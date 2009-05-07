@@ -1,0 +1,232 @@
+\documentclass[11pt]{g-brief}
+\usepackage[utf8]{inputenc} 
+\usepackage{ngerman}
+\usepackage{enumerate}
+\usepackage{eurosym}
+\usepackage[T1]{fontenc}
+\usepackage{wallpaper}
+\usepackage{color}
+\usepackage{graphicx}
+\fenstermarken
+\topmargin0mm
+\textheight17cm
+\renewcommand{\datumtext}{}
+\newcommand{\n}{\newline}
+
+\Adresse	{\Sexpr{paste(svalue(p.vorname), svalue(p.name))}\\
+		 \Sexpr{svalue(p.strasse)}\\
+		 \Sexpr{paste(svalue(p.plz), svalue(p.ort))}
+		}
+
+\Betreff	{Genexpressionsanalyse (GEP) auf Affymetrix-DNA-Microarrays}
+
+%\Datum		{\today}
+
+%\Anrede	{Sehr geehrter Herr Mustermann,}
+\Gruss		{}{0cm}
+
+\begin{document}
+\begin{g-brief}
+% 1. Seite des Briefkopf
+\ThisCenterWallPaper{1}{data/Logo.pdf}
+
+% Angaben zum Patienten
+\line(1,0){170} \\ \\
+\textbf{Name:} \Sexpr{svalue(p.name)}, \Sexpr{svalue(p.vorname)} % name des Patienten
+\hspace{8cm}
+\textbf{Geb.Datum:} \Sexpr{svalue(p.geb)} % geburtsdatum des Patienten
+\\
+\line(1,0){170}
+\begin{tabbing}
+\textbf{Klinische Diagnose:} \hspace{0.5cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= %hier klini. Diagnose eintragen
+\\
+\textbf{Klinische Angaben:}
+\>\textbf{Ig-Typ:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\>\textbf{Leichtkettentyp:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
+\end{tabbing}
+
+% Angaben zur Genexpressionsanalyse
+\begin{tabular}{ | l l | } \hline
+Datum der Probenentnahme (KM): & \Sexpr{svalue(probe.date)} \tabularnewline 
+Probenvolumen: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
+CD-138 Anreicherung, Protokoll: & \Sexpr{svalue(probe.protokoll)} \% \tabularnewline
+Menge der zur Analyse verwendeten RNA: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
+Array-Typ: & \Sexpr{svalue(probe.array)} \tabularnewline
+Anzahl analysierter Probesets: & \Sexpr{nr.genes} \tabularnewline
+Anzahl analysierter Gene und EST: & ca. 39 000 \tabularnewline
+RNA Amplifikations / Markierungs-Protokoll: & \Sexpr{svalue(probe.ampl)} \tabularnewline
+Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
+\end{tabular}
+
+% Beginn der 2. Seite, mit Briefbogenwechsel
+\pagebreak
+\CenterWallPaper{1}{data/Logo2.pdf}
+
+% Befund
+\begin{large}\textbf{Befund}\end{large} \\
+\line(1,0){170}
+\begin{enumerate}
+\item \textbf{Qualitätskontrolle} \\
+% Hier Erläuterungen zur Qualitätskontrolle
+% MAQC Kontrolle + QC Stats --> Erläuterung kommt noch
+\Sexpr{svalue(befund.qualitycontrol)}
+
+\item \textbf{Identitäskontrolle} \\
+% Hier Erläuterungen zur Identifikationskontrolle
+% Prädiktion mittels PAM-Prädiktor von Geschlecht, IG-Typ und Leichtkette. Sens./Spez. kommt noch
+\Sexpr{svalue(befund.identitycontrol)}
+
+\item \textbf{Risikoklassifizierungen} \\
+% Hier Erläuterungen zur Risikoklassifizierung
+% Berechnung der Riskikoscores nach Sh...... kommt noch..
+\Sexpr{svalue(befund.risk)}.
+
+\item \textbf{Beim Multiplen Myelom häufig im Vergleich zu normalen Plasmazellen überexprimierte Gene (z.B. aufgrund einer Translokation oder Amplifikation).} \\
+% Hier Erläuerungen zu den expr. Genen
+% häufig expr. Gene
+% Starke Überexpression von CCND1, fehlende Expression von FGFR3 und MMSET.
+\Sexpr{svalue(befund.genes)}
+
+\item \textbf{Zielantigene für Immuntherapie} \\
+% Zielantigene für Immuntherapie
+% Expression von HM1.24/BST2. Keine expression von MAGEA3, A1 und MUC1.
+\Sexpr{svalue(befund.itherapy)}
+
+\item \textbf{Zielantigene für gruppenspezifische Therapie} \\
+% Zielantigene für gruppenspezifische Therapie
+% Expression von Aurorakinase A.
+\Sexpr{svalue(befund.grtherapy)}
+
+\end{enumerate}
+
+\vspace{0.5cm}
+
+% Beuerteilung
+\begin{large}\textbf{Beurteilung}\end{large} \\
+\line(1,0){170}
+
+%Hier der frei-Text:
+\textbf{Hinweis:} Die Genexpressionsanalyse stellt gegenwärtig ein experimentelles Verfahren dar. Anwendung und Interpretation werden gegenwärtig in klinischen Studien evaluiert. \\ \\
+%Beim Multiplen Myelom wurde wiederholt beschrieben, dass eine starke Überexpression von CCND1 mit dem Vorliegen einer Trankslokation t(11;14), einhergeht, die nach Hochdosistherapie mit einer guten Prognose vergesellschaftet ist. Eine geringe Expression von Proliferationsmarkern (z.B. Ki67) ist ebenfalls mit einer günstigen Prognose vergesellschaftet. \\ \\
+%Aufgrund der fehlenden Expression von MAGEA3 und MUC-1 ist eine Immuntherapie hinsichtlich dieses Antigens nicht erfolgsversprechend. \\ \\
+%Aufgrund des vorliegens einer TACI-Expression ist ein Einschluss in die TACI-Fe5 Studie möglicherweise von therapeutischem Interesse.
+\Sexpr{svalue(beurteilung)}
+
+\pagebreak
+
+% aufruf des r-skripts 
+%<<echo=FALSE, results=hide>>=
+%setwd("/home/linusvanpelt/Work/genchip befund/")
+%source("befund.R")
+%@
+
+% Qualitätskontrolle
+\begin{large}\textbf{Qualitätskontrolle}\end{large} \\
+\line(1,0){170}
+\begin{center}
+\resizebox{7cm}{!}{\includegraphics{temp/qualityplot.pdf}}
+\hspace{1cm}
+\resizebox{7cm}{!}{\includegraphics{temp/qcsummary.pdf}}
+\end{center}
+
+\vspace{1cm}
+
+% Identitätskontrolle
+\begin{large}\textbf{Identitätskontrolle}\end{large} \\
+\line(1,0){170}
+
+\vspace{0.5cm}
+
+\begin{tabular}{ | l | c | c | c | c | } \hline
+ & prädiktierter Wert & Wertebereich  & Sensitivität & Spezifität \tabularnewline \hline \hline
+Geschlecht & \Sexpr{sex} & [m;f] & & \tabularnewline \hline 
+Ig-Typ & \Sexpr{type} & [IgA;IgG;IgD] & & \tabularnewline \hline 
+Leichtkette & \Sexpr{lightchain} & [l;k] & & \tabularnewline \hline 
+\end{tabular}
+
+\vspace{1cm}
+
+% Molekulare Klassifikationen
+\begin{large}\textbf{Molekulare Klassifikationen}\end{large} \\
+\line(1,0){170}
+
+\vspace{0.5cm}
+
+\begin{tabular}{ | l | c | c |} \hline
+ & Klassifikation & Wertebereich \tabularnewline \hline \hline
+Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
+EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
+Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
+\end{tabular}
+
+\pagebreak
+
+% Risikoklassifizierungen
+\begin{large}\textbf{Risiko Klassifikationen}\end{large} \\
+\line(1,0){170}
+
+\vspace{0.5cm}
+
+\begin{tabular}{ | l | c | c |} \hline
+ & Klassifikation & Wertebereich \tabularnewline \hline \hline
+Decaux &  \Sexpr{decaux$decaux.risk} & [high;low] \tabularnewline \hline 
+Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high;medium;low] \tabularnewline \hline
+Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high;medium;low] \tabularnewline \hline
+Shaughnessy 17 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted17} & [high;low] \tabularnewline \hline
+GPI & \Sexpr{gpi} & [high;medium;low] \tabularnewline \hline 
+\end{tabular}
+
+\vspace{1cm}
+
+% Gene
+\begin{large}\textbf{Gene}\end{large} \\
+\line(1,0){170}
+
+\vspace{0.5cm}
+
+\begin{tabular}{ | c | c | c | c | c | c | c | c | } \hline
+ & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasmazellen (normal)} & \multicolumn{2}{ | c | }{Plasmazellen (MM)} \tabularnewline \hline
+Gen & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{} \tabularnewline
+\multicolumn{8}{ | l | }{\textbf{Beim Multiplen Myelom häufig überexprimierte Gene}} \tabularnewline \hline \hline
+
+Cyclin D1 & 208712\_at & \Sexpr{cyclind1.signal} & \Sexpr{cyclind1} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+Cyclin D2 & 200953\_s\_at & \Sexpr{cyclind2.signal} & \Sexpr{cyclind2} & \Sexpr{cyclind2.bmpc.signal} & \Sexpr{p.cyclind2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind2.mmc.signal} & \Sexpr{p.cyclind2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+Cyclin D3 & 201700\_at & \Sexpr{cyclind3.signal} & \Sexpr{cyclind3} & \Sexpr{cyclind3.bmpc.signal} & \Sexpr{p.cyclind3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind3.mmc.signal} & \Sexpr{p.cyclind3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+FGFR3 & 204379\_s\_at & \Sexpr{fgfr3.signal} & \Sexpr{fgfr3} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+\multicolumn{8}{ | l | }{} \tabularnewline
+\multicolumn{8}{ | l | }{\textbf{Zielantigene für Immuntherapie}} \tabularnewline \hline \hline
+
+MAGEA1 & 207325\_x\_at & \Sexpr{magea1.signal} & \Sexpr{magea1} & \Sexpr{magea1.bmpc.signal} & \Sexpr{p.magea1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea1.mmc.signal} & \Sexpr{p.magea1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+ 
+MAGEA3 & 209942\_x\_at & \Sexpr{magea3.signal} & \Sexpr{magea3} & \Sexpr{magea3.bmpc.signal} & \Sexpr{p.magea3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea3.mmc.signal} & \Sexpr{p.magea3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+ 
+CTAG1 & 210546\_x\_at & \Sexpr{ctag1.signal} & \Sexpr{ctag1} & \Sexpr{ctag1.bmpc.signal} & \Sexpr{p.ctag1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ctag1.mmc.signal} & \Sexpr{p.ctag1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+SSX2 & 210497\_x\_at & \Sexpr{ssx2.signal} & \Sexpr{ssx2} & \Sexpr{ssx2.bmpc.signal} & \Sexpr{p.ssx2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ssx2.mmc.signal} & \Sexpr{p.ssx2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+HM1.24/BST2 & 201641\_at & \Sexpr{hm124.signal} & \Sexpr{hm124} & \Sexpr{hm124.bmpc.signal} & \Sexpr{p.hm124.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{hm124.mmc.signal} & \Sexpr{p.hm124.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+ 
+MUC1 & 213693\_s\_at & \Sexpr{muc1.signal} & \Sexpr{muc1} & \Sexpr{muc1.bmpc.signal} & \Sexpr{p.muc1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{muc1.mmc.signal} & \Sexpr{p.muc1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+\multicolumn{8}{ | l | }{} \tabularnewline
+\multicolumn{8}{ | l | }{\textbf{Zielgene für gruppenspezifische Therapie}} \tabularnewline \hline \hline
+
+Aurorakinase A & 208079\_s\_at & \Sexpr{aurka.signal} & \Sexpr{aurka} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+\end{tabular}
+
+\vspace{3cm}
+
+\begin{tabbing}
+Dipl.phys. D.Hose \hspace{8cm} \=Prof.Dr. H.Goldschmidt \\
+Labor für Myelomforschung \> Sektion Multiples Myelom \\
+Leiter \> Leiter
+\end{tabbing}
+
+\end{g-brief}
+\end{document}
