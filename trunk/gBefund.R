@@ -1,30 +1,3 @@
-# tobias meißner
-# 29.04.2009
-
-# todo + ideen:
-
-# statusleiste, mit anzeige bzgl. analyse usw... mal schauen was da machbar ist..
-# speichern dialog + button, wie umgang mit temporär erzeugten dateien? speicherverbrauch? 
-# qualitätskontrolle mit eingaben abgleichen und gegebenfalls hinweise ausgeben
-# hilfe dialog
-# hilfe button mit erläuterungen zu den feldern -.-> manual
-# gep-analyse tab soll focus direkt nach start haben
-# bedingt ausschalten über 'x' das gleiche wie über button? werden temp. dateien gelöscht?
-# evtl. batch mode zum vorverarbeiten mehrere cel files mit anschließender befundung?, ist das in dieser umgebung so realisierbar?
-# quit-button nach rechts
-# feste größe für eingabefelder? in pixeln? oder dynamisch lassen?
-# automatische abfrage ob wirklich beendet werden soll, wurde gespeichert??
-# überprüfung das alle felder (richtig) ausgefüllt sind
-# datenbank anbindun um automatisch patientendaten zu übernehmen
-# yaqc() durch qc() ersetzen
-
-# KNOWN BUGS
-
-# beim laden kommt folgender fehler: (R:27935): Gtk-CRITICAL **: gtk_text_buffer_set_text: assertion `text != NULL' failed  --> noch keine zuordnung.. aber auch kein größeres problem erkennbar, liegt vermutlich daran das evtl. einige textfelder leer sind
-# überprüfung der identitycontrol funtioniert nicht
-# speichern soll nicht möglich sein wenn noch keine analyse gelaufen ist!
-# statusleiste zeigt nicht unbedingt das an was sie soll
-
 require(gWidgets)
 options("guiToolkit"="RGtk2")
 # source("scripts/befund.R") # funktion zur berechnung des befundes run.befund()
@@ -531,21 +504,6 @@ enabled(tables) = "FALSE"
 sb = gstatusbar("", cont=g)
 
 
-
-# ------------------------------------------------------
-# batch mode testing mit paralleler prozessierung
-
-# cel.files ist vektor der länge n
-# runAnalysis für jedes celfile[i]
-
-# wichtiges todo: temporäre dateien eindeutig benennen!
-
-batchHandler = function(h, ...) {
-	library(snowfall)
-	sfInit(parallel=TRUE, cpus=2)	
-	sfLapply(cel.files, run.befund)
-	sfStop()
-}
 
 
 
