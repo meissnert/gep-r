@@ -1,4 +1,4 @@
-# funktion ohne veränderung aus simpleaffy übernommen, wird für my.qc() gebraucht
+# function form simpleaffy, not changed, used for my.qc()
 my.bg.stats = function(unnormalised, grid=c(4,4)) {	
 	pms         <- unlist(pmindex(unnormalised))
 	mms         <- unlist(mmindex(unnormalised))
@@ -27,7 +27,7 @@ my.bg.stats = function(unnormalised, grid=c(4,4)) {
   	return(list(zonebg=zonebg,zonesd=zonesd))
 }
 
-# funktion ohne veränderung aus simpleaffy übernommen, wird für repplot() gebraucht
+# function form simpleaffy, not changed, used for repplot()
 my.plotdiag <- function() {
   fc <- c(2,4,8)
   k <- 1
@@ -40,8 +40,8 @@ my.plotdiag <- function() {
 }
 
 
-# scalefaktor und targetbrechnung auskommentiert, da nicht mit gcrma möglich
-# present call durch panp present call ersetzt
+# scalefactors and targed taken out, not used for gcrma
+# present call changed to panp present call
 my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cdfn = cdfName(unnormalised)) {
     verbose <- getOption("verbose")
 
@@ -94,7 +94,7 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
         bioBCalls = biobcalls, arraytype = cdfn))
 }
 
-# normalisierung aus originalfunktion herausgenommen, nur noch die plotfunktion, übergabe der normalisierten objekte über argument
+# normalization taken out, only ploting here, function takes the normalized obekt as an argument
 my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
     e <- exprs(data)
     dim <- ncol(e)
@@ -134,7 +134,7 @@ my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
     mtext(main, 3, outer = TRUE, cex = 1.4 * cex)
 }
 
-# scale factors entfernt
+# scale factors taken out
 my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 1.25, ba.thresh = 3.0, present.thresh=10, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
   old.par <- par()
   par(mai=c(0,0,0,0))

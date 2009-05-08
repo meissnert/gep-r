@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------
-# pa.calls modifikation 
-# überprüfun auf "ExpressionSet" entfernt da docval objekt == AffyBatch
+# pa.calls modification 
+# check for "ExpressionSet" taken out, docval object == AffyBatch
 
 my.pa.calls <-
 function(object=NULL, looseCutoff=0.02, tightCutoff=0.01, verbose=FALSE) {

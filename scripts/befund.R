@@ -3,43 +3,10 @@
 
 # --------------------------------------------------------------------------
 #
-# Erstellung eines genexpressionsbasierenden Befundes
+# GEP-R
 #
 # -------------------------------------------------------------------------- 
 
-# folgende Scores sollen für ein neues CEL-Files bestimmt werden:
-#	GPI
-#	.....
-#
-# basierend auf der docval modifikation mit gcrma von TM und TH
-# basierund auf der panp modifikation von TM
-
-# --------------------------------------------------------------------------
-# Algorithmus:
-# - einlesen de(s/r) CEL-File(s) 
-# - normalisieren mittels docval-package zum Refrenz-Datensatz
-# - presence/absence call mittels panp
-# - mas5 normalilierung
-# - qualitätskontrolle mittels yaqcaffy
-# - aufrufen der einzelnen funtionen zur berechnung der risikoparameter
-# - erstellen eines befundes mittels sweave/odfweave
-
-#--------------------------------------------------------------------------- 
-# TODO
-# shaughnessy molecular classification
-# angiogenese (Score??) + MRT ?
-# code-optimierung und usability
-# gibt es aufrufe die sich mittels snowfall optimieren/parallelisieren lassen?
-# qualitätskontrolle optimieren!! braucht mit den meisten rechenaufwand!!
-# .plotdiag() in repplot funktion
-# yaqc = yaqc(tmp) durch qc() ersetzen?
-
-# der hm2 datensatz, so wie er jetzt ist ist nicht optimal! --> korrigieren für batch-effekt!. reduzieren um chips welche den qualitätskontrollkriterien nicht genügen!
-
-# known BUGS
-
-# funktion run.befund() führt alles berechnungen durch
-# run.befund = function(cel.file) {
 
 # --------------------------------------------------------------------------
 # libraries einbinden
@@ -207,8 +174,6 @@ ec = sig.ec(exprs(exprs.external.gcrma))
 # to do...
 
 
-
-#} # ende run.befund()
 
 
 
