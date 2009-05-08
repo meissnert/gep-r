@@ -1,7 +1,7 @@
 # tobias meißner
 # 02.12.08
 
-# GPI für genchip befund
+# GPI for gep-r
 gpi = function(exprs, panp) {
 	# Einlesen der Proliferationsindex Probesets
 	genes = read.csv2("data/probe.list.perm.csv")[,2]
