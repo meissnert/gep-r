@@ -3,6 +3,7 @@
 _this is not complete and in order_
 
  * port language from german to english (later add language file)
+ * port comments in source code from german to english
  * automatically check results from quality-control with user-input
  * gep analysis-tab needs to get focus right after start
  * quit button to the right side
