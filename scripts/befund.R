@@ -1,29 +1,17 @@
-# tobias meißner
-# 29.04.2009
-
-# --------------------------------------------------------------------------
-#
-# GEP-R
-#
-# -------------------------------------------------------------------------- 
-
-
-# --------------------------------------------------------------------------
-# libraries einbinden
+# load required librarys
 require(docval)
 require(panp)
 require(gdata)
-#library(monash) # ermöglicht das erstellen von figures mit möglichst wenig umrandung
 
 # ---------------------------------------------------------------------------
-# gcrma referenz daten laden
-load("data/params.hm2.Rdata") # hm2 gcrma parmaeter params.hm2
+# load gcrma reference data
+load("data/params.hm2.Rdata") # hm2 gcrma parmameter params.hm2
 
-# externen patient/en preprocessing
+# external patient preprocessing
 external = ReadAffy(filenames=cel.file)
 exprs.external.gcrma = wrap.val.add(external, params.hm2, method="gcrma")
 
-nr.genes = dim(exprs(exprs.external.gcrma))[1] # anzahl der transkripte
+nr.genes = dim(exprs(exprs.external.gcrma))[1] # number probesets on the chip
 
 # panp
 source("scripts/panp_docval_mod.R")
@@ -33,16 +21,16 @@ panp.external = my.pa.calls(exprs.external.gcrma, verbose=TRUE)
 exprs.external.mas5 = mas5(external)
 
 # -------------------------------------------------------------------------
-# Qualitätskontrolle
+# Qualitycontrol
 # -------------------------------------------------------------------------
-require(yaqcaffy) # kommt weg ...
+require(yaqcaffy) # supposed to be removed soon
 require(affydata)
 require(MAQCsubsetAFX)
 require(affyQCReport)
-data(refA) # ersetzen durch MM-Referenzen
-source("scripts/qc_gcrma.R") # modifikationen von qc() und RepPlot() für gcrma und performance
+data(refA) # supposed to be replace with own myeloma reference chips
+source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
 
-# phenoData anpassen, sonst meckert qc(), irgendwie so...
+# phenoData mod., somehow this way...
 tmp = external
 tmp@phenoData@data = refA@phenoData@data[1,]
 
@@ -53,10 +41,10 @@ cel.file.temp2 = unlist((strsplit(cel.file.temp, "/")))[last.temp]
 rownames(tmp@phenoData@data) = cel.file.temp2
 
 # qc summary statistics
-qc.data = merge.AffyBatch(refA, tmp) # sample + referenz als affybatch zusammenfassen
+qc.data = merge.AffyBatch(refA, tmp) # combine sample + referece to affybatch object
 qc.data.norm = gcrma(qc.data) # gcrma 	
 qc.data.norm.panp = my.pa.calls(qc.data.norm, verbose=TRUE) # panp
-qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # qc objekt erstellen
+qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc object
 
 # qc plot
 pdf("temp/qcsummary.pdf")
@@ -68,8 +56,8 @@ pdf("temp/qualityplot.pdf")
 my.repplot(qc.data.norm)
 dev.off()
 
-# kommt weg...
-yaqc = yaqc(tmp) # durch qc() ersetzen!!!
+# supposed to be removed soon..
+yaqc = yaqc(tmp) # to be replaced with qc() !!
 
 # konvertierung der *.pdf zu *.gif für den imagehandler im gui
 system("convert temp/qualityplot.pdf temp/qualityplot.gif")
@@ -77,7 +65,7 @@ system("convert temp/qcsummary.pdf temp/qcsummary.gif")
 
 rm(tmp, cel.file.temp, last.temp)
 # -------------------------------------------------------------------------
-# prädiktionen / identitätskontrolle
+# predictions / identity control
 # -------------------------------------------------------------------------
 # sex
 load("data/pam.sex.Rdata")
@@ -92,7 +80,7 @@ load("data/pam.lightchain.Rdata")
 lightchain = sig.lightchain(exprs(exprs.external.gcrma))
 
 # -------------------------------------------------------------------------
-# berechnen der risiko parameter
+# risk stratification & molecular classifications
 # -------------------------------------------------------------------------
 # gpi
 source("scripts/gpi.befund.R")
@@ -100,14 +88,14 @@ gpi = gpi(exprs.external.gcrma, panp.external)
 
 
 # -------------------------------------------------------------------------
-# Gene Patient
+# genes patient (just some samples yet..)
 # -------------------------------------------------------------------------
-# zielgene für gruppenspezifische therapie
+# targetgenes for group-specific therapie
 # aurorakinase A
 aurka = as.vector((panp.external$Pcalls["208079_s_at", ]))
 aurka.signal = as.numeric(round(exprs(exprs.external.gcrma)["208079_s_at", ],1))
 
-# beim multiplen myelom häufig überexprimierte gene
+# within mm samples often overexpressed genes
 # Cyclin D1, D2, D3
 cyclind1 = as.vector((panp.external$Pcalls["208712_at", ]))
 cyclind1.signal = as.numeric(round(exprs(exprs.external.gcrma)["208712_at", ],1))
@@ -122,7 +110,7 @@ fgfr3.signal = as.numeric(round(exprs(exprs.external.gcrma)["204379_s_at", ],1))
 mmset = as.vector((panp.external$Pcalls["209053_s_at", ]))
 mmset.signal = as.numeric(round(exprs(exprs.external.gcrma)["209053_s_at", ],1))
 
-# zielgene für immuntherapie
+# target genes for imuntherapyh
 # MAGEA1
 magea1 = as.vector((panp.external$Pcalls["207325_x_at", ])) 
 magea1.signal = as.numeric(round(exprs(exprs.external.gcrma)["207325_x_at", ],1))
@@ -143,12 +131,12 @@ muc1 = as.vector((panp.external$Pcalls["213693_s_at", ]))
 muc1.signal = as.numeric(round(exprs(exprs.external.gcrma)["213693_s_at", ],1))
 
 # -------------------------------------------------------------------------
-# Gene MMC / BMPC
+# Gene reference MMC / BMPC
 # -------------------------------------------------------------------------
 load("data/genes.Rdata")
 
 # -------------------------------------------------------------------------
-# berechnen der risiko klassifikationen
+# risk stratification & molecular classifications
 # -------------------------------------------------------------------------
 # decaux
 source("scripts/decaux.R")
@@ -156,11 +144,11 @@ decaux = decaux(exprs.external.gcrma)
 
 # shaughnessy 17/70 Gene Risk score
 source("scripts/shrisk.R")
-shaughnessy = shrisk(exprs.external.mas5) # benötigt mas5 normalisierte daten als übergabe
-					  # liefert liste mit 3 Rückgaben:
+shaughnessy = shrisk(exprs.external.mas5) # needs mas5 normalized data
+					  # returns this:
 					  # shaughnessy$predicted.abs 	70 Gene abs distance
 					  # shaughnessy$predicted.sqrt	70 Gene squared distcance
-					  # shaughnessy$predicted17	17 Gene Prediktor
+					  # shaughnessy$predicted17	17 Gene predictor
 
 # bergsagel tc classification
 source("scripts/bergsagel.R")
@@ -171,7 +159,7 @@ load("data/pam.ec.Rdata")
 ec = sig.ec(exprs(exprs.external.gcrma))
 
 # shaughnessy molecular classification
-# to do...
+# still to do...
 
 
 
