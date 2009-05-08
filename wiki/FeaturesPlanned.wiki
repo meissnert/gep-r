@@ -1,0 +1,6 @@
+== Features planned for upcoming Versions==
+
+ * help-system
+ * language-file that makes it easy to customize for different languages
+ * batch mode for processing cpl of files before edditing
+ * database integration for entering all patient data automatically 
