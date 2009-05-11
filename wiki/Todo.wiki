@@ -12,4 +12,4 @@ _this is not complete and in order_
  * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
  * check for correct user input in all fields
  * change yaqc() to qc() gcrma results
- * add RLE and NUSE plots to quality control
+ * add RLE and NUSE plots to PDF
