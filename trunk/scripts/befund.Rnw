@@ -28,7 +28,7 @@
 \begin{document}
 \begin{g-brief}
 % 1. Seite des Briefkopf
-\ThisCenterWallPaper{1}{data/Logo.pdf}
+\ThisCenterWallPaper{1}{data/Logo_hd.pdf}
 
 % Angaben zum Patienten
 \line(1,0){170} \\ \\
@@ -60,7 +60,7 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 % Beginn der 2. Seite, mit Briefbogenwechsel
 \pagebreak
-\CenterWallPaper{1}{data/Logo2.pdf}
+\CenterWallPaper{1}{data/Logo2_hd.pdf}
 
 % Befund
 \begin{large}\textbf{Befund}\end{large} \\

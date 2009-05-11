@@ -1,25 +1,24 @@
 require(gWidgets)
 options("guiToolkit"="RGtk2")
-# source("scripts/befund.R") # funktion zur berechnung des befundes run.befund()
 
-# toolbar Handler
+# toolbar handler
 quitHandler = function(h, ...) {
 	dispose(win)
-	system("rm *.pdf *.log *.aux *.tex temp/*") # löschen der temporären dateien
+	system("rm *.pdf *.log *.aux *.tex temp/*") # delete temporary files
 
-	# todo: automatische abfrage ob wirklich beendet werden soll, wurde gespeichert??
+	# todo: ask if really quit, ask to save
 }
 
-# befund speichern handler
+# report save handler
 saveHandler = function(h, ...) {
-	# speichern aller cel-file bezogenen variablen in einer liste, 
-	# erzeugen eines ordners indem die abbildungen kopiert werden und das r-objekt mit den variablen abgelegt wird
+	# save all cel-file associated variables in a list 
+	# create a directory, copy imagages and r-ohject with variables there
 
-	system(paste("mkdir -p save/", svalue(cel.label), sep="")) # verzeichnis mit namen des cel-file anlegen, überschreiben wenn schon vorhanden
-	system(paste("cp temp/*.gif save/", svalue(cel.label), sep="")) # abbildungen aus temp ins neue verzeichnis kopieren
-	system(paste("cp temp/*.pdf save/", svalue(cel.label), sep="")) # abbildungen aus temp ins neue verzeichnis kopieren
+	system(paste("mkdir -p save/", svalue(cel.label), sep="")) # create dir with name of the cel-file overwrite if exists
+	system(paste("cp temp/*.gif save/", svalue(cel.label), sep="")) # copy pictures from temp to the new dir
+	system(paste("cp temp/*.pdf save/", svalue(cel.label), sep="")) # copy pdf to the new dir
 	
-	# speichern der "inputs"
+	# save the "inputs"
 	save = list(
 	       	cel = svalue(cel.label),
 		plot = svalue(plot),
@@ -49,7 +48,7 @@ saveHandler = function(h, ...) {
 		befund.grtherapy = svalue(befund.grtherapy)
 	       )
 	
-	# speichern der variablen als r-objekt, hier mit der endung *.befund
+	# save variables as a r-object with the ending *.befund
 	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", 
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "yaqc", "nr.genes",
 		   "aurka", "aurka.bmpc.signal", "aurka.mmc.signal", "aurka.signal", "p.aurka.bmpc", "p.aurka.mmc",
@@ -71,10 +70,10 @@ saveHandler = function(h, ...) {
 	svalue(sb) = paste("Befund", svalue(cel.label), "erfolgreich gespeichert", sep=" ")
 }
 
-# Befund laden handler
+# report load handler
 loadHandler = function(h, ...) {
-	# laden des ausgewählten r-objekts,(befund) 
-	# kopieren der gespeicherten pdf-abbildungen in den temp ordner
+	# load the selected r-object,(befund) 
+	# copy the save images to the temp folder
 
 	              gfile(text="Bitte ein Rdata-Objekt auswählen...", 
 			    type="open", 
@@ -86,7 +85,7 @@ loadHandler = function(h, ...) {
 			    handler = function(h, ...) {do.call(h$action, list(h$file))}
 			    )	
 
-	# setzen der "werte" in den eingabefeldern
+	# set the values in the input boxes
 	svalue(cel.label) = save$cel
 	svalue(plot) = save$plot
 	svalue(p.name) = save$p.name
@@ -115,15 +114,15 @@ loadHandler = function(h, ...) {
 	svalue(befund.grtherapy) = save$befund.grtherapy
 	svalue(sb) = save$sb
 	
-	# abbildungen kopieren
+	# copy images
 	system(paste("cp -f save/", svalue(cel.label), "/*.gif temp/", sep="")) 
 	system(paste("cp -f save/", svalue(cel.label), "/*.pdf temp/", sep="")) 
 
-	# handler erneut aufrufen
-	identHandler()			# ausgabe ic, nb rechts
-	riskHandler()			# ausgabe risk, nb rechts
-	geneHandler()			# ausgabe gene, nb rechts
-	qctableHandler()		# ausgabe qc, rechts
+	# call handlers
+	identHandler()			# printout ic, nb right
+	riskHandler()			# printout risk, nb right
+	geneHandler()			# printout genes, nb right
+	qctableHandler()		# printout qc, right
 	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
 	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
 	enabled(tbl.befund) = "TRUE"	# befund aktivieren
@@ -174,6 +173,12 @@ dispHandlerMAQC = function(h, ...) {
 }
 dispHandlerQCSTATS = function(h, ...) {
 	svalue(plot) = "temp/qcsummary.gif"
+}
+dispHandlerNUSERLE = function(h, ...) {
+	svalue(plot) = "temp/nuse_rle.gif"
+}
+dispHandlerARTIFACTS = function(h, ...) {
+	svalue(plot) = "temp/artifacts.gif"
 }
 
 # identity control
@@ -488,8 +493,10 @@ enabled(tbl.beurteilung) = "FALSE"
 nb.right = gnotebook(cont=pg)
 
 qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
-gbutton(text="Zeige QC MAQC", border=TRUE, handler=dispHandlerMAQC, cont=qc)
+gbutton(text="Zeige QC Reproduzierbarkeit", border=TRUE, handler=dispHandlerMAQC, cont=qc)
 gbutton(text="Zeige QC Stats", border=TRUE, handler=dispHandlerQCSTATS , cont=qc)
+gbutton(text="Zeige QC NUSE/RLE", border=TRUE, handler=dispHandlerNUSERLE, cont=qc)
+gbutton(text="Zeige QC for Artifacts", border=TRUE, handler=dispHandlerARTIFACTS, cont=qc)
 plot = gimage("data/default_empty.gif", cont=qc)
 qc.table = gtable(data.frame(QC=rep("",35), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"

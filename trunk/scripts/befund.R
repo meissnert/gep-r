@@ -27,6 +27,7 @@ require(yaqcaffy) # supposed to be removed soon
 require(affydata)
 require(MAQCsubsetAFX)
 require(affyQCReport)
+require(affyPLM)
 data(refA) # supposed to be replace with own myeloma reference chips
 source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
 
@@ -59,9 +60,31 @@ dev.off()
 # supposed to be removed soon..
 yaqc = yaqc(tmp) # to be replaced with qc() !!
 
+# NUSE / RLE
+# detect which arrays have lower quality data
+Pset <- fitPLM(qc.data)
+
+pdf("temp/nuse_rle.pdf")
+par(mfrow=c(2,1), cex=0.5)
+RLE(Pset,col="lightblue",main="RLE", ylim=c(-3.5, 3.5))
+NUSE(Pset,col="yellow", main="NUSE", ylim=c(0.8, 1.5))
+dev.off()
+
+# check the "new" chip for possible artifacts
+pdf("temp/artifacts.pdf")
+par(mfrow=c(2,3))
+image(Pset,which=7)
+image(Pset,which=7,type="resids")
+image(Pset,which=7,type="pos.resids")
+image(Pset,which=7,type="neg.resids")
+image(Pset,which=7,type="sign.resids")
+dev.off()
+
 # konvertierung der *.pdf zu *.gif für den imagehandler im gui
 system("convert temp/qualityplot.pdf temp/qualityplot.gif")
 system("convert temp/qcsummary.pdf temp/qcsummary.gif")
+system("convert temp/nuse_rle.pdf temp/nuse_rle.gif")
+system("convert temp/artifacts.pdf temp/artifacts.gif")
 
 rm(tmp, cel.file.temp, last.temp)
 # -------------------------------------------------------------------------
