@@ -13,3 +13,6 @@ _this is not complete and in order_
  * check for correct user input in all fields
  * change yaqc() to qc() gcrma results
  * add RLE and NUSE plots to PDF
+ * add Spike-In performance to PDF
+ * add Artifact-Control to PDF
+ * add RAN degredation Plot to PDF
