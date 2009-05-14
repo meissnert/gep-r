@@ -62,7 +62,7 @@ yaqc = yaqc(tmp) # to be replaced with qc() !!
 
 # NUSE / RLE
 # detect which arrays have lower quality data
-Pset <- fitPLM(qc.data)
+Pset <- fitPLM(qc.data, background.method="GCRMA")
 
 pdf("temp/nuse_rle.pdf")
 par(mfrow=c(2,1), cex=0.5)
@@ -70,21 +70,48 @@ RLE(Pset,col="lightblue",main="RLE", ylim=c(-3.5, 3.5))
 NUSE(Pset,col="yellow", main="NUSE", ylim=c(0.8, 1.5))
 dev.off()
 
-# check the "new" chip for possible artifacts
+# check the "new" chip for possible artifacts, by plotting pseudo-images
 pdf("temp/artifacts.pdf")
 par(mfrow=c(2,3))
-image(Pset,which=7)
-image(Pset,which=7,type="resids")
-image(Pset,which=7,type="pos.resids")
-image(Pset,which=7,type="neg.resids")
-image(Pset,which=7,type="sign.resids")
+image(Pset, which=7, main="Weights") # pseudo-image of the weights
+image(Pset, which=7,type="resids", main="Residuals")
+image(Pset, which=7,type="pos.resids", main="Positive Rresiduals")
+image(Pset, which=7,type="neg.resids", main="Negative Residuals")
+image(Pset, which=7,type="sign.resids", main="Signed Residuals")
 dev.off()
 
-# konvertierung der *.pdf zu *.gif für den imagehandler im gui
+# performance of spike-in genes --> measure hybridization performance
+concentration = log(c(1.5, 5, 25, 100))
+x.val = array(concentration, c(4, length(qc.data)))
+x.val = t(x.val)
+y.val = spikeInProbes(qc.obj)
+
+pdf("temp/spikein_performance.pdf")
+plot(x.val, y.val, col=1:7, main="Spike-in performance", xlab="log ( concentration in pM)", ylab="log2 (expression)", ylim=c(4,16))
+legend(legend=sampleNames(qc.data), x=2.5, y=7, lty=1, col=1:7, cex=0.7)
+for (i in 1:length(qc.data)) {
+	y.val = spikeInProbes(qc.obj)[i,]
+ 	lm.spike = lm(y.val ~ concentration)
+	slope = coef(lm.spike)[2]
+ 	intercept = coef(lm.spike)[1]
+	abline(intercept, slope, col=i)
+}
+dev.off()
+
+# rna degredation
+degredation = AffyRNAdeg(qc.data)
+pdf("temp/degredation.pdf")
+plotAffyRNAdeg(degredation, col=1:7, lty=1)
+legend(legend=sampleNames(qc.data), x=4.5, y=10, lty=1, col=1:7, cex=0.6)
+dev.off()
+
+# convert  *.pdf to *.gif for the imagehandler within the gui
 system("convert temp/qualityplot.pdf temp/qualityplot.gif")
 system("convert temp/qcsummary.pdf temp/qcsummary.gif")
 system("convert temp/nuse_rle.pdf temp/nuse_rle.gif")
 system("convert temp/artifacts.pdf temp/artifacts.gif")
+system("convert temp/spikein_performance.pdf temp/spikein_performance.gif")
+system("convert temp/degredation.pdf temp/degredation.gif")
 
 rm(tmp, cel.file.temp, last.temp)
 # -------------------------------------------------------------------------

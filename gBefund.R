@@ -180,6 +180,12 @@ dispHandlerNUSERLE = function(h, ...) {
 dispHandlerARTIFACTS = function(h, ...) {
 	svalue(plot) = "temp/artifacts.gif"
 }
+dispHandlerSPIKE = function(h, ...) {
+	svalue(plot) = "temp/spikein_performance.gif"
+}
+dispHandlerDEGREDATION = function(h, ...) {
+	svalue(plot) = "temp/degredation.gif"
+}
 
 # identity control
 identHandler = function(h, ...) {
@@ -493,10 +499,13 @@ enabled(tbl.beurteilung) = "FALSE"
 nb.right = gnotebook(cont=pg)
 
 qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
-gbutton(text="Zeige QC Reproduzierbarkeit", border=TRUE, handler=dispHandlerMAQC, cont=qc)
-gbutton(text="Zeige QC Stats", border=TRUE, handler=dispHandlerQCSTATS , cont=qc)
-gbutton(text="Zeige QC NUSE/RLE", border=TRUE, handler=dispHandlerNUSERLE, cont=qc)
-gbutton(text="Zeige QC for Artifacts", border=TRUE, handler=dispHandlerARTIFACTS, cont=qc)
+tbl.qc = glayout(cont=qc)
+tbl.qc[1,1] = gbutton(text="  Reproduzierbarkeit  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
+tbl.qc[1,2] = gbutton(text="        Stats         ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
+tbl.qc[1,3] = gbutton(text=" Spike-in Performance ", border=TRUE, handler=dispHandlerSPIKE, cont=tbl.qc)
+tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHandlerNUSERLE, cont=tbl.qc)
+tbl.qc[2,2] = gbutton(text="       Artifacts      ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
+tbl.qc[2,3] = gbutton(text="   RNA Degredation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
 plot = gimage("data/default_empty.gif", cont=qc)
 qc.table = gtable(data.frame(QC=rep("",35), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"
