@@ -1,33 +1,34 @@
-# function form simpleaffy, not changed, used for my.qc()
-my.bg.stats = function(unnormalised, grid=c(4,4)) {	
-	pms         <- unlist(pmindex(unnormalised))
-	mms         <- unlist(mmindex(unnormalised))
-	all         <- c(pms,mms)
-	intensities <- exprs(unnormalised)
-	rws <- nrow(unnormalised)
-	cls <- ncol(unnormalised)
-	zonebg <- c();
-	zonesd <- c();
-	for(no in 1:length(unnormalised)){
-  		this.array <- intensities[,no];
-  		result <- .C("bgmas",as.integer(as.vector(all)),as.integer(length(all)),
-       		as.double(as.vector(this.array)),as.integer(length(this.array)),
-	       	as.integer(rws),
-       		as.integer(cls),
-       		as.integer(grid[1]),as.integer(grid[2]),
-       		zonebg=double(grid[1] * grid[2]),
-	        zonesd=double(grid[1] * grid[2]),corrected=double(length(this.array)),PACKAGE="simpleaffy");
-  		zonesd <- rbind(zonesd, result$zonesd);
-  		zonebg <- rbind(zonebg, result$zonebg);
-  	}
-  	colnames(zonesd) <- paste("zone",1:16,sep=".");
-  	colnames(zonebg) <- paste("zone",1:16,sep=".");
-  	rownames(zonesd) <- sampleNames(unnormalised);
-  	rownames(zonebg) <- sampleNames(unnormalised);
-  	return(list(zonebg=zonebg,zonesd=zonesd))
+# function taken from simpleaffy(.bg.stats() function), not changed, needed for 
+# my.qc()
+my.bg.stats <- function(unnormalised, grid=c(4,4)) {
+pms         <- unlist(pmindex(unnormalised))
+mms         <- unlist(mmindex(unnormalised))
+all         <- c(pms,mms)
+intensities <- exprs(unnormalised)
+rws <- nrow(unnormalised)
+cls <- ncol(unnormalised)
+zonebg <- c();
+zonesd <- c();
+for(no in 1:length(unnormalised)){
+  this.array <- intensities[,no];
+  result <- .C("bgmas",as.integer(as.vector(all)),as.integer(length(all)),
+       as.double(as.vector(this.array)),as.integer(length(this.array)),
+       as.integer(rws),
+       as.integer(cls),
+       as.integer(grid[1]),as.integer(grid[2]),
+       zonebg=double(grid[1] * grid[2]),
+       zonesd=double(grid[1] * grid[2]),corrected=double(length(this.array)),PACKAGE="simpleaffy");
+  zonesd <- rbind(zonesd, result$zonesd);
+  zonebg <- rbind(zonebg, result$zonebg);
+  }
+  colnames(zonesd) <- paste("zone",1:16,sep=".");
+  colnames(zonebg) <- paste("zone",1:16,sep=".");
+  rownames(zonesd) <- sampleNames(unnormalised);
+  rownames(zonebg) <- sampleNames(unnormalised);
+  return(list(zonebg=zonebg,zonesd=zonesd))
 }
 
-# function form simpleaffy, not changed, used for repplot()
+# function taken from the yaqcaffy package, not changed, used for my.repplot()
 my.plotdiag <- function() {
   fc <- c(2,4,8)
   k <- 1
@@ -39,7 +40,7 @@ my.plotdiag <- function() {
   }
 }
 
-
+# function taken from the simpleaffy package (gc() function) and modified:
 # scalefactors and targed taken out, not used for gcrma
 # present call changed to panp present call
 my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cdfn = cdfName(unnormalised)) {
@@ -94,6 +95,7 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
         bioBCalls = biobcalls, arraytype = cdfn))
 }
 
+# tthis is taken from the yaqcaffy package (reprodPlot() function) and modified
 # normalization taken out, only ploting here, function takes the normalized obekt as an argument
 my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
     e <- exprs(data)
@@ -134,6 +136,7 @@ my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
     mtext(main, 3, outer = TRUE, cex = 1.4 * cex)
 }
 
+# function taken from the simpleaffy package (plot.qc.stats() function) and modified for gcrma preprocessing
 # scale factors taken out
 my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 1.25, ba.thresh = 3.0, present.thresh=10, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
   old.par <- par()

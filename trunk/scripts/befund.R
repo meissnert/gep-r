@@ -23,7 +23,6 @@ exprs.external.mas5 = mas5(external)
 # -------------------------------------------------------------------------
 # Qualitycontrol
 # -------------------------------------------------------------------------
-require(yaqcaffy) # supposed to be removed soon
 require(affydata)
 require(MAQCsubsetAFX)
 require(affyQCReport)
@@ -49,16 +48,13 @@ qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc obje
 
 # qc plot
 pdf("temp/qcsummary.pdf")
-my.plot.qc.stats(qc.obj, usemid=T, main="", present.thresh=50, bg.thresh=100)
+my.plot.qc.stats(qc.obj, usemid=T, main="", present.thresh=10, bg.thresh=20)
 dev.off()
 
 #  quality control metrics -- reproducibility plot
 pdf("temp/qualityplot.pdf")
 my.repplot(qc.data.norm)
 dev.off()
-
-# supposed to be removed soon..
-yaqc = yaqc(tmp) # to be replaced with qc() !!
 
 # NUSE / RLE
 # detect which arrays have lower quality data
@@ -102,7 +98,7 @@ dev.off()
 degredation = AffyRNAdeg(qc.data)
 pdf("temp/degredation.pdf")
 plotAffyRNAdeg(degredation, col=1:7, lty=1)
-legend(legend=sampleNames(qc.data), x=4.5, y=10, lty=1, col=1:7, cex=0.6)
+legend(legend=sampleNames(qc.data), x=4.5, y=15, lty=1, col=1:7, cex=0.6)
 dev.off()
 
 # convert  *.pdf to *.gif for the imagehandler within the gui
