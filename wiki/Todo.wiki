@@ -16,3 +16,4 @@ _this is not complete and in order_
  * add Spike-In performance to PDF
  * add Artifact-Control to PDF
  * add RAN degredation Plot to PDF
+ * PDF size of images within /temp is too big, reduze size or change to png...
