@@ -1,6 +1,8 @@
+# funtion from the panp package (pa.calls() and modified to work with docval package
 # --------------------------------------------------------------------------
 # pa.calls modification 
 # check for "ExpressionSet" taken out, docval object == AffyBatch
+# pa.calls() work with one chip only
 
 my.pa.calls <-
 function(object=NULL, looseCutoff=0.02, tightCutoff=0.01, verbose=FALSE) {

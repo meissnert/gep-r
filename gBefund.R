@@ -49,7 +49,7 @@ saveHandler = function(h, ...) {
 	       )
 	
 	# save variables as a r-object with the ending *.befund
-	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", 
+	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", "my.qc",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "yaqc", "nr.genes",
 		   "aurka", "aurka.bmpc.signal", "aurka.mmc.signal", "aurka.signal", "p.aurka.bmpc", "p.aurka.mmc",
 		   "ctag1", "ctag1.bmpc.signal", "ctag1.mmc.signal", "ctag1.signal", "p.ctag1.bmpc", "p.ctag1.mmc",
@@ -157,7 +157,7 @@ runAnalysis = function(h, ...) {
 	identHandler()			# ausgabe ic, nb rechts
 	riskHandler()			# ausgabe risk, nb rechts
 	geneHandler()			# ausgabe gene, nb rechts
-	qctableHandler()		# ausgabe qc, rechts
+	#qctableHandler()		# ausgabe qc, rechts
 	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
 	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
 	enabled(tbl.befund) = "TRUE"	# befund aktivieren
@@ -332,31 +332,25 @@ geneHandler = function(h, ...) {
 
 # qualitätskontrolle
 qctableHandler = function(h, ...) {
-	qc.table[1][[1]] = as.character("scale.factors")
-	qc.table[1][[2]] = as.character(yaqc@scale.factors)
+	qc.table[1][[1]] = as.character("average.background")
+	qc.table[1][[2]] = as.character(qc.obj@average.background)[7]
 
-	qc.table[2][[1]] = as.character("average.background")
-	qc.table[2][[2]] = as.character(yaqc@average.background)
+	qc.table[2][[1]] = as.character("percent.present")
+	qc.table[2][[2]] = as.character(qc.obj@percent.present)[7]
 
-	qc.table[3][[1]] = as.character("average.noise")
-	qc.table[3][[2]] = as.character(yaqc@average.noise)
-
-	qc.table[4][[1]] = as.character("percent.present")
-	qc.table[4][[2]] = as.character(yaqc@percent.present)
-
-	for (i in seq(1:19)) {
-		qc.table[i+4][[1]] = as.character(rownames(yaqc@morespikes)[i])
-		qc.table[i+4][[2]] = as.character(yaqc@morespikes[i])
+	for (i in seq(1:4)) {
+		qc.table[i+2][[1]] = as.character(names(qc.obj@spikes)[i])
+		qc.table[i+2][[2]] = as.character(qc.obj@spiked[i])
 	}
 
 	for (i in seq(1:6)) {
-		qc.table[i+23][[1]] = as.character(rownames(yaqc@gcos.probes)[i])
-		qc.table[i+23][[2]] = as.character(yaqc@gcos.probes[i])
+		qc.table[i+6][[1]] = as.character(names(qc.obj@qc.probes)[i])
+		qc.table[i+6][[2]] = as.character(qc.obj@qc.probes[i])
 	}
 
 	for (i in seq(1:6)) {
-		qc.table[i+29][[1]] = as.character(rownames(yaqc@bio.calls)[i])
-		qc.table[i+29][[2]] = as.character(yaqc@bio.calls[i])
+		qc.table[i+11][[1]] = as.character(names(qc.obj@bio.calls)[i])
+		qc.table[i+11][[2]] = as.character(qc.obj@bio.calls[i])
 	}
 }
 
