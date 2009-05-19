@@ -12,7 +12,7 @@ quitHandler = function(h, ...) {
 # report save handler
 saveHandler = function(h, ...) {
 	# save all cel-file associated variables in a list 
-	# create a directory, copy imagages and r-ohject with variables there
+	# create a directory, copy imagages and r-object with variables there
 
 	system(paste("mkdir -p save/", svalue(cel.label), sep="")) # create dir with name of the cel-file overwrite if exists
 	system(paste("cp temp/*.gif save/", svalue(cel.label), sep="")) # copy pictures from temp to the new dir
@@ -50,7 +50,7 @@ saveHandler = function(h, ...) {
 	
 	# save variables as a r-object with the ending *.befund
 	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", "my.qc",
-		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "yaqc", "nr.genes",
+		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
 		   "aurka", "aurka.bmpc.signal", "aurka.mmc.signal", "aurka.signal", "p.aurka.bmpc", "p.aurka.mmc",
 		   "ctag1", "ctag1.bmpc.signal", "ctag1.mmc.signal", "ctag1.signal", "p.ctag1.bmpc", "p.ctag1.mmc",
 		   "cyclind1", "cyclind1.bmpc.signal", "cyclind1.mmc.signal", "cyclind1.signal", "p.cyclind1.bmpc", "p.cyclind1.mmc",
@@ -65,9 +65,9 @@ saveHandler = function(h, ...) {
 		   "ssx2", "ssx2.bmpc.signal", "ssx2.mmc.signal", "ssx2.signal", "p.ssx2.bmpc", "p.ssx2.mmc")
 
 
-	save(file=paste("save/", svalue(cel.label), "/", svalue(cel.label), ".befund", sep=""), list=tosave)
+	save(file=paste("save/", svalue(cel.label), "/", svalue(cel.label), ".report", sep=""), list=tosave)
 
-	svalue(sb) = paste("Befund", svalue(cel.label), "erfolgreich gespeichert", sep=" ")
+	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "was saved!", sep=" ")
 }
 
 # report load handler
@@ -75,12 +75,12 @@ loadHandler = function(h, ...) {
 	# load the selected r-object,(befund) 
 	# copy the save images to the temp folder
 
-	              gfile(text="Bitte ein Rdata-Objekt auswählen...", 
+	              gfile(text="Please choose a report-object to load...", 
 			    type="open", 
 			    action = function(h, ...) {print(h)
 						       load(h, envir=.GlobalEnv)
 						       },
-			    filter=list("Befund-Objekte"=list(patterns=c("*.befund"))),
+			    filter=list("report-objects"=list(patterns=c("*.report"))),
 			    cont=file,			
 			    handler = function(h, ...) {do.call(h$action, list(h$file))}
 			    )	
@@ -123,25 +123,25 @@ loadHandler = function(h, ...) {
 	riskHandler()			# printout risk, nb right
 	geneHandler()			# printout genes, nb right
 	qctableHandler()		# printout qc, right
-	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
-	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
-	enabled(tbl.befund) = "TRUE"	# befund aktivieren
-	enabled(tbl.beurteilung) = "TRUE" # beurteilung aktiveiren
-	enabled(file.pdfcreate)="TRUE"  # button zum pdf erzeugen aktivieren
+	enabled(qc) = "TRUE"		# turn on qualitycontrol tab
+	enabled(tables) = "TRUE"	# turn on tables tab
+	enabled(tbl.befund) = "TRUE"	# turn on report tab
+	enabled(tbl.beurteilung) = "TRUE" # turn on ind. report tabs
+	enabled(file.pdfcreate)="TRUE"  # turn on create pdf button
 
-	svalue(sb) = paste("Befund", svalue(cel.label), "erfolgreich geladen", sep=" ")
+	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "has been loaded!", sep=" ")
 }
 
 # open File Handler
 chooseFile = function(h, ...) {
-	              gfile(text="Bitte ein CEL-File auswählen...", 
+	              gfile(text="Please choose a CEL-File to load...", 
 			    type="open", 
 			    action = function(h, ...) {print(h)
 						       cel.file = print(h)
 						       assign("cel.file", cel.file, envir=.GlobalEnv)
 						       svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]
-						       svalue(sb) = "Die Analyse kann nun gestartet werden"
-						       enabled(file.analyse)="TRUE" # button zum start der analyse aktivieren
+						       svalue(sb) = "The analysis can now be started!"
+						       enabled(file.analyse)="TRUE" # enables run analysis button
 						       },
 			    filter=list("CEL-Files"=list(patterns=c("*.CEL"))),
 			    cont=file,			
@@ -149,11 +149,10 @@ chooseFile = function(h, ...) {
 	)
 }
 
-# starte analyse handler
+# start analyse handler
 runAnalysis = function(h, ...) {
-	svalue(sb) = "Analyse läuft ... bitte etwas Geduld!"         # <<-- das will noch nicht sorecht, vermutlich ausglidern und vor ranAnalysis() ausführen
-	source("scripts/befund.R")	# durchfürhren der analyse
-	#run.befund(cel.file)
+	svalue(sb) = "Analysis is running ... please be patient!"         # <<-- das will noch nicht sorecht, vermutlich ausglidern und vor ranAnalysis() ausführen
+	source("scripts/befund.R")	# run the analysis
 	identHandler()			# ausgabe ic, nb rechts
 	riskHandler()			# ausgabe risk, nb rechts
 	geneHandler()			# ausgabe gene, nb rechts
@@ -164,7 +163,7 @@ runAnalysis = function(h, ...) {
 	enabled(tbl.beurteilung) = "TRUE" # beurteilung aktiveiren
 	enabled(file.pdfcreate)="TRUE"  # button zum pdf erzeugen aktivieren
 	saveHandler()			# speichern
-	svalue(sb) = "Analysis beendet & gespeichert, bitte nun befunden!"
+	svalue(sb) = "Analysis done & saved!"
 	}
 
 # diplay handler
@@ -192,13 +191,14 @@ identHandler = function(h, ...) {
 	ictable[1][[1]] = as.character(sex)
 	ictable[1][[2]] = as.character(type)
 	ictable[1][[3]] = as.character(lightchain)
-
+	 
+	# still some work to be done here!!!
 	# ist vermutlich noch nicht optimal, was passiert wenn eingabe geändert wird, automatisches update??
-	if (sex==svalue(p.sex) & type==svalue(p.igtype) & lightchain==svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle bestanden"}
-	if (sex!=svalue(p.sex) | type!=svalue(p.igtype) | lightchain!=svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle nicht bestanden, bitte Eingaben überprüfen!"}
+	#if (sex==svalue(p.sex) & type==svalue(p.igtype) & lightchain==svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle bestanden"}
+	#if (sex!=svalue(p.sex) | type!=svalue(p.igtype) | lightchain!=svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle nicht bestanden, bitte Eingaben überprüfen!"}
 }
 
-# risikoklassifizierungen
+# risk stratification
 riskHandler = function(h, ...) {
 	risktable[1][[1]] = as.character("Decaux")
 	risktable[1][[2]] = as.character(decaux$decaux.risk)
@@ -354,9 +354,11 @@ qctableHandler = function(h, ...) {
 	}
 }
 
-# pdf erzeugen
+# create the pdf
 pdfHandler = function(h, ...) {
-	svalue(sb) = "PDF wird erzeugt ..."
+	svalue(sb) = "PDF will be created ..."
+
+	# here to come more.... 
 
 	#  hier noch kontrolle einfügen ob alle nötigen eingabefelder ausgefüllt wurden!!!
 	#  ansonsten warnhinweis ausgeben und abrechen
@@ -371,17 +373,17 @@ pdfHandler = function(h, ...) {
 	system("R CMD pdflatex befund.tex")
 	system(paste("pdftk befund.pdf output", svalue(cel.label), " compress"))
 	system(paste("mv", svalue(cel.label), paste("reports/",svalue(cel.label), sep="")))
-	enabled(file.pdfshow)="TRUE"  # button zum anzeigen des pdf aktivieren
-	svalue(sb) = "PDF wurde erzeugt und kann nun angezeigt werden!"
+	enabled(file.pdfshow)="TRUE"  # activate view pdf button
+	svalue(sb) = "PDF was created and can now be shown!"
 }
 
-# pdf mit acroread öffnen
+# open pdf with acroread
 viewpdfHandler = function(h, ...) {
 	system(paste("acroread", paste("reports/",svalue(cel.label), sep="")))
 }
 
 # --------------------------------------------------------------------
-# hautpfenster erzeugen
+# create the main window
 win = gwindow("Geneexpression Report", width=1024, height=768)
 g = ggroup(horizontal=F, cont=win, expand=TRUE)
 
@@ -396,29 +398,29 @@ tb = gtoolbar(tbl, cont=g)
 # paned group
 pg = gpanedgroup(cont=g, expand=TRUE)
 
-# notebook links
+# notebook left
 nb.left = gnotebook(cont=pg)
-file = ggroup(horizontal=FALSE, cont=nb.left, label="GEP-Analyse")
-patient = ggroup(horizontal=FALSE, cont=nb.left, label="Patient")
-probe = ggroup(horizontal=FALSE, cont=nb.left, label="Probe")
-befund = ggroup(horizontal=FALSE, cont=nb.left, label="Befund")
-beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Beurteilung")
+file = ggroup(horizontal=FALSE, cont=nb.left, label="GEP-Analysis")
+patient = ggroup(horizontal=FALSE, cont=nb.left, label="Patient-Information")
+probe = ggroup(horizontal=FALSE, cont=nb.left, label="Sample-Information")
+befund = ggroup(horizontal=FALSE, cont=nb.left, label="Individual Comments")
+beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Report")
 
 # file 
 tbl.file = glayout(cont=file)
 tbl.file[1,1] = "CEL-File"
-tbl.file[1,2] = (file.open = gbutton(text="Öffnen", border=TRUE, handler=chooseFile, cont=tbl.file))
+tbl.file[1,2] = (file.open = gbutton(text="Open", border=TRUE, handler=chooseFile, cont=tbl.file))
 tbl.file[2,1] = "Selected File:"
 tbl.file[2,2] = (cel.label = glabel("", cont=tbl.file, editable=TRUE))
 tbl.file[3,1] = ""
 tbl.file[4,1] = ""
-tbl.file[5,1] = "GEP Analyse"
-tbl.file[5,2] = (file.analyse = gbutton(text="Starte Analyse", border=TRUE, handler=runAnalysis, cont=tbl.file))
+tbl.file[5,1] = "GEP Analysis"
+tbl.file[5,2] = (file.analyse = gbutton(text="Run Analysis", border=TRUE, handler=runAnalysis, cont=tbl.file))
 tbl.file[6,1] = ""
 tbl.file[7,1] = "" 
 tbl.file[8,1] = "PDF"
-tbl.file[8,2] = (file.pdfcreate = gbutton(text="PDF erstellen", border=TRUE, handler=pdfHandler, cont=tbl.file))
-tbl.file[8,3] = (file.pdfshow = gbutton(text="PDF anzeigen", border=TRUE, handler=viewpdfHandler, cont=tbl.file))
+tbl.file[8,2] = (file.pdfcreate = gbutton(text="Create PDF", border=TRUE, handler=pdfHandler, cont=tbl.file))
+tbl.file[8,3] = (file.pdfshow = gbutton(text="Show PDF", border=TRUE, handler=viewpdfHandler, cont=tbl.file))
 enabled(file.analyse)="FALSE"
 enabled(file.pdfcreate)="FALSE"
 enabled(file.pdfshow)="FALSE"
@@ -427,60 +429,60 @@ enabled(file.pdfshow)="FALSE"
 tbl.patient = glayout(cont=patient)
 tbl.patient[1,1] = "Name"
 tbl.patient[1,2, expand=FALSE] = (p.name = gedit("", cont=tbl.patient))
-tbl.patient[2,1] = "Vorname"
+tbl.patient[2,1] = "First Name"
 tbl.patient[2,2, expand=FALSE] = (p.vorname = gedit("", cont=tbl.patient))
-tbl.patient[3,1] = "Geb.Datum"
+tbl.patient[3,1] = "Date of Birth"
 tbl.patient[3,2, expand=FALSE] = (p.geb = gedit("", cont=tbl.patient))
-tbl.patient[4,1] = "Straße"
+tbl.patient[4,1] = "Street"
 tbl.patient[4,2, expand=FALSE] = (p.strasse = gedit("", cont=tbl.patient))
-tbl.patient[5,1] = "Wohnort"
+tbl.patient[5,1] = "City"
 tbl.patient[5,2, expand=FALSE] = (p.ort = gedit("", cont=tbl.patient))
-tbl.patient[6,1] = "Postleitzahl"
+tbl.patient[6,1] = "Zipcode"
 tbl.patient[6,2, expand=FALSE] = (p.plz = gedit("", cont=tbl.patient))
 tbl.patient[7,1] = ""
 tbl.patient[8,1] = ""
-tbl.patient[9,1] = "Diagnose"
-tbl.patient[9,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiples Myelom", "MGUS"), cont=tbl.patient))
-tbl.patient[10,1] = "Ig-Typ"
-tbl.patient[10,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "IgG", "IgA", "IgD", "BJ" ,"asekretorisch"), cont=tbl.patient))
-tbl.patient[11,1] = "Leichtkette"
+tbl.patient[9,1] = "Diagnosis"
+tbl.patient[9,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiple Myeloma", "MGUS"), cont=tbl.patient))
+tbl.patient[10,1] = "Ig-Type"
+tbl.patient[10,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "IgG", "IgA", "IgD", "BJ" ,"asecretory"), cont=tbl.patient))
+tbl.patient[11,1] = "Lightchain"
 tbl.patient[11,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "l", "k"), cont=tbl.patient))
-tbl.patient[12,1] = "Geschlecht"
+tbl.patient[12,1] = "Sex"
 tbl.patient[12,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "m", "f"), cont=tbl.patient))
 
 # probe
 tbl.probe = glayout(cont=probe)
-tbl.probe[1,1] = "Datum der Probenentnahme"
+tbl.probe[1,1] = "Date Sample was taken"
 tbl.probe[1,2, expand=FALSE] = (probe.date = gedit("", cont=tbl.probe))
-tbl.probe[2,1] = "Probenvolumen"
+tbl.probe[2,1] = "Samplevolume"
 tbl.probe[2,2, expand=FALSE] = (probe.volume = gedit("", cont=tbl.probe))
 tbl.probe[2,3] = "ml"
-tbl.probe[3,1] = "CD-138 Anreicherung"
+tbl.probe[3,1] = "CD-138 Purification"
 tbl.probe[3,2, expand=FALSE] = (probe.protokoll = gedit("", cont=tbl.probe))
 tbl.probe[3,3] = "%"
-tbl.probe[4,1] = "Menge der verwendeten RNA"
+tbl.probe[4,1] = "Amount of RNA used"
 tbl.probe[4,2] = (probe.rna = gedit("", cont=tbl.probe))
 tbl.probe[4,3] = "ng"
-tbl.probe[5,1] = "Array-Typ"
-tbl.probe[5,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0", "Affymetrix U133A"), cont=tbl.probe))
-tbl.probe[6,1] = "RNA Amplifikations-Protokoll"
+tbl.probe[5,1] = "Array-Type"
+tbl.probe[5,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
+tbl.probe[6,1] = "RNA Purification Protokoll"
 tbl.probe[6,2, expand=FALSE] = (probe.ampl = gedit("", cont=tbl.probe))
-tbl.probe[7,1] = "Normalisierung"
-tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "RMA", "GC-RMA", "MAS5", "VSN"), cont=tbl.probe))
+tbl.probe[7,1] = "Normalization Method"
+tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("GC-RMA"), cont=tbl.probe))
 
 # befund
 tbl.befund = glayout(cont=befund)
-tbl.befund[1,1] = "Qualitätskontrolle"
+tbl.befund[1,1] = "Qualitycontrol"
 tbl.befund[2,1] = (befund.qualitycontrol = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[3,1] = "Identitätskontrolle"
+tbl.befund[3,1] = "Identitycontrol"
 tbl.befund[4,1] = (befund.identitycontrol = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[5,1] = "Risikoklassifizierungen"
+tbl.befund[5,1] = "Risk Stratification"
 tbl.befund[6,1] = (befund.risk = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[7,1] = "Überexprimierte Gene"
+tbl.befund[7,1] = "Overexpressed Genes"
 tbl.befund[8,1] = (befund.genes = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[9,1] = "Zielantigene für Immuntherapie"
+tbl.befund[9,1] = "Targetgenes  for Immunotherapy"
 tbl.befund[10,1] = (befund.itherapy = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[11,1] = "Zielantigene für Gruppenspezifische Therapie"
+tbl.befund[11,1] = "Targetgenes for Risk adapted Treatment"
 tbl.befund[12,1] = (befund.grtherapy = gtext(width=400, height=80, cont=tbl.befund))
 enabled(tbl.befund) = "FALSE"
 
@@ -489,12 +491,12 @@ tbl.beurteilung = glayout(cont=beurteilung)
 tbl.beurteilung[1,1] = (beurteilung = gtext(width=400, height=250, cont=tbl.beurteilung))
 enabled(tbl.beurteilung) = "FALSE"
 
-# notebook rechts
+# notebook right
 nb.right = gnotebook(cont=pg)
 
 qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
 tbl.qc = glayout(cont=qc)
-tbl.qc[1,1] = gbutton(text="  Reproduzierbarkeit  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
+tbl.qc[1,1] = gbutton(text="  Reproducability  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
 tbl.qc[1,2] = gbutton(text="        Stats         ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
 tbl.qc[1,3] = gbutton(text=" Spike-in Performance ", border=TRUE, handler=dispHandlerSPIKE, cont=tbl.qc)
 tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHandlerNUSERLE, cont=tbl.qc)
@@ -505,9 +507,9 @@ qc.table = gtable(data.frame(QC=rep("",35), Value="", stringsAsFactors=FALSE), c
 enabled(qc) = "FALSE"
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
-ictable = gtable(data.frame(Geschlecht="", Typ="", Leichtkette="", stringsAsFactors=FALSE), cont=tables)
-risktable = gtable(data.frame(Methode=rep("",7), Risk="", Bereich="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
-genetable= gtable(data.frame(Gen=rep("",11), Probeset="", Pat.Sig.="", Pat.Call="", BMPC.Sig.="", BMPC.Call="", MM.Sig.="", MM.Call="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+ictable = gtable(data.frame(Sex="", IG_Type="", Lightchain="", stringsAsFactors=FALSE), cont=tables)
+risktable = gtable(data.frame(Method=rep("",7), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+genetable= gtable(data.frame(Gene=rep("",11), Probeset="", Pat.Sig.="", Pat.Call="", BMPC.Sig.="", BMPC.Call="", MM.Sig.="", MM.Call="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
 enabled(tables) = "FALSE"
 
 # statusbar
