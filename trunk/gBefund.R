@@ -1,10 +1,23 @@
 require(gWidgets)
 options("guiToolkit"="RGtk2")
 
+# get system-information for systemspecific adaptions
+# .. what about "not supported" systems?? stop from running the software... more comin soon...
+system = Sys.info()[1]
+
 # toolbar handler
 quitHandler = function(h, ...) {
 	dispose(win)
-	system("rm *.pdf *.log *.aux *.tex temp/*") # delete temporary files
+	# system("rm *.pdf *.log *.aux *.tex temp/*") # delete temporary files
+
+	# delete files on the wd	
+	if(file.exists("befund.aux")) {file.remove("befund.aux")}
+	if(file.exists("befund.log")) {file.remove("befund.log")}
+	if(file.exists("befund.tex")) {file.remove("befund.tex")}
+	if(file.exists("befund.pdf")) {file.remove("befund.pdf")}
+
+	# delet all files within temp
+	file.remove(paste("temp/", dir("temp/"), sep=""))
 
 	# todo: ask if really quit, ask to save
 }
@@ -14,9 +27,12 @@ saveHandler = function(h, ...) {
 	# save all cel-file associated variables in a list 
 	# create a directory, copy imagages and r-object with variables there
 
-	system(paste("mkdir -p save/", svalue(cel.label), sep="")) # create dir with name of the cel-file overwrite if exists
-	system(paste("cp temp/*.gif save/", svalue(cel.label), sep="")) # copy pictures from temp to the new dir
-	system(paste("cp temp/*.pdf save/", svalue(cel.label), sep="")) # copy pdf to the new dir
+	# create dir with name of celfile within the save directory
+	if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
+	# copy .gif files from temp to the save folder, overwrite all existing files
+	file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	# copy .pdf files from temp to the save folder, overwrite all existing files
+	file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
 	
 	# save the "inputs"
 	save = list(
@@ -49,7 +65,7 @@ saveHandler = function(h, ...) {
 	       )
 	
 	# save variables as a r-object with the ending *.befund
-	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", "my.qc",
+	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", "qc.obj",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
 		   "aurka", "aurka.bmpc.signal", "aurka.mmc.signal", "aurka.signal", "p.aurka.bmpc", "p.aurka.mmc",
 		   "ctag1", "ctag1.bmpc.signal", "ctag1.mmc.signal", "ctag1.signal", "p.ctag1.bmpc", "p.ctag1.mmc",
@@ -115,8 +131,10 @@ loadHandler = function(h, ...) {
 	svalue(sb) = save$sb
 	
 	# copy images
-	system(paste("cp -f save/", svalue(cel.label), "/*.gif temp/", sep="")) 
-	system(paste("cp -f save/", svalue(cel.label), "/*.pdf temp/", sep="")) 
+	# copy .gif files from save to the temp folder, overwrite all existing files
+	file.copy(paste("save/", svalue(cel.label), "/", dir(paste("save/", svalue(cel.label), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", svalue(cel.label), sep="")), sep=""))], "temp/", overwrite=T) 
+	# copy .pdf files from save to the temp folder, overwrite all existing files
+	file.copy(paste("save/", svalue(cel.label), "/", dir(paste("save/", svalue(cel.label), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", svalue(cel.label), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 
 	# call handlers
 	identHandler()			# printout ic, nb right
@@ -156,7 +174,7 @@ runAnalysis = function(h, ...) {
 	identHandler()			# ausgabe ic, nb rechts
 	riskHandler()			# ausgabe risk, nb rechts
 	geneHandler()			# ausgabe gene, nb rechts
-	#qctableHandler()		# ausgabe qc, rechts
+	qctableHandler()		# ausgabe qc, rechts
 	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
 	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
 	enabled(tbl.befund) = "TRUE"	# befund aktivieren
@@ -217,7 +235,7 @@ riskHandler = function(h, ...) {
 	risktable[4][[3]] = as.character("[high;low]")
 
 	risktable[5][[1]] = as.character("Bergsagel TC Klassifikation")
-	risktable[5][[2]] = as.character(bergsagel)
+	risktable[5][[2]] = as.character(bergsagel)[1]                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
 	risktable[5][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
 	risktable[6][[1]] = as.character("EC Klassifikation")
@@ -332,26 +350,24 @@ geneHandler = function(h, ...) {
 
 # qualitätskontrolle
 qctableHandler = function(h, ...) {
-	qc.table[1][[1]] = as.character("average.background")
+	qc.table[1][[1]] = as.character("Average Background")
 	qc.table[1][[2]] = as.character(qc.obj@average.background)[7]
 
-	qc.table[2][[1]] = as.character("percent.present")
+	qc.table[2][[1]] = as.character("Percent Present")
 	qc.table[2][[2]] = as.character(qc.obj@percent.present)[7]
 
 	for (i in seq(1:4)) {
-		qc.table[i+2][[1]] = as.character(names(qc.obj@spikes)[i])
-		qc.table[i+2][[2]] = as.character(qc.obj@spiked[i])
+		qc.table[i+2][[1]] = as.character(names(qc.obj@spikes[7,]))[i]
+		qc.table[i+2][[2]] = as.character(qc.obj@spikes[7,])[i]
 	}
 
 	for (i in seq(1:6)) {
-		qc.table[i+6][[1]] = as.character(names(qc.obj@qc.probes)[i])
-		qc.table[i+6][[2]] = as.character(qc.obj@qc.probes[i])
+		qc.table[i+6][[1]] = as.character(names(qc.obj@qc.probes[7,]))[i]
+		qc.table[i+6][[2]] = as.character(qc.obj@qc.probes[7,])[i]
 	}
 
-	for (i in seq(1:6)) {
-		qc.table[i+11][[1]] = as.character(names(qc.obj@bio.calls)[i])
-		qc.table[i+11][[2]] = as.character(qc.obj@bio.calls[i])
-	}
+ 	qc.table[13][[1]] = as.character("BioB Call")
+	qc.table[13][[2]] = as.character(qc.obj@bioBCalls)[7]
 }
 
 # create the pdf
@@ -370,16 +386,28 @@ pdfHandler = function(h, ...) {
 	#    svalue(probe.norm)=="")
 
 	Sweave("scripts/befund.Rnw")
-	system("R CMD pdflatex befund.tex")
-	system(paste("pdftk befund.pdf output", svalue(cel.label), " compress"))
-	system(paste("mv", svalue(cel.label), paste("reports/",svalue(cel.label), sep="")))
-	enabled(file.pdfshow)="TRUE"  # activate view pdf button
-	svalue(sb) = "PDF was created and can now be shown!"
+	if(system=="Linux") {
+		system("R CMD pdflatex befund.tex") # create pdf from tex file
+		system(paste("pdftk befund.pdf output", svalue(cel.label), " compress")) # optimize file size using pdftk
+		system(paste("mv", svalue(cel.label), paste("reports/",svalue(cel.label), sep=""))) # move the pdf to the reports directory
+		enabled(file.pdfshow)="TRUE"  # activate view pdf button
+		svalue(sb) = "PDF was created and can now be shown!"
+	}
+	
+	if(system=="Windows") {
+		svalue(sb) = "Creating the PDF within windows is not yet supportet!"
+	}	
 }
 
 # open pdf with acroread
 viewpdfHandler = function(h, ...) {
-	system(paste("acroread", paste("reports/",svalue(cel.label), sep="")))
+	if(system=="Linux") {
+		system(paste("acroread", paste("reports/",svalue(cel.label), sep="")))
+	}
+
+	if(system=="Windows") {
+		svalue(sb) = "Opening the PDF within windows is not yet supportet!"
+	}
 }
 
 # --------------------------------------------------------------------
@@ -503,7 +531,7 @@ tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHa
 tbl.qc[2,2] = gbutton(text="       Artifacts      ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
 tbl.qc[2,3] = gbutton(text="   RNA Degredation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
 plot = gimage("data/default_empty.gif", cont=qc)
-qc.table = gtable(data.frame(QC=rep("",35), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
+qc.table = gtable(data.frame(QC=rep("",13), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
