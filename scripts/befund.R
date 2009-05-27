@@ -102,12 +102,19 @@ legend(legend=sampleNames(qc.data), x=4.5, y=15, lty=1, col=1:7, cex=0.6)
 dev.off()
 
 # convert  *.pdf to *.gif for the imagehandler within the gui
-system("convert temp/qualityplot.pdf temp/qualityplot.gif")
-system("convert temp/qcsummary.pdf temp/qcsummary.gif")
-system("convert temp/nuse_rle.pdf temp/nuse_rle.gif")
-system("convert temp/artifacts.pdf temp/artifacts.gif")
-system("convert temp/spikein_performance.pdf temp/spikein_performance.gif")
-system("convert temp/degredation.pdf temp/degredation.gif")
+if(system=="Linux") {
+	system("convert temp/qualityplot.pdf temp/qualityplot.gif")
+	system("convert temp/qcsummary.pdf temp/qcsummary.gif")
+	system("convert temp/nuse_rle.pdf temp/nuse_rle.gif")
+	system("convert temp/artifacts.pdf temp/artifacts.gif")
+	system("convert temp/spikein_performance.pdf temp/spikein_performance.gif")
+	system("convert temp/degredation.pdf temp/degredation.gif")
+}
+
+if(system=="Windows") {
+	# conversion within windows ...
+	# imagemagic windows version has to be installed, more to come here soon....!!!
+}
 
 rm(tmp, cel.file.temp, last.temp)
 # -------------------------------------------------------------------------
