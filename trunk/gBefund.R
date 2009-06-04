@@ -218,29 +218,33 @@ identHandler = function(h, ...) {
 
 # risk stratification
 riskHandler = function(h, ...) {
-	risktable[1][[1]] = as.character("Decaux")
+	risktable[1][[1]] = as.character("IFM 15-gene model")
 	risktable[1][[2]] = as.character(decaux$decaux.risk)
 	risktable[1][[3]] = as.character("[high;low]")
 
-	risktable[2][[1]] = as.character("Shaughnessy 70 Genes Abs. dist.")
-	risktable[2][[2]] = as.character(shaughnessy$predicted.abs)
-	risktable[2][[3]] = as.character("[high;medium;low]")
+	#risktable[2][[1]] = as.character("Shaughnessy 70 Genes Abs. dist.")
+	#risktable[2][[2]] = as.character(shaughnessy$predicted.abs)
+	#risktable[2][[3]] = as.character("[high;medium;low]")
 	
-	risktable[3][[1]] = as.character("Shaughnessy 70 Genes Sqrt. dist.")
-	risktable[3][[2]] = as.character(shaughnessy$predicted.sqrt)
-	risktable[3][[3]] = as.character("[high;medium;low]")
+	risktable[2][[1]] = as.character("Shaughnessy 70-gene classifier")
+	risktable[2][[2]] = as.character(shaughnessy$predicted.sqrt)
+	risktable[2][[3]] = as.character("[high;medium;low]")
 
-	risktable[4][[1]] = as.character("Shaughnessy 17 Genes Sqrt. dist.")
-	risktable[4][[2]] = as.character(shaughnessy$predicted17)
-	risktable[4][[3]] = as.character("[high;low]")
+	risktable[3][[1]] = as.character("Shaughnessy 17-gene classifier")
+	risktable[3][[2]] = as.character(shaughnessy$predicted17)
+	risktable[3][[3]] = as.character("[high;low]")
 
-	risktable[5][[1]] = as.character("Bergsagel TC Klassifikation")
-	risktable[5][[2]] = as.character(bergsagel)[1]                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
-	risktable[5][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
+	risktable[4][[1]] = as.character("Bergsagel TC classification")
+	risktable[4][[2]] = as.character(bergsagel)[1]                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
+	risktable[4][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
-	risktable[6][[1]] = as.character("EC Klassifikation")
-	risktable[6][[2]] = as.character(ec)
-	risktable[6][[3]] = as.character("[11;12;21;22]")
+	risktable[5][[1]] = as.character("Hose EC classification")
+	risktable[5][[2]] = as.character(ec)
+	risktable[5][[3]] = as.character("[11;12;21;22]")
+
+	risktable[6][[1]] = as.character("Zahn molecular classification")
+	risktable[6][[2]] = ""
+	risktable[6][[3]] = ""
 
 	risktable[7][[1]] = as.character("GPI")
 	risktable[7][[2]] = as.character(gpi)
@@ -248,6 +252,16 @@ riskHandler = function(h, ...) {
 }
 
 geneHandler = function(h, ...) {
+	
+	overexpression = function(sig.pat, call.pat, sig.bmpc, sd.bmpc, call.bmpc) {
+		sig.value = ""
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "*** (up)"}
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "*** (aberrant)"}
+		if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "*** (down)"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
+		#else {sig.value = ""}  <-- why doesnt that work ???
+		return(sig.value)
+	}
+
 	genetable[1][[1]] = as.character("Cyclin D1")
 	genetable[1][[2]] = as.character("208712_at")
 	genetable[1][[3]] = as.character(cyclind1.signal)
@@ -256,6 +270,7 @@ geneHandler = function(h, ...) {
 	genetable[1][[6]] = as.character(round(p.cyclind1.bmpc/7*100, 1))
 	genetable[1][[7]] = as.character(cyclind1.mmc.signal)
 	genetable[1][[8]] = as.character(round(p.cyclind1.mmc/233*100, 1))
+	genetable[1][[9]] = overexpression(cyclind1.signal, cyclind1, cyclind1.bmpc.signal, cyclind1.bmpc.sd, p.cyclind1.bmpc)
 
 	genetable[2][[1]] = as.character("Cyclin D2")
 	genetable[2][[2]] = as.character("200953_s_at")
@@ -265,6 +280,7 @@ geneHandler = function(h, ...) {
 	genetable[2][[6]] = as.character(round(p.cyclind2.bmpc/7*100, 1))
 	genetable[2][[7]] = as.character(cyclind2.mmc.signal)
 	genetable[2][[8]] = as.character(round(p.cyclind2.mmc/233*100, 1))
+	genetable[2][[9]] = overexpression(cyclind2.signal, cyclind2, cyclind2.bmpc.signal, cyclind2.bmpc.sd, p.cyclind2.bmpc)
 
 	genetable[3][[1]] = as.character("Cyclin D3")
 	genetable[3][[2]] = as.character("201700_at")
@@ -274,6 +290,7 @@ geneHandler = function(h, ...) {
 	genetable[3][[6]] = as.character(round(p.cyclind3.bmpc/7*100, 1))
 	genetable[3][[7]] = as.character(cyclind3.mmc.signal)
 	genetable[3][[8]] = as.character(round(p.cyclind3.mmc/233*100, 1))
+	genetable[3][[9]] = overexpression(cyclind3.signal, cyclind3, cyclind3.bmpc.signal, cyclind3.bmpc.sd, p.cyclind3.bmpc)
 
 	genetable[4][[1]] = as.character("FGFR3")
 	genetable[4][[2]] = as.character("204379_s_at")
@@ -283,75 +300,93 @@ geneHandler = function(h, ...) {
 	genetable[4][[6]] = as.character(round(p.fgfr3.bmpc/7*100, 1))
 	genetable[4][[7]] = as.character(fgfr3.mmc.signal)
 	genetable[4][[8]] = as.character(round(p.fgfr3.mmc/233*100, 1))
+	genetable[4][[9]] = overexpression(fgfr3.signal, fgfr3, fgfr3.bmpc.signal, fgfr3.bmpc.sd, p.fgfr3.bmpc)
 
-	genetable[5][[1]] = as.character("MAGEA1")
-	genetable[5][[2]] = as.character("207325_x_at")
-	genetable[5][[3]] = as.character(magea1.signal)
-	genetable[5][[4]] = as.character(magea1)
-	genetable[5][[5]] = as.character(magea1.bmpc.signal)
-	genetable[5][[6]] = as.character(round(p.magea1.bmpc/7*100, 1))
-	genetable[5][[7]] = as.character(magea1.mmc.signal)
-	genetable[5][[8]] = as.character(round(p.magea1.mmc/233*100, 1))
+	genetable[5][[1]] = as.character("MMSET")
+	genetable[5][[2]] = as.character("209053_s_at")
+	genetable[5][[3]] = as.character(mmset.signal)
+	genetable[5][[4]] = as.character(mmset)
+	genetable[5][[5]] = as.character(mmset.bmpc.signal)
+	genetable[5][[6]] = as.character(round(p.mmset.bmpc/7*100, 1))
+	genetable[5][[7]] = as.character(mmset.mmc.signal)
+	genetable[5][[8]] = as.character(round(p.mmset.mmc/233*100, 1))
+	genetable[5][[9]] = overexpression(mmset.signal, mmset, mmset.bmpc.signal, mmset.bmpc.sd, p.mmset.bmpc)
 
-	genetable[6][[1]] = as.character("MAGEA3")
-	genetable[6][[2]] = as.character("209942_x_at")
-	genetable[6][[3]] = as.character(magea3.signal)
-	genetable[6][[4]] = as.character(magea3)
-	genetable[6][[5]] = as.character(magea3.bmpc.signal)
-	genetable[6][[6]] = as.character(round(p.magea3.bmpc/7*100, 1))
-	genetable[6][[7]] = as.character(magea3.mmc.signal)
-	genetable[6][[8]] = as.character(round(p.magea3.mmc/233*100, 1))
+	genetable[6][[1]] = as.character("MAGEA1")
+	genetable[6][[2]] = as.character("207325_x_at")
+	genetable[6][[3]] = as.character(magea1.signal)
+	genetable[6][[4]] = as.character(magea1)
+	genetable[6][[5]] = as.character(magea1.bmpc.signal)
+	genetable[6][[6]] = as.character(round(p.magea1.bmpc/7*100, 1))
+	genetable[6][[7]] = as.character(magea1.mmc.signal)
+	genetable[6][[8]] = as.character(round(p.magea1.mmc/233*100, 1))
+	genetable[6][[9]] = overexpression(magea1.signal, magea1, magea1.bmpc.signal, magea1.bmpc.sd, p.magea1.bmpc)
 
-	genetable[7][[1]] = as.character("CTAG1")
-	genetable[7][[2]] = as.character("210546_x_at")
-	genetable[7][[3]] = as.character(ctag1.signal)
-	genetable[7][[4]] = as.character(ctag1)
-	genetable[7][[5]] = as.character(ctag1.bmpc.signal)
-	genetable[7][[6]] = as.character(round(p.ctag1.bmpc/7*100, 1))
-	genetable[7][[7]] = as.character(ctag1.mmc.signal)
-	genetable[7][[8]] = as.character(round(p.ctag1.mmc/233*100, 1))
+	genetable[7][[1]] = as.character("MAGEA3")
+	genetable[7][[2]] = as.character("209942_x_at")
+	genetable[7][[3]] = as.character(magea3.signal)
+	genetable[7][[4]] = as.character(magea3)
+	genetable[7][[5]] = as.character(magea3.bmpc.signal)
+	genetable[7][[6]] = as.character(round(p.magea3.bmpc/7*100, 1))
+	genetable[7][[7]] = as.character(magea3.mmc.signal)
+	genetable[7][[8]] = as.character(round(p.magea3.mmc/233*100, 1))
+	genetable[7][[9]] = overexpression(magea3.signal, magea3, magea3.bmpc.signal, magea3.bmpc.sd, p.magea3.bmpc)
 
-	genetable[8][[1]] = as.character("SSX2")
-	genetable[8][[2]] = as.character("210497_x_at")
-	genetable[8][[3]] = as.character(ssx2.signal)
-	genetable[8][[4]] = as.character(ssx2)
-	genetable[8][[5]] = as.character(ssx2.bmpc.signal)
-	genetable[8][[6]] = as.character(round(p.ssx2.bmpc/7*100, 1))
-	genetable[8][[7]] = as.character(ssx2.mmc.signal)
-	genetable[8][[8]] = as.character(round(p.ssx2.mmc/233*100, 1))
+	genetable[8][[1]] = as.character("CTAG1")
+	genetable[8][[2]] = as.character("210546_x_at")
+	genetable[8][[3]] = as.character(ctag1.signal)
+	genetable[8][[4]] = as.character(ctag1)
+	genetable[8][[5]] = as.character(ctag1.bmpc.signal)
+	genetable[8][[6]] = as.character(round(p.ctag1.bmpc/7*100, 1))
+	genetable[8][[7]] = as.character(ctag1.mmc.signal)
+	genetable[8][[8]] = as.character(round(p.ctag1.mmc/233*100, 1))
+	genetable[8][[9]] = overexpression(ctag1.signal, ctag1, ctag1.bmpc.signal, ctag1.bmpc.sd, p.ctag1.bmpc)
 
-	genetable[9][[1]] = as.character("HM1.24/BST2")
-	genetable[9][[2]] = as.character("201641_at")
-	genetable[9][[3]] = as.character(hm124.signal)
-	genetable[9][[4]] = as.character(hm124)
-	genetable[9][[5]] = as.character(hm124.bmpc.signal)
-	genetable[9][[6]] = as.character(round(p.hm124.bmpc/7*100, 1))
-	genetable[9][[7]] = as.character(hm124.mmc.signal)
-	genetable[9][[8]] = as.character(round(p.hm124.mmc/233*100, 1))
+	genetable[9][[1]] = as.character("SSX2")
+	genetable[9][[2]] = as.character("210497_x_at")
+	genetable[9][[3]] = as.character(ssx2.signal)
+	genetable[9][[4]] = as.character(ssx2)
+	genetable[9][[5]] = as.character(ssx2.bmpc.signal)
+	genetable[9][[6]] = as.character(round(p.ssx2.bmpc/7*100, 1))
+	genetable[9][[7]] = as.character(ssx2.mmc.signal)
+	genetable[9][[8]] = as.character(round(p.ssx2.mmc/233*100, 1))
+	genetable[9][[9]] = overexpression(ssx2.signal, ssx2, ssx2.bmpc.signal, ssx2.bmpc.sd, p.ssx2.bmpc)
 
-	genetable[10][[1]] = as.character("MUC1")
-	genetable[10][[2]] = as.character("213693_s_at")
-	genetable[10][[3]] = as.character(muc1.signal)
-	genetable[10][[4]] = as.character(muc1)
-	genetable[10][[5]] = as.character(muc1.bmpc.signal)
-	genetable[10][[6]] = as.character(round(p.muc1.bmpc/7*100, 1))
-	genetable[10][[7]] = as.character(muc1.mmc.signal)
-	genetable[10][[8]] = as.character(round(p.muc1.mmc/233*100, 1))
+	genetable[10][[1]] = as.character("HM1.24/BST2")
+	genetable[10][[2]] = as.character("201641_at")
+	genetable[10][[3]] = as.character(hm124.signal)
+	genetable[10][[4]] = as.character(hm124)
+	genetable[10][[5]] = as.character(hm124.bmpc.signal)
+	genetable[10][[6]] = as.character(round(p.hm124.bmpc/7*100, 1))
+	genetable[10][[7]] = as.character(hm124.mmc.signal)
+	genetable[10][[8]] = as.character(round(p.hm124.mmc/233*100, 1))
+	genetable[10][[9]] = overexpression(hm124.signal, hm124, hm124.bmpc.signal, hm124.bmpc.sd, p.hm124.bmpc)
 
-	genetable[11][[1]] = as.character("AURKA")
-	genetable[11][[2]] = as.character("208079_s_at")
-	genetable[11][[3]] = as.character(aurka.signal)
-	genetable[11][[4]] = as.character(aurka)
-	genetable[11][[5]] = as.character(aurka.bmpc.signal)
-	genetable[11][[6]] = as.character(round(p.aurka.bmpc/7*100, 1))
-	genetable[11][[7]] = as.character(aurka.mmc.signal)
-	genetable[11][[8]] = as.character(round(p.aurka.mmc/233*100, 1))
+	genetable[11][[1]] = as.character("MUC1")
+	genetable[11][[2]] = as.character("213693_s_at")
+	genetable[11][[3]] = as.character(muc1.signal)
+	genetable[11][[4]] = as.character(muc1)
+	genetable[11][[5]] = as.character(muc1.bmpc.signal)
+	genetable[11][[6]] = as.character(round(p.muc1.bmpc/7*100, 1))
+	genetable[11][[7]] = as.character(muc1.mmc.signal)
+	genetable[11][[8]] = as.character(round(p.muc1.mmc/233*100, 1))
+	genetable[11][[9]] = overexpression(muc1.signal, muc1, muc1.bmpc.signal, muc1.bmpc.sd, p.muc1.bmpc)
+
+	genetable[12][[1]] = as.character("AURKA")
+	genetable[12][[2]] = as.character("208079_s_at")
+	genetable[12][[3]] = as.character(aurka.signal)
+	genetable[12][[4]] = as.character(aurka)
+	genetable[12][[5]] = as.character(aurka.bmpc.signal)
+	genetable[12][[6]] = as.character(round(p.aurka.bmpc/7*100, 1))
+	genetable[12][[7]] = as.character(aurka.mmc.signal)
+	genetable[12][[8]] = as.character(round(p.aurka.mmc/233*100, 1))
+	genetable[12][[9]] = overexpression(aurka.signal, aurka, aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
 }
 
 # qualitätskontrolle
 qctableHandler = function(h, ...) {
 	qc.table[1][[1]] = as.character("Average Background")
-	qc.table[1][[2]] = as.character(qc.obj@average.background)[7]
+	qc.table[1][[2]] = as.character(log2(qc.obj@average.background))[7]
 
 	qc.table[2][[1]] = as.character("Percent Present")
 	qc.table[2][[2]] = as.character(qc.obj@percent.present)[7]
@@ -388,8 +423,8 @@ pdfHandler = function(h, ...) {
 	Sweave("scripts/befund.Rnw")
 	if(system=="Linux") {
 		system("R CMD pdflatex befund.tex") # create pdf from tex file
-		system(paste("pdftk befund.pdf output", svalue(cel.label), " compress")) # optimize file size using pdftk
-		system(paste("mv", svalue(cel.label), paste("reports/",svalue(cel.label), sep=""))) # move the pdf to the reports directory
+		system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk
+		system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
 		enabled(file.pdfshow)="TRUE"  # activate view pdf button
 		svalue(sb) = "PDF was created and can now be shown!"
 	}
@@ -402,7 +437,7 @@ pdfHandler = function(h, ...) {
 # open pdf with acroread
 viewpdfHandler = function(h, ...) {
 	if(system=="Linux") {
-		system(paste("acroread", paste("reports/",svalue(cel.label), sep="")))
+		system(paste("acroread", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
 	}
 
 	if(system=="Windows") {
@@ -537,7 +572,18 @@ enabled(qc) = "FALSE"
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IG_Type="", Lightchain="", stringsAsFactors=FALSE), cont=tables)
 risktable = gtable(data.frame(Method=rep("",7), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
-genetable= gtable(data.frame(Gene=rep("",11), Probeset="", Pat.Sig.="", Pat.Call="", BMPC.Sig.="", BMPC.Call="", MM.Sig.="", MM.Call="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+genetable= gtable(data.frame(Gene=rep("",12), 
+			     Probeset="", 
+			     Pat.Sig.="", 
+			     Pat.Call="", 
+		             BMPC.Sig.="", 
+		             BMPC.Call="", 
+		             MM.Sig.="", 
+	  	             MM.Call="", 
+		             Sig.Overexpr.="", 
+		             stringsAsFactors=FALSE), 
+			     cont=tables, 
+			     expand=TRUE)
 enabled(tables) = "FALSE"
 
 # statusbar
