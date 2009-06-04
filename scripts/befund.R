@@ -27,21 +27,11 @@ require(affydata)
 require(MAQCsubsetAFX)
 require(affyQCReport)
 require(affyPLM)
-data(refA) # supposed to be replace with own myeloma reference chips
+load("data/qc.ref.Rdata") # load myeloma reference chips for qc
 source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
 
-# phenoData mod., somehow this way...
-tmp = external
-tmp@phenoData@data = refA@phenoData@data[1,]
-
-cel.file.temp = cel.file
-last.temp = length(unlist((strsplit(cel.file.temp, "/"))))
-cel.file.temp2 = unlist((strsplit(cel.file.temp, "/")))[last.temp]
-
-rownames(tmp@phenoData@data) = cel.file.temp2
-
 # qc summary statistics
-qc.data = merge.AffyBatch(refA, tmp) # combine sample + referece to affybatch object
+qc.data = merge.AffyBatch(qc.ref, external) # combine sample + referece to affybatch object
 qc.data.norm = gcrma(qc.data) # gcrma 	
 qc.data.norm.panp = my.pa.calls(qc.data.norm, verbose=TRUE) # panp
 qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc object
@@ -116,7 +106,6 @@ if(system=="Windows") {
 	# imagemagic windows version has to be installed, more to come here soon....!!!
 }
 
-rm(tmp, cel.file.temp, last.temp)
 # -------------------------------------------------------------------------
 # predictions / identity control
 # -------------------------------------------------------------------------

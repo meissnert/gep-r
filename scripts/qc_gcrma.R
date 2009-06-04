@@ -150,7 +150,7 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
   dpv <- percent.present(x)
   dpv <- (round(100*dpv))/100;
 
-  abg <- avbg(x)
+  abg <- log2(avbg(x))
   abg <- (round(100*abg))/100;
 	
   if(is.null(label)) { label <- names(maxbg(x)) }
