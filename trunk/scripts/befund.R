@@ -173,11 +173,6 @@ muc1 = as.vector((panp.external$Pcalls["213693_s_at", ]))
 muc1.signal = as.numeric(round(exprs(exprs.external.gcrma)["213693_s_at", ],1))
 
 # -------------------------------------------------------------------------
-# Gene reference MMC / BMPC
-# -------------------------------------------------------------------------
-load("data/genes.Rdata")
-
-# -------------------------------------------------------------------------
 # risk stratification & molecular classifications
 # -------------------------------------------------------------------------
 # decaux
