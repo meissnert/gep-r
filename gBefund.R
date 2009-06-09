@@ -65,20 +65,20 @@ saveHandler = function(h, ...) {
 	       )
 	
 	# save variables as a r-object with the ending *.befund
-	tosave = c("save", "anzahl.bmpc", "anzahl.mmc", "bergsagel", "decaux", "ec", "gpi", "qc.obj",
+	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
-		   "aurka", "aurka.bmpc.signal", "aurka.mmc.signal", "aurka.signal", "p.aurka.bmpc", "p.aurka.mmc",
-		   "ctag1", "ctag1.bmpc.signal", "ctag1.mmc.signal", "ctag1.signal", "p.ctag1.bmpc", "p.ctag1.mmc",
-		   "cyclind1", "cyclind1.bmpc.signal", "cyclind1.mmc.signal", "cyclind1.signal", "p.cyclind1.bmpc", "p.cyclind1.mmc",
-		   "cyclind2", "cyclind2.bmpc.signal", "cyclind2.mmc.signal", "cyclind2.signal","p.cyclind2.bmpc", "p.cyclind2.mmc",
-		   "cyclind3", "cyclind3.bmpc.signal", "cyclind3.mmc.signal", "cyclind3.signal", "p.cyclind3.bmpc", "p.cyclind3.mmc",
-		   "fgfr3", "fgfr3.bmpc.signal", "fgfr3.mmc.signal", "fgfr3.signal", "p.fgfr3.bmpc", "p.fgfr3.mmc",
-		   "hm124", "hm124.bmpc.signal", "hm124.mmc.signal", "hm124.signal", "p.hm124.bmpc", "p.hm124.mmc",
-		   "magea1", "magea1.bmpc.signal", "magea1.mmc.signal", "magea1.signal", "p.magea1.bmpc", "p.magea1.mmc",
-		   "magea3", "magea3.bmpc.signal", "magea3.mmc.signal", "magea3.signal", "p.magea3.bmpc", "p.magea3.mmc",
-		   "mmset", "mmset.bmpc.signal", "mmset.mmc.signal", "mmset.signal", "p.mmset.bmpc", "p.mmset.mmc",
-		   "muc1", "muc1.bmpc.signal", "muc1.mmc.signal", "muc1.signal", "p.muc1.bmpc", "p.muc1.mmc",
-		   "ssx2", "ssx2.bmpc.signal", "ssx2.mmc.signal", "ssx2.signal", "p.ssx2.bmpc", "p.ssx2.mmc")
+		   "aurka", "aurka.signal", 
+		   "ctag1",  "ctag1.signal", 
+		   "cyclind1", "cyclind1.signal", 
+		   "cyclind2", "cyclind2.signal",
+		   "cyclind3", "cyclind3.signal", 
+		   "fgfr3", "fgfr3.signal", 
+		   "hm124", "hm124.signal",
+		   "magea1", "magea1.signal", 
+		   "magea3", "magea3.signal", 
+		   "mmset", "mmset.signal", 
+		   "muc1", "muc1.signal", 
+		   "ssx2", "ssx2.signal")
 
 
 	save(file=paste("save/", svalue(cel.label), "/", svalue(cel.label), ".report", sep=""), list=tosave)
@@ -126,7 +126,7 @@ loadHandler = function(h, ...) {
 	svalue(befund.identitycontrol) = save$befund.identitycontrol
 	svalue(befund.risk) = save$befund.risk
 	svalue(befund.genes) = save$befund.genes
-	svalue(befund.itherapy) = save$befund.therapy
+	svalue(befund.itherapy) = save$befund.itherapy
 	svalue(befund.grtherapy) = save$befund.grtherapy
 	svalue(sb) = save$sb
 	
@@ -143,9 +143,13 @@ loadHandler = function(h, ...) {
 	qctableHandler()		# printout qc, right
 	enabled(qc) = "TRUE"		# turn on qualitycontrol tab
 	enabled(tables) = "TRUE"	# turn on tables tab
-	enabled(tbl.befund) = "TRUE"	# turn on report tab
+	enabled(befund) = "TRUE"	# turn on report tab
 	enabled(tbl.beurteilung) = "TRUE" # turn on ind. report tabs
-	enabled(file.pdfcreate)="TRUE"  # turn on create pdf button
+	enabled(file.integrity) = "TRUE"	# turn on button for integrity check
+	enabled(file.ignore) = "TRUE"	# turn on the ignore integrity check button
+	enabled(file.pdfcreate)="FALSE" # make sure create pdf button is turned off
+	enabled(file.pdfshow)="FALSE"  	# make sure pdf viewing ist turned off
+	enabled(file.analyse)="FALSE" 	# make sure runing the analysis button is turned off
 
 	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "has been loaded!", sep=" ")
 }
@@ -177,9 +181,10 @@ runAnalysis = function(h, ...) {
 	qctableHandler()		# ausgabe qc, rechts
 	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
 	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
-	enabled(tbl.befund) = "TRUE"	# befund aktivieren
+	enabled(befund) = "TRUE"	# befund aktivieren
 	enabled(tbl.beurteilung) = "TRUE" # beurteilung aktiveiren
-	enabled(file.pdfcreate)="TRUE"  # button zum pdf erzeugen aktivieren
+	enabled(file.integrity)="TRUE"  # activate integrity check button
+	enabled(file.ignore)="TRUE"	# activate ignore integrity check button
 	saveHandler()			# speichern
 	svalue(sb) = "Analysis done & saved!"
 	}
@@ -209,11 +214,6 @@ identHandler = function(h, ...) {
 	ictable[1][[1]] = as.character(sex)
 	ictable[1][[2]] = as.character(type)
 	ictable[1][[3]] = as.character(lightchain)
-	 
-	# still some work to be done here!!!
-	# ist vermutlich noch nicht optimal, was passiert wenn eingabe geändert wird, automatisches update??
-	#if (sex==svalue(p.sex) & type==svalue(p.igtype) & lightchain==svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle bestanden"}
-	#if (sex!=svalue(p.sex) | type!=svalue(p.igtype) | lightchain!=svalue(p.lk)) {svalue(befund.identitycontrol) = "Hinweis: Identitätskonrolle nicht bestanden, bitte Eingaben überprüfen!"}
 }
 
 # risk stratification
@@ -252,13 +252,14 @@ riskHandler = function(h, ...) {
 }
 
 geneHandler = function(h, ...) {
+	load("data/genes.Rdata") # load the reference genes for bmpc and mmc
 	
 	overexpression = function(sig.pat, call.pat, sig.bmpc, sd.bmpc, call.bmpc) {
 		sig.value = ""
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "*** (up)"}
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "*** (aberrant)"}
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "*** (up)"} 
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "*** (aberrant)"} 
 		if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "*** (down)"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
-		#else {sig.value = ""}  <-- why doesnt that work ???
+		#else {sig.value = ""}
 		return(sig.value)
 	}
 
@@ -383,7 +384,7 @@ geneHandler = function(h, ...) {
 	genetable[12][[9]] = overexpression(aurka.signal, aurka, aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
 }
 
-# qualitätskontrolle
+# qualitycontrol
 qctableHandler = function(h, ...) {
 	qc.table[1][[1]] = as.character("Average Background")
 	qc.table[1][[2]] = as.character(log2(qc.obj@average.background))[7]
@@ -405,20 +406,170 @@ qctableHandler = function(h, ...) {
 	qc.table[13][[2]] = as.character(qc.obj@bioBCalls)[7]
 }
 
+# check for integrity
+integrityHandler = function(h, ...)  {
+	dispose(warning.message)
+
+	# check if the input-fields are not empty and if its the right input type
+	# patient information
+	error.count = 0
+	if (svalue(p.name)=="") {
+		insert(warning.message, "Please enter the name of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(p.vorname)=="") {
+		insert(warning.message, "Please enter the first name of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.geb)=="") {
+		insert(warning.message, "Please enter the birthday of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.strasse)=="") {
+		insert(warning.message, "Please enter a street name", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.ort)=="") {
+		insert(warning.message, "Please enter a city", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+		
+	if (svalue(p.plz)=="") {
+		insert(warning.message, "Please enter a zipcode", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.diag)=="") {
+		insert(warning.message, "Please enter the diagnosis of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.igtype)=="") {
+		insert(warning.message, "Please enter the Ig-type of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(p.lk)=="") {
+		insert(warning.message, "Please enter the lightchain type of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.sex)=="") {
+		insert(warning.message, "Please enter the sex of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	# sample information
+	if (svalue(probe.date)=="") {
+		insert(warning.message, "Please enter the date the sample was taken", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.volume)=="") {
+		insert(warning.message, "Please enter the collected amount of samplevolume", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.protokoll)=="") {
+		insert(warning.message, "Please enter cd-138 purification", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.rna)=="") {
+		insert(warning.message, "Please enter the amount rna that was used", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.array)=="") {
+		insert(warning.message, "Please select the array type", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.ampl)=="") {
+		insert(warning.message, "Please enter the purification protocoll used", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.norm)=="") {
+		insert(warning.message, "Please select the normalization mehtod used", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}	
+
+	# are individual comments entered?
+	if (svalue(befund.qualitycontrol)=="") {
+		insert(warning.message, "Please comment on qualitycontrol", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}	
+
+	if (svalue(befund.identitycontrol)=="") {
+		insert(warning.message, "Please comment on identitycontrol", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(befund.risk)=="") {
+		insert(warning.message, "Please comment on risk stratification", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(befund.genes)=="") {
+		insert(warning.message, "Please comment on overexpressed genes", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(befund.itherapy)=="") {
+		insert(warning.message, "Please comment on targetgenes for immunotherapy", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(befund.grtherapy)=="") {
+		insert(warning.message, "Please comment on targetgenes for risk adapted treatment", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	# final report
+	if (svalue(beurteilung)=="") {
+		insert(warning.message, "Please enter your comments for the report", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	# identiycontrol
+	if (svalue(p.igtype)!=as.character(type)) {
+		insert(warning.message, "Ig-Type does not match with the predicted Ig-Type!", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.lk)!=as.character(lightchain)) {
+		insert(warning.message, "Lightchain does not match with the predicted Lightchain!", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(p.sex)!=as.character(sex)) {
+		insert(warning.message, "Sex does not match with the predicted Sex!", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+
+	# if there are no more errors, go on and enable pdf-creation
+	if (error.count > 0) {
+		svalue(sb) = paste(error.count, "Error(s). See Warnings for Details!", sep=" ")	
+	} else {
+		svalue(sb) = "Integrity check passed! You may create the PDF now!"
+		enabled(file.pdfcreate)="TRUE"  # aktivate pdf creation button
+	}
+}
+
+ignoreHandler = function(h, ...) {
+	enabled(file.pdfcreate)="TRUE"
+}
+
 # create the pdf
 pdfHandler = function(h, ...) {
 	svalue(sb) = "PDF will be created ..."
-
-	# here to come more.... 
-
-	#  hier noch kontrolle einfügen ob alle nötigen eingabefelder ausgefüllt wurden!!!
-	#  ansonsten warnhinweis ausgeben und abrechen
-
-	#if (svalue(p.vorname)=="" | svalue(p.name)=="" | svalue(p.geb)=="" | svalue(p.strasse)=="" | 
-	#    svalue(p.ort)=="" | svalue(p.plz)=="" | svalue(p.diag)=="" | svalue(p.igtype)=="" | 
-	#    svalue(p.lk)=="" | svalue(p.sex)=="" | svalue(probe.date)=="" | svalue(probe.volume)=="" | 
-	#    svalue(probe.protokoll)=="" | svalue(probe.rna)=="" | svalue(probe.array)=="" | svalue(probe.ampl)=="" | 
-	#    svalue(probe.norm)=="")
 
 	Sweave("scripts/befund.Rnw")
 	if(system=="Linux") {
@@ -426,7 +577,7 @@ pdfHandler = function(h, ...) {
 		system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk
 		system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
 		enabled(file.pdfshow)="TRUE"  # activate view pdf button
-		svalue(sb) = "PDF was created and can now be shown!"
+		svalue(sb) = "PDF was created and can now be viewed!"
 	}
 	
 	if(system=="Windows") {
@@ -470,23 +621,39 @@ befund = ggroup(horizontal=FALSE, cont=nb.left, label="Individual Comments")
 beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Report")
 
 # file 
-tbl.file = glayout(cont=file)
-tbl.file[1,1] = "CEL-File"
-tbl.file[1,2] = (file.open = gbutton(text="Open", border=TRUE, handler=chooseFile, cont=tbl.file))
-tbl.file[2,1] = "Selected File:"
-tbl.file[2,2] = (cel.label = glabel("", cont=tbl.file, editable=TRUE))
-tbl.file[3,1] = ""
-tbl.file[4,1] = ""
-tbl.file[5,1] = "GEP Analysis"
-tbl.file[5,2] = (file.analyse = gbutton(text="Run Analysis", border=TRUE, handler=runAnalysis, cont=tbl.file))
-tbl.file[6,1] = ""
-tbl.file[7,1] = "" 
-tbl.file[8,1] = "PDF"
-tbl.file[8,2] = (file.pdfcreate = gbutton(text="Create PDF", border=TRUE, handler=pdfHandler, cont=tbl.file))
-tbl.file[8,3] = (file.pdfshow = gbutton(text="Show PDF", border=TRUE, handler=viewpdfHandler, cont=tbl.file))
+file.row.1 = glayout(horizontal="TRUE", cont=file)
+file.row.1[1,1] = "CEL-File                "
+file.row.1[1,2] =  (file.open = gbutton(text="Open", border=TRUE, handler=chooseFile, cont=file.row.1))
+
+file.row.2 = glayout(horizontal="TRUE", cont=file)
+file.row.2[1,1] = "Selected File:        "
+file.row.2[1,2] = (cel.label = glabel("", cont=file.row.2, editable=TRUE))
+file.row.2[2,1] = ""
+file.row.2[3,1] = ""
+
+file.row.3 = glayout(horizontal="TRUE", cont=file)
+file.row.3[1,1] = "GEP Analysis        "
+file.row.3[1,2] = (file.analyse = gbutton(text="Run Analysis", border=TRUE, handler=runAnalysis, cont=file.row.3))
+file.row.3[2,1] = ""
+file.row.3[3,1] = "" 
+
+file.row.4 = glayout(horizontal="TRUE", cont=file)
+file.row.4[1,1] = "Integrity                   "
+file.row.4[1,2] = (file.integrity = gbutton(text="Check", border=TRUE, handler=integrityHandler, cont=file.row.4))
+file.row.4[1,3] = (file.ignore = gbutton(text="Ignore", border=TRUE, handler=ignoreHandler, cont=file.row.4))
+file.row.4[2,1] = ""
+file.row.4[2,1] = ""
+
+file.row.5 = glayout(horizontal="TRUE", cont=file)
+file.row.5[1,1] = "PDF                         " 
+file.row.5[1,2] = (file.pdfcreate = gbutton(text="Create PDF", border=TRUE, handler=pdfHandler, cont=file.row.5))
+file.row.5[1,3] = (file.pdfshow = gbutton(text="Show PDF", border=TRUE, handler=viewpdfHandler, cont=file.row.5))
+
 enabled(file.analyse)="FALSE"
+enabled(file.integrity)="FALSE"
 enabled(file.pdfcreate)="FALSE"
 enabled(file.pdfshow)="FALSE"
+enabled(file.ignore)="FALSE"
 
 # patient
 tbl.patient = glayout(cont=patient)
@@ -533,41 +700,79 @@ tbl.probe[6,2, expand=FALSE] = (probe.ampl = gedit("", cont=tbl.probe))
 tbl.probe[7,1] = "Normalization Method"
 tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("GC-RMA"), cont=tbl.probe))
 
-# befund
-tbl.befund = glayout(cont=befund)
-tbl.befund[1,1] = "Qualitycontrol"
-tbl.befund[2,1] = (befund.qualitycontrol = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[3,1] = "Identitycontrol"
-tbl.befund[4,1] = (befund.identitycontrol = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[5,1] = "Risk Stratification"
-tbl.befund[6,1] = (befund.risk = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[7,1] = "Overexpressed Genes"
-tbl.befund[8,1] = (befund.genes = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[9,1] = "Targetgenes  for Immunotherapy"
-tbl.befund[10,1] = (befund.itherapy = gtext(width=400, height=80, cont=tbl.befund))
-tbl.befund[11,1] = "Targetgenes for Risk adapted Treatment"
-tbl.befund[12,1] = (befund.grtherapy = gtext(width=400, height=80, cont=tbl.befund))
-enabled(tbl.befund) = "FALSE"
+# individual comments
+# create the widgets
+befund.qualitycontrol = gtext(width=250, height=80)
+befund.qualitycontrol.message = gtext(width=150, height=80)
+befund.identitycontrol = gtext(width=250, height=80)
+befund.identitycontrol.message = gtext(width=150, height=80)
+befund.risk = gtext(width=250, height=80)
+befund.risk.message = gtext(width=150, height=80)
+befund.genes = gtext(width=250, height=80)
+befund.genes.message = gtext(width=150, height=80)
+befund.itherapy = gtext(width=250, height=80)
+befund.itherapy.message = gtext(width=150, height=80)
+befund.grtherapy = gtext(width=250, height=80)
+befund.grtherapy.message = gtext(width=150, height=80)
+
+# 1. row
+befund.row.1 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Qualitycontrol", container=befund.row.1)
+add(tmp, befund.qualitycontrol)
+tmp = gframe("", container=befund.row.1)
+add(tmp, befund.qualitycontrol.message)
+
+# 2. row
+befund.row.2 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Identitycontrol", container=befund.row.2)
+add(tmp, befund.identitycontrol)
+tmp = gframe("", container=befund.row.2)
+add(tmp, befund.identitycontrol.message)
+
+# 3. row
+befund.row.3 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Risk Stratification", container=befund.row.3)
+add(tmp, befund.risk)
+tmp = gframe("", container=befund.row.3)
+add(tmp, befund.risk.message)
+
+# 4. row
+befund.row.4 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Overexpressed Genes", container=befund.row.4)
+add(tmp, befund.genes)
+tmp = gframe("", container=befund.row.4)
+add(tmp, befund.genes.message)
+
+# 5. row
+befund.row.5 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Targetgenes  for Immunotherapy", container=befund.row.5)
+add(tmp, befund.itherapy)
+tmp = gframe("", container=befund.row.5)
+add(tmp, befund.itherapy.message)
+
+# 6. row
+befund.row.6 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Targetgenes for Risk adapted Treatment", container=befund.row.6)
+add(tmp, befund.grtherapy)
+tmp = gframe("", container=befund.row.6)
+add(tmp, befund.grtherapy.message)
+
+# disable comments on startup, disable message boxes
+enabled(befund) = "FALSE"
+enabled(befund.qualitycontrol.message)="FALSE"
+enabled(befund.identitycontrol.message)="FALSE"
+enabled(befund.risk.message)="FALSE"
+enabled(befund.genes.message)="FALSE"
+enabled(befund.itherapy.message)="FALSE"
+enabled(befund.grtherapy.message)="FALSE"
 
 # beuerteilung
 tbl.beurteilung = glayout(cont=beurteilung)
-tbl.beurteilung[1,1] = (beurteilung = gtext(width=400, height=250, cont=tbl.beurteilung))
+tbl.beurteilung[1,1, expand=TRUE] = (beurteilung = gtext(width=400, height=350, cont=tbl.beurteilung))
 enabled(tbl.beurteilung) = "FALSE"
 
 # notebook right
 nb.right = gnotebook(cont=pg)
-
-qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
-tbl.qc = glayout(cont=qc)
-tbl.qc[1,1] = gbutton(text="  Reproducability  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
-tbl.qc[1,2] = gbutton(text="        Stats         ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
-tbl.qc[1,3] = gbutton(text=" Spike-in Performance ", border=TRUE, handler=dispHandlerSPIKE, cont=tbl.qc)
-tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHandlerNUSERLE, cont=tbl.qc)
-tbl.qc[2,2] = gbutton(text="       Artifacts      ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
-tbl.qc[2,3] = gbutton(text="   RNA Degredation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
-plot = gimage("data/default_empty.gif", cont=qc)
-qc.table = gtable(data.frame(QC=rep("",13), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
-enabled(qc) = "FALSE"
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IG_Type="", Lightchain="", stringsAsFactors=FALSE), cont=tables)
@@ -585,6 +790,26 @@ genetable= gtable(data.frame(Gene=rep("",12),
 			     cont=tables, 
 			     expand=TRUE)
 enabled(tables) = "FALSE"
+
+qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
+tbl.qc = glayout(cont=qc)
+tbl.qc[1,1] = gbutton(text="  Reproducability  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
+tbl.qc[1,2] = gbutton(text="        Stats         ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
+tbl.qc[1,3] = gbutton(text=" Spike-in Performance ", border=TRUE, handler=dispHandlerSPIKE, cont=tbl.qc)
+tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHandlerNUSERLE, cont=tbl.qc)
+tbl.qc[2,2] = gbutton(text="       Artifacts      ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
+tbl.qc[2,3] = gbutton(text="   RNA Degredation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
+plot = gimage("data/default_empty.gif", cont=qc)
+qc.table = gtable(data.frame(QC=rep("",13), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
+enabled(qc) = "FALSE"
+
+warnings = ggroup(horizontal=FALSE, cont=nb.right, label="Warnings")
+warnings.message = (warning.message = gtext(width=300, height=500, cont=warnings))
+enabled(warnings) = "FALSE" # just to output warning messages, text is not supossed to be editable
+
+# get focus on firt tabs
+svalue(nb.left) = 1
+svalue(nb.right) = 1
 
 # statusbar
 sb = gstatusbar("", cont=g)
