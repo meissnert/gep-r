@@ -6,11 +6,8 @@ _this is not complete and in order_
 
  * port language from german to english (later add language file) (most of it already done)
  * port comments in source code from german to english (most of it already done)
- * automatically check results from quality-control with user-input
- * gep analysis-tab needs to get focus right after start
  * quit button to the right side
  * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
- * check for correct user input in all fields
  * add RLE and NUSE plots to PDF
  * add Spike-In performance to PDF
  * add Artifact-Control to PDF
