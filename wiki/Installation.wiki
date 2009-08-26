@@ -1,3 +1,32 @@
 = Installation of GEP-R =
 
-... coming soon
+== Required ==
+ * Linux Operating System (e.g. [http://www.opensuse.org openSUSE] - GEP-R is developed within openSUSE 11.0 64-Bit)
+ * R/Bioconductor Version 2.8/2.3 or higher
+ * with the following packages and their dependencies installed
+  * _docval_ (get the gcrma modified version from the [http://code.google.com/p/gep-r/downloads/list Downloads] section)
+  * _affy_
+  * _gcrma_
+  * _affyQCReport_
+  * _simpleaffy_
+  * _MAQCsubsetAFX_
+  * _affydata_
+  * _hgu133plus2probe_
+  * _hgu133plus2cdf_
+  * _gdata_
+  * _panp_
+  * _genefilter_
+  * _pamr_
+  * _affyPLM_
+  * _gWidgetsRGtk2_
+  * _gWidgets_
+
+== Getting GEP-R ==
+Checkout the source via subversion. See the [http://code.google.com/p/gep-r/source/checkout Source-Tab] for more details.
+
+== Running GEP-R ==
+To run GEP-R change to the folder containing your local copy of the GEP-R code and start a R session within this folder. Within R execute 
+
+{{{source("gBefund.R")}}}
+
+to get GEP-R running.
