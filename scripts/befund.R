@@ -5,11 +5,11 @@ require(gdata)
 
 # ---------------------------------------------------------------------------
 # load gcrma reference data
-load("data/params.hm2.Rdata") # hm2 gcrma parmameter params.hm2
+load("data/params.befund.Rdata") # report reference gcrma parmameter params
 
 # external patient preprocessing
 external = ReadAffy(filenames=cel.file)
-exprs.external.gcrma = wrap.val.add(external, params.hm2, method="gcrma")
+exprs.external.gcrma = wrap.val.add(external, params, method="gcrma")
 
 nr.genes = dim(exprs(exprs.external.gcrma))[1] # number probesets on the chip
 

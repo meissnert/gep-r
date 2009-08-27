@@ -596,6 +596,74 @@ viewpdfHandler = function(h, ...) {
 	}
 }
 
+# save info to dadabase
+savedbHanlder = function(h, ...) {
+	# open connection to the database
+	require(pgUtils)
+	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="gepr")
+
+	# set dateystyle to european format dd/mm/yyyy
+	dbSendQuery(con, "SET datestyle to 'european'")
+	
+	# check if patient is already entered in the db, if yes just update the inforamtion
+	result = dbSendQuery(con, "SELECT cel FROM celfile")
+	if(svalue(cel.label) %in% dbGetResult(result)$cel) {
+		updatedbHandler()
+	} else {dbSendQuery(con, 
+			    paste("INSERT INTO  celfile (cel, name, first_name, birth, street, city, zipcode, diagnosis, ig_type, lightchain, sex, sample_date, sample_volume, cd_138_purification, array_type, rna_purification_protcoll, normalization_method, qualitycontrol, identitycontrol, risk_stratification, overexpressed_genes, targetgenes_immonotherapy, targetgenes_risk_treatment, report) VALUES (", 
+				  "'", svalue(cel.label), "', ", 
+				  "'", svalue(p.name), "', ", 
+				  "'", svalue(p.vorname), "', ", 
+				  "'", svalue(p.geb), "', ", 
+				  "'", svalue(p.strasse), "', ", 
+				  "'", svalue(p.ort), "', ", 
+				  "'", svalue(p.plz), "', ", 
+				  "'", svalue(p.diag), "', ", 
+				  "'", svalue(p.igtype), "', ", 
+				  "'", svalue(p.lk), "', ", 
+				  "'", svalue(p.sex), "', ", 
+				  "'", svalue(probe.date), "', ", 
+				  "'", svalue(probe.volume), "', ", 
+				  "'", svalue(probe.protokoll), "', ", 
+				  "'", svalue(probe.array), "', ", 
+				  "'", svalue(probe.rna), "', ", 
+				  "'", svalue(probe.norm), "', ", 
+				  "'", svalue(befund.qualitycontrol), "', ", 
+				  "'", svalue(befund.identitycontrol), "', ", 
+				  "'", svalue(befund.risk), "', ", 
+				  "'", svalue(befund.genes), "', ", 
+				  "'", svalue(befund.itherapy), "', ", 
+				  "'", svalue(befund.risk), "', ", 
+				  "'", svalue(beurteilung), "')",
+			  	sep=""))
+	}
+	
+	# disconnect the database
+	dbDisconnect(con)
+}
+
+# update information within the database
+updatedbHandler = function(h, ...) {
+	# open connection to the database
+	require(pgUtils)
+	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="gepr")
+
+	dbSendQuery(con, paste("UPDATE celfile SET name = '", svalue(p.name), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET first_name = '", svalue(p.vorname), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET birth = '", svalue(p.geb), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET street = '", svalue(p.strasse), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET city = '", svalue(p.ort), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET zipcode = '", svalue(p.plz), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET diagnosis = '", svalue(p.diag), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET ig_type = '", svalue(p.igtype), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET lightchain = '", svalue(p.lk), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET sex = '", svalue(p.sex), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	
+	
+	# disconnect the database
+	dbDisconnect(con)
+}
+
 # --------------------------------------------------------------------
 # create the main window
 win = gwindow("Geneexpression Report", width=1024, height=768)
@@ -696,9 +764,9 @@ tbl.probe[4,3] = "ng"
 tbl.probe[5,1] = "Array-Type"
 tbl.probe[5,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
 tbl.probe[6,1] = "RNA Purification Protokoll"
-tbl.probe[6,2, expand=FALSE] = (probe.ampl = gedit("", cont=tbl.probe))
+tbl.probe[6,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
 tbl.probe[7,1] = "Normalization Method"
-tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("GC-RMA"), cont=tbl.probe))
+tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
 
 # individual comments
 # create the widgets
