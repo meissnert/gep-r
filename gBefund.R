@@ -659,7 +659,38 @@ updatedbHandler = function(h, ...) {
 	dbSendQuery(con, paste("UPDATE celfile SET lightchain = '", svalue(p.lk), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
 	dbSendQuery(con, paste("UPDATE celfile SET sex = '", svalue(p.sex), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
 	
+	# not finished yet!!!
 	
+	# disconnect the database
+	dbDisconnect(con)
+}
+
+# madb handler --> writes the geneexpression profile to the madb database
+# this is experementell and not really working yet!!!!
+madbHandler = function(h, ...) {
+	# open connection to the database
+	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
+	# setting loglevel to error
+	log.level = "ERROR"
+
+	# this is a "dirty" trick.. getting the featureData from qc.data.norm.. definetly not optimal solution!
+	madb.chip = new ("ExpressionSet", phenoData = phenoData(exprs.external.gcrma) , featureData = featureData(qc.data.norm), experimentData = experimentData(exprs.external.gcrma), annotation = annotation(exprs.external.gcrma),  assayData= assayData(exprs.external.gcrma))
+
+	# converting to madb object
+	madb.chip = newMadbSet(madb.chip)
+
+	# sample description
+	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex))
+	TheSamples = list(madb.sample)
+
+	SigChannels = getSignalChannels(madb.chip)
+	for (i in 1:length(SigChannels)) {
+		SigChannels[[i]]@sample.index = i
+	}
+
+	# write to madb --> Works only once!! problem: exp.name has to be changed every time, but then every chip is his own exp.....
+	publishToDB(madb.chip, con, exp.name="GEP-R", signal.channels=SigChannels, samples=TheSamples, preprocessing="gcRMA", v=FALSE)
+
 	# disconnect the database
 	dbDisconnect(con)
 }
