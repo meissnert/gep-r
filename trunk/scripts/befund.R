@@ -132,6 +132,8 @@ gpi = gpi(exprs.external.gcrma, panp.external)
 # -------------------------------------------------------------------------
 # genes patient (just some samples yet..)
 # -------------------------------------------------------------------------
+load("data/genes.Rdata") # load the reference genes for bmpc and mmc
+
 # targetgenes for group-specific therapie
 # aurorakinase A
 aurka = as.vector((panp.external$Pcalls["208079_s_at", ]))
@@ -198,6 +200,13 @@ ec = sig.ec(exprs(exprs.external.gcrma))
 # shaughnessy molecular classification
 # still to do...
 
+# -------------------------------------------------------------------------
+# prediction of chromosomal abberations
+# -------------------------------------------------------------------------
+# translocation t(4;14)
+load("data/pam.t414.Rdata")
+t414 = sig.t414(exprs(exprs.external.gcrma))
+if(t414==1) {t414="yes"} else {t414 = "no"}
 
 
 

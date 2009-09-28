@@ -19,7 +19,12 @@ echo "<table border>\n";
 // Überschriften
 echo "<tr> <td>Nr.</td> <td>CEL-File</td><td>Name</td> <td>Vorname</td>";
 echo "<td>Geburtsdatum</td> <td>Straße</td><td>Ort</td> <td>PLZ</td>";
-echo "<td>Diagnose</td> <td>IG-Typ</td><td>Leichtkette</td> <td>Geschlecht</td></tr>";
+echo "<td>Diagnose</td> <td>IG-Typ</td><td>Leichtkette</td> <td>Geschlecht</td>";
+echo "<td>Sample Date</td><td>Samplevolume</td><td>CD-138 Purification</td>";
+echo "<td>Amount of RNA used</td><td>Array-Type</td><td>Normalizaton Method</td>";
+echo "<td>Qualitycontrol</td><td>Identitycontrol</td><td>Risk Stratification</td>";
+echo "<td>Overexpressed Genes</td><td>Targetgenes Immunotherapy</td><td>Targetgenes Risk adapted Treatment</td>";
+echo "<td>Report</td></tr>";
 
 
 

@@ -5,6 +5,12 @@ options("guiToolkit"="RGtk2")
 # .. what about "not supported" systems?? stop from running the software... more comin soon...
 system = Sys.info()[1]
 
+# ------------------------------------------------------------------------------------------------
+#
+# Analysis / Open / Save / Toolbar
+#
+# ------------------------------------------------------------------------------------------------
+
 # toolbar handler
 quitHandler = function(h, ...) {
 	dispose(win)
@@ -16,7 +22,7 @@ quitHandler = function(h, ...) {
 	if(file.exists("befund.tex")) {file.remove("befund.tex")}
 	if(file.exists("befund.pdf")) {file.remove("befund.pdf")}
 
-	# delet all files within temp
+	# delete all files within temp
 	file.remove(paste("temp/", dir("temp/"), sep=""))
 
 	# todo: ask if really quit, ask to save
@@ -65,7 +71,7 @@ saveHandler = function(h, ...) {
 	       )
 	
 	# save variables as a r-object with the ending *.befund
-	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj",
+	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj", "t414",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
 		   "aurka", "aurka.signal", 
 		   "ctag1",  "ctag1.signal", 
@@ -129,6 +135,8 @@ loadHandler = function(h, ...) {
 	svalue(befund.itherapy) = save$befund.itherapy
 	svalue(befund.grtherapy) = save$befund.grtherapy
 	svalue(sb) = save$sb
+
+	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 	
 	# copy images
 	# copy .gif files from save to the temp folder, overwrite all existing files
@@ -161,6 +169,9 @@ chooseFile = function(h, ...) {
 			    action = function(h, ...) {print(h)
 						       cel.file = print(h)
 						       assign("cel.file", cel.file, envir=.GlobalEnv)
+
+						       clearGUIHandler() # clear all "old" entries within the gui
+
 						       svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]
 						       svalue(sb) = "The analysis can now be started!"
 						       enabled(file.analyse)="TRUE" # enables run analysis button
@@ -189,25 +200,44 @@ runAnalysis = function(h, ...) {
 	svalue(sb) = "Analysis done & saved!"
 	}
 
-# diplay handler
-dispHandlerMAQC = function(h, ...) {
-	svalue(plot) = "temp/qualityplot.gif"
+# clear info within the gui prior to loading a new cel-file or *.befund
+clearGUIHandler = function(h, ...) {
+	dispHandlerEMPTY() # set the qc window to the default empty plot
+
+	# reset the values in the input boxes
+	svalue(cel.label) = ""
+	svalue(p.name) = ""
+	svalue(p.vorname) = ""
+	svalue(p.geb) = ""
+	svalue(p.strasse) = ""
+	svalue(p.ort) = ""
+	svalue(p.plz) = ""
+	svalue(p.diag) = ""
+	svalue(p.igtype) = ""
+	svalue(p.lk) = ""
+	svalue(p.sex) = ""
+	svalue(probe.date) = ""
+	svalue(probe.volume) = ""
+	svalue(probe.protokoll) = ""
+	svalue(probe.rna) = ""
+	svalue(probe.array) = ""
+	svalue(probe.ampl) = ""
+	svalue(probe.norm) = ""
+	svalue(beurteilung) = ""
+	svalue(befund.qualitycontrol) = ""
+	svalue(befund.identitycontrol) = ""
+	svalue(befund.risk) = ""
+	svalue(befund.genes) = ""
+	svalue(befund.itherapy) = ""
+	svalue(befund.grtherapy) = ""
+	svalue(sb) = ""	
 }
-dispHandlerQCSTATS = function(h, ...) {
-	svalue(plot) = "temp/qcsummary.gif"
-}
-dispHandlerNUSERLE = function(h, ...) {
-	svalue(plot) = "temp/nuse_rle.gif"
-}
-dispHandlerARTIFACTS = function(h, ...) {
-	svalue(plot) = "temp/artifacts.gif"
-}
-dispHandlerSPIKE = function(h, ...) {
-	svalue(plot) = "temp/spikein_performance.gif"
-}
-dispHandlerDEGREDATION = function(h, ...) {
-	svalue(plot) = "temp/degredation.gif"
-}
+
+# ------------------------------------------------------------------------------------------------
+#
+# Identity control
+#
+# ------------------------------------------------------------------------------------------------
 
 # identity control
 identHandler = function(h, ...) {
@@ -215,6 +245,12 @@ identHandler = function(h, ...) {
 	ictable[1][[2]] = as.character(type)
 	ictable[1][[3]] = as.character(lightchain)
 }
+
+# ------------------------------------------------------------------------------------------------
+#
+# Risk
+#
+# ------------------------------------------------------------------------------------------------
 
 # risk stratification
 riskHandler = function(h, ...) {
@@ -249,11 +285,19 @@ riskHandler = function(h, ...) {
 	risktable[7][[1]] = as.character("GPI")
 	risktable[7][[2]] = as.character(gpi)
 	risktable[7][[3]] = as.character("[high;medium;low]")
+
+	risktable[8][[1]] = as.character("Translocation t(4;14)")
+	risktable[8][[2]] = as.character(t414)
+	risktable[8][[3]] = as.character("[yes;no]")
 }
 
+# ------------------------------------------------------------------------------------------------
+#
+# Genes
+#
+# ------------------------------------------------------------------------------------------------
+
 geneHandler = function(h, ...) {
-	load("data/genes.Rdata") # load the reference genes for bmpc and mmc
-	
 	overexpression = function(sig.pat, call.pat, sig.bmpc, sd.bmpc, call.bmpc) {
 		sig.value = ""
 		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "*** (up)"} 
@@ -384,6 +428,12 @@ geneHandler = function(h, ...) {
 	genetable[12][[9]] = overexpression(aurka.signal, aurka, aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
 }
 
+# ------------------------------------------------------------------------------------------------
+#
+# QC
+#
+# ------------------------------------------------------------------------------------------------
+
 # qualitycontrol
 qctableHandler = function(h, ...) {
 	qc.table[1][[1]] = as.character("Average Background")
@@ -406,7 +456,35 @@ qctableHandler = function(h, ...) {
 	qc.table[13][[2]] = as.character(qc.obj@bioBCalls)[7]
 }
 
-# check for integrity
+# diplay handler
+dispHandlerMAQC = function(h, ...) {
+	svalue(plot) = "temp/qualityplot.gif"
+}
+dispHandlerQCSTATS = function(h, ...) {
+	svalue(plot) = "temp/qcsummary.gif"
+}
+dispHandlerNUSERLE = function(h, ...) {
+	svalue(plot) = "temp/nuse_rle.gif"
+}
+dispHandlerARTIFACTS = function(h, ...) {
+	svalue(plot) = "temp/artifacts.gif"
+}
+dispHandlerSPIKE = function(h, ...) {
+	svalue(plot) = "temp/spikein_performance.gif"
+}
+dispHandlerDEGREDATION = function(h, ...) {
+	svalue(plot) = "temp/degredation.gif"
+}
+dispHandlerEMPTY = function(h, ...) {
+	svalue(plot) = "data/default_empty.gif"
+}
+
+# ------------------------------------------------------------------------------------------------
+#
+# Integrity check
+#
+# ------------------------------------------------------------------------------------------------
+
 integrityHandler = function(h, ...)  {
 	dispose(warning.message)
 
@@ -567,6 +645,12 @@ ignoreHandler = function(h, ...) {
 	enabled(file.pdfcreate)="TRUE"
 }
 
+# ------------------------------------------------------------------------------------------------
+#
+# PDF
+#
+# ------------------------------------------------------------------------------------------------
+
 # create the pdf
 pdfHandler = function(h, ...) {
 	svalue(sb) = "PDF will be created ..."
@@ -596,6 +680,14 @@ viewpdfHandler = function(h, ...) {
 	}
 }
 
+# ------------------------------------------------------------------------------------------------
+#
+# DATABASE SUPPORT
+#
+# ------------------------------------------------------------------------------------------------
+# this part ist still early development
+# functions are not implemented in the gui yet!
+
 # save info to dadabase
 savedbHanlder = function(h, ...) {
 	# open connection to the database
@@ -610,7 +702,7 @@ savedbHanlder = function(h, ...) {
 	if(svalue(cel.label) %in% dbGetResult(result)$cel) {
 		updatedbHandler()
 	} else {dbSendQuery(con, 
-			    paste("INSERT INTO  celfile (cel, name, first_name, birth, street, city, zipcode, diagnosis, ig_type, lightchain, sex, sample_date, sample_volume, cd_138_purification, array_type, rna_purification_protcoll, normalization_method, qualitycontrol, identitycontrol, risk_stratification, overexpressed_genes, targetgenes_immonotherapy, targetgenes_risk_treatment, report) VALUES (", 
+			    paste("INSERT INTO  celfile (cel, name, first_name, birth, street, city, zipcode, diagnosis, ig_type, lightchain, sex, sample_date, sample_volume, cd_138_purification, array_type, rna_purification_protcoll, normalization_method, qualitycontrol, identitycontrol, risk_stratification, overexpressed_genes, targetgenes_immunotherapy, targetgenes_risk_treatment, report) VALUES (", 
 				  "'", svalue(cel.label), "', ", 
 				  "'", svalue(p.name), "', ", 
 				  "'", svalue(p.vorname), "', ", 
@@ -633,7 +725,7 @@ savedbHanlder = function(h, ...) {
 				  "'", svalue(befund.risk), "', ", 
 				  "'", svalue(befund.genes), "', ", 
 				  "'", svalue(befund.itherapy), "', ", 
-				  "'", svalue(befund.risk), "', ", 
+				  "'", svalue(befund.grtherapy), "', ", 
 				  "'", svalue(beurteilung), "')",
 			  	sep=""))
 	}
@@ -658,7 +750,20 @@ updatedbHandler = function(h, ...) {
 	dbSendQuery(con, paste("UPDATE celfile SET ig_type = '", svalue(p.igtype), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
 	dbSendQuery(con, paste("UPDATE celfile SET lightchain = '", svalue(p.lk), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
 	dbSendQuery(con, paste("UPDATE celfile SET sex = '", svalue(p.sex), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
-	
+	dbSendQuery(con, paste("UPDATE celfile SET sample_date = '", svalue(probe.date), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET sample_volume = '", svalue(probe.volume), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET cd_138_purification = '", svalue(probe.protokoll), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET array_type = '", svalue(probe.array), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET rna_purification_protocoll = '", svalue(probe.rna), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET normalization_method = '", svalue(probe.norm), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET qualitycontrol = '", svalue(befund.qualitycontrol), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET identitycontrol = '", svalue(befund.identitycontrol), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET overexpressed_genes = '", svalue(befund.genes), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET targetgenes_immunotherapy = '", svalue(befund.itherapy), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET risk_stratification = '", svalue(befund.risk), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET targetgenes_risk_treatment = '", svalue(befund.grtherapy), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+	dbSendQuery(con, paste("UPDATE celfile SET report = '", svalue(beurteilung), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
+
 	# not finished yet!!!
 	
 	# disconnect the database
@@ -668,6 +773,7 @@ updatedbHandler = function(h, ...) {
 # madb handler --> writes the geneexpression profile to the madb database
 # this is experementell and not really working yet!!!!
 madbHandler = function(h, ...) {
+	require(maDB)
 	# open connection to the database
 	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
 	# setting loglevel to error
@@ -695,7 +801,11 @@ madbHandler = function(h, ...) {
 	dbDisconnect(con)
 }
 
-# --------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+#
+# GUI
+#
+# ------------------------------------------------------------------------------------------------
 # create the main window
 win = gwindow("Geneexpression Report", width=1024, height=768)
 g = ggroup(horizontal=F, cont=win, expand=TRUE)
@@ -875,7 +985,7 @@ nb.right = gnotebook(cont=pg)
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IG_Type="", Lightchain="", stringsAsFactors=FALSE), cont=tables)
-risktable = gtable(data.frame(Method=rep("",7), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+risktable = gtable(data.frame(Method=rep("",8), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
 genetable= gtable(data.frame(Gene=rep("",12), 
 			     Probeset="", 
 			     Pat.Sig.="", 
@@ -912,13 +1022,3 @@ svalue(nb.right) = 1
 
 # statusbar
 sb = gstatusbar("", cont=g)
-
-
-
-
-
-
-
-
-
-
