@@ -6,5 +6,5 @@ _this is not complete and in order_
 
  * language support, automaticly change from german to english
  * port comments in source code from german to english (most of it already done)
- *  * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
+ * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
  * PDF size of images within /temp is too big, reduze size or change to png (working on that atm)
