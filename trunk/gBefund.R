@@ -34,11 +34,17 @@ saveHandler = function(h, ...) {
 	# create a directory, copy imagages and r-object with variables there
 
 	# create dir with name of celfile within the save directory
-	if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
+	# if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
+	if(!file.exists(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""))) dir.create(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")) # get rid of brackets within filenames
 	# copy .gif files from temp to the save folder, overwrite all existing files
-	file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+	# copy .png files from temp to the save folder, overwrite all existing files
+	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T) 
 	# copy .pdf files from temp to the save folder, overwrite all existing files
-	file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+	file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
 	
 	# save the "inputs"
 	save = list(
@@ -54,9 +60,12 @@ saveHandler = function(h, ...) {
 		p.igtype = svalue(p.igtype),
 		p.lk = svalue(p.lk),
 		p.sex = svalue(p.sex),
+		p.stage = svalue(p.stage),
+		p.datediag = svalue(p.datediag),
 		probe.date = svalue(probe.date),
 		probe.volume = svalue(probe.volume),
 		probe.protokoll = svalue(probe.protokoll),
+		probe.purity = svalue(probe.purity),
 		probe.rna = svalue(probe.rna),
 		probe.array = svalue(probe.array),
 		probe.ampl = svalue(probe.ampl),
@@ -67,10 +76,11 @@ saveHandler = function(h, ...) {
 		befund.risk = svalue(befund.risk),
 		befund.genes = svalue(befund.genes),
 		befund.itherapy = svalue(befund.itherapy),
-		befund.grtherapy = svalue(befund.grtherapy)
+		befund.grtherapy = svalue(befund.grtherapy),
+		befund.classification = svalue(befund.classification)
 	       )
 	
-	# save variables as a r-object with the ending *.befund
+	# save variables as a r-object with the ending *.report
 	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj", "t414",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
 		   "aurka", "aurka.signal", 
@@ -84,10 +94,11 @@ saveHandler = function(h, ...) {
 		   "magea3", "magea3.signal", 
 		   "mmset", "mmset.signal", 
 		   "muc1", "muc1.signal", 
-		   "ssx2", "ssx2.signal")
+		   "ssx2", "ssx2.signal",
+		   "igf1r", "igf1r.signal")
 
 
-	save(file=paste("save/", svalue(cel.label), "/", svalue(cel.label), ".report", sep=""), list=tosave)
+	save(file=paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", gsub("[()]" , "", svalue(cel.label)), ".report", sep=""), list=tosave)
 
 	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "was saved!", sep=" ")
 }
@@ -120,6 +131,8 @@ loadHandler = function(h, ...) {
 	svalue(p.igtype) = save$p.igtype
 	svalue(p.lk) = save$p.lk
 	svalue(p.sex) = save$p.sex
+	svalue(p.stage) = save$p.stage
+	svalue(p.datediag) = save$p.datediag
 	svalue(probe.date) = save$probe.date
 	svalue(probe.volume) = save$probe.volume
 	svalue(probe.protokoll) = save$probe.protokoll
@@ -127,6 +140,7 @@ loadHandler = function(h, ...) {
 	svalue(probe.array) = save$probe.array
 	svalue(probe.ampl) = save$probe.ampl
 	svalue(probe.norm) = save$probe.norm
+	svalue(probe.purity) = save$probe.purity
 	svalue(beurteilung) = save$beurteilung
 	svalue(befund.qualitycontrol) = save$befund.qualitycontrol
 	svalue(befund.identitycontrol) = save$befund.identitycontrol
@@ -134,15 +148,18 @@ loadHandler = function(h, ...) {
 	svalue(befund.genes) = save$befund.genes
 	svalue(befund.itherapy) = save$befund.itherapy
 	svalue(befund.grtherapy) = save$befund.grtherapy
+	svalue(befund.classification) = save$befund.classification
 	svalue(sb) = save$sb
 
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 	
 	# copy images
 	# copy .gif files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", svalue(cel.label), "/", dir(paste("save/", svalue(cel.label), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", svalue(cel.label), sep="")), sep=""))], "temp/", overwrite=T) 
+	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T) 
 	# copy .pdf files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", svalue(cel.label), "/", dir(paste("save/", svalue(cel.label), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", svalue(cel.label), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+	# copy .png files from save to the temp folder, overwrite all existing files
+	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("png", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 
 	# call handlers
 	identHandler()			# printout ic, nb right
@@ -216,6 +233,8 @@ clearGUIHandler = function(h, ...) {
 	svalue(p.igtype) = ""
 	svalue(p.lk) = ""
 	svalue(p.sex) = ""
+	svalue(p.stage) = ""
+	svalue(p.datediag) = ""
 	svalue(probe.date) = ""
 	svalue(probe.volume) = ""
 	svalue(probe.protokoll) = ""
@@ -223,6 +242,7 @@ clearGUIHandler = function(h, ...) {
 	svalue(probe.array) = ""
 	svalue(probe.ampl) = ""
 	svalue(probe.norm) = ""
+	svalue(probe.purity) = ""
 	svalue(beurteilung) = ""
 	svalue(befund.qualitycontrol) = ""
 	svalue(befund.identitycontrol) = ""
@@ -230,6 +250,7 @@ clearGUIHandler = function(h, ...) {
 	svalue(befund.genes) = ""
 	svalue(befund.itherapy) = ""
 	svalue(befund.grtherapy) = ""
+	svalue(befund.classification) = ""
 	svalue(sb) = ""	
 }
 
@@ -262,11 +283,11 @@ riskHandler = function(h, ...) {
 	#risktable[2][[2]] = as.character(shaughnessy$predicted.abs)
 	#risktable[2][[3]] = as.character("[high;medium;low]")
 	
-	risktable[2][[1]] = as.character("Shaughnessy 70-gene classifier")
+	risktable[2][[1]] = as.character("Shaughnessy 70-gene-risk-score")
 	risktable[2][[2]] = as.character(shaughnessy$predicted.sqrt)
 	risktable[2][[3]] = as.character("[high;medium;low]")
 
-	risktable[3][[1]] = as.character("Shaughnessy 17-gene classifier")
+	risktable[3][[1]] = as.character("Shaughnessy 17-gene-risk-score")
 	risktable[3][[2]] = as.character(shaughnessy$predicted17)
 	risktable[3][[3]] = as.character("[high;low]")
 
@@ -312,9 +333,9 @@ geneHandler = function(h, ...) {
 	genetable[1][[3]] = as.character(cyclind1.signal)
 	genetable[1][[4]] = as.character(cyclind1)
 	genetable[1][[5]] = as.character(cyclind1.bmpc.signal)
-	genetable[1][[6]] = as.character(round(p.cyclind1.bmpc/7*100, 1))
+	genetable[1][[6]] = as.character(round(p.cyclind1.bmpc/10*100, 1))
 	genetable[1][[7]] = as.character(cyclind1.mmc.signal)
-	genetable[1][[8]] = as.character(round(p.cyclind1.mmc/233*100, 1))
+	genetable[1][[8]] = as.character(round(p.cyclind1.mmc/329*100, 1))
 	genetable[1][[9]] = overexpression(cyclind1.signal, cyclind1, cyclind1.bmpc.signal, cyclind1.bmpc.sd, p.cyclind1.bmpc)
 
 	genetable[2][[1]] = as.character("Cyclin D2")
@@ -322,9 +343,9 @@ geneHandler = function(h, ...) {
 	genetable[2][[3]] = as.character(cyclind2.signal)
 	genetable[2][[4]] = as.character(cyclind2)
 	genetable[2][[5]] = as.character(cyclind2.bmpc.signal)
-	genetable[2][[6]] = as.character(round(p.cyclind2.bmpc/7*100, 1))
+	genetable[2][[6]] = as.character(round(p.cyclind2.bmpc/10*100, 1))
 	genetable[2][[7]] = as.character(cyclind2.mmc.signal)
-	genetable[2][[8]] = as.character(round(p.cyclind2.mmc/233*100, 1))
+	genetable[2][[8]] = as.character(round(p.cyclind2.mmc/329*100, 1))
 	genetable[2][[9]] = overexpression(cyclind2.signal, cyclind2, cyclind2.bmpc.signal, cyclind2.bmpc.sd, p.cyclind2.bmpc)
 
 	genetable[3][[1]] = as.character("Cyclin D3")
@@ -332,9 +353,9 @@ geneHandler = function(h, ...) {
 	genetable[3][[3]] = as.character(cyclind3.signal)
 	genetable[3][[4]] = as.character(cyclind3)
 	genetable[3][[5]] = as.character(cyclind3.bmpc.signal)
-	genetable[3][[6]] = as.character(round(p.cyclind3.bmpc/7*100, 1))
+	genetable[3][[6]] = as.character(round(p.cyclind3.bmpc/10*100, 1))
 	genetable[3][[7]] = as.character(cyclind3.mmc.signal)
-	genetable[3][[8]] = as.character(round(p.cyclind3.mmc/233*100, 1))
+	genetable[3][[8]] = as.character(round(p.cyclind3.mmc/329*100, 1))
 	genetable[3][[9]] = overexpression(cyclind3.signal, cyclind3, cyclind3.bmpc.signal, cyclind3.bmpc.sd, p.cyclind3.bmpc)
 
 	genetable[4][[1]] = as.character("FGFR3")
@@ -342,9 +363,9 @@ geneHandler = function(h, ...) {
 	genetable[4][[3]] = as.character(fgfr3.signal)
 	genetable[4][[4]] = as.character(fgfr3)
 	genetable[4][[5]] = as.character(fgfr3.bmpc.signal)
-	genetable[4][[6]] = as.character(round(p.fgfr3.bmpc/7*100, 1))
+	genetable[4][[6]] = as.character(round(p.fgfr3.bmpc/10*100, 1))
 	genetable[4][[7]] = as.character(fgfr3.mmc.signal)
-	genetable[4][[8]] = as.character(round(p.fgfr3.mmc/233*100, 1))
+	genetable[4][[8]] = as.character(round(p.fgfr3.mmc/329*100, 1))
 	genetable[4][[9]] = overexpression(fgfr3.signal, fgfr3, fgfr3.bmpc.signal, fgfr3.bmpc.sd, p.fgfr3.bmpc)
 
 	genetable[5][[1]] = as.character("MMSET")
@@ -352,9 +373,9 @@ geneHandler = function(h, ...) {
 	genetable[5][[3]] = as.character(mmset.signal)
 	genetable[5][[4]] = as.character(mmset)
 	genetable[5][[5]] = as.character(mmset.bmpc.signal)
-	genetable[5][[6]] = as.character(round(p.mmset.bmpc/7*100, 1))
+	genetable[5][[6]] = as.character(round(p.mmset.bmpc/10*100, 1))
 	genetable[5][[7]] = as.character(mmset.mmc.signal)
-	genetable[5][[8]] = as.character(round(p.mmset.mmc/233*100, 1))
+	genetable[5][[8]] = as.character(round(p.mmset.mmc/329*100, 1))
 	genetable[5][[9]] = overexpression(mmset.signal, mmset, mmset.bmpc.signal, mmset.bmpc.sd, p.mmset.bmpc)
 
 	genetable[6][[1]] = as.character("MAGEA1")
@@ -362,9 +383,9 @@ geneHandler = function(h, ...) {
 	genetable[6][[3]] = as.character(magea1.signal)
 	genetable[6][[4]] = as.character(magea1)
 	genetable[6][[5]] = as.character(magea1.bmpc.signal)
-	genetable[6][[6]] = as.character(round(p.magea1.bmpc/7*100, 1))
+	genetable[6][[6]] = as.character(round(p.magea1.bmpc/10*100, 1))
 	genetable[6][[7]] = as.character(magea1.mmc.signal)
-	genetable[6][[8]] = as.character(round(p.magea1.mmc/233*100, 1))
+	genetable[6][[8]] = as.character(round(p.magea1.mmc/329*100, 1))
 	genetable[6][[9]] = overexpression(magea1.signal, magea1, magea1.bmpc.signal, magea1.bmpc.sd, p.magea1.bmpc)
 
 	genetable[7][[1]] = as.character("MAGEA3")
@@ -372,9 +393,9 @@ geneHandler = function(h, ...) {
 	genetable[7][[3]] = as.character(magea3.signal)
 	genetable[7][[4]] = as.character(magea3)
 	genetable[7][[5]] = as.character(magea3.bmpc.signal)
-	genetable[7][[6]] = as.character(round(p.magea3.bmpc/7*100, 1))
+	genetable[7][[6]] = as.character(round(p.magea3.bmpc/10*100, 1))
 	genetable[7][[7]] = as.character(magea3.mmc.signal)
-	genetable[7][[8]] = as.character(round(p.magea3.mmc/233*100, 1))
+	genetable[7][[8]] = as.character(round(p.magea3.mmc/329*100, 1))
 	genetable[7][[9]] = overexpression(magea3.signal, magea3, magea3.bmpc.signal, magea3.bmpc.sd, p.magea3.bmpc)
 
 	genetable[8][[1]] = as.character("CTAG1")
@@ -382,9 +403,9 @@ geneHandler = function(h, ...) {
 	genetable[8][[3]] = as.character(ctag1.signal)
 	genetable[8][[4]] = as.character(ctag1)
 	genetable[8][[5]] = as.character(ctag1.bmpc.signal)
-	genetable[8][[6]] = as.character(round(p.ctag1.bmpc/7*100, 1))
+	genetable[8][[6]] = as.character(round(p.ctag1.bmpc/10*100, 1))
 	genetable[8][[7]] = as.character(ctag1.mmc.signal)
-	genetable[8][[8]] = as.character(round(p.ctag1.mmc/233*100, 1))
+	genetable[8][[8]] = as.character(round(p.ctag1.mmc/329*100, 1))
 	genetable[8][[9]] = overexpression(ctag1.signal, ctag1, ctag1.bmpc.signal, ctag1.bmpc.sd, p.ctag1.bmpc)
 
 	genetable[9][[1]] = as.character("SSX2")
@@ -392,9 +413,9 @@ geneHandler = function(h, ...) {
 	genetable[9][[3]] = as.character(ssx2.signal)
 	genetable[9][[4]] = as.character(ssx2)
 	genetable[9][[5]] = as.character(ssx2.bmpc.signal)
-	genetable[9][[6]] = as.character(round(p.ssx2.bmpc/7*100, 1))
+	genetable[9][[6]] = as.character(round(p.ssx2.bmpc/10*100, 1))
 	genetable[9][[7]] = as.character(ssx2.mmc.signal)
-	genetable[9][[8]] = as.character(round(p.ssx2.mmc/233*100, 1))
+	genetable[9][[8]] = as.character(round(p.ssx2.mmc/329*100, 1))
 	genetable[9][[9]] = overexpression(ssx2.signal, ssx2, ssx2.bmpc.signal, ssx2.bmpc.sd, p.ssx2.bmpc)
 
 	genetable[10][[1]] = as.character("HM1.24/BST2")
@@ -402,9 +423,9 @@ geneHandler = function(h, ...) {
 	genetable[10][[3]] = as.character(hm124.signal)
 	genetable[10][[4]] = as.character(hm124)
 	genetable[10][[5]] = as.character(hm124.bmpc.signal)
-	genetable[10][[6]] = as.character(round(p.hm124.bmpc/7*100, 1))
+	genetable[10][[6]] = as.character(round(p.hm124.bmpc/10*100, 1))
 	genetable[10][[7]] = as.character(hm124.mmc.signal)
-	genetable[10][[8]] = as.character(round(p.hm124.mmc/233*100, 1))
+	genetable[10][[8]] = as.character(round(p.hm124.mmc/329*100, 1))
 	genetable[10][[9]] = overexpression(hm124.signal, hm124, hm124.bmpc.signal, hm124.bmpc.sd, p.hm124.bmpc)
 
 	genetable[11][[1]] = as.character("MUC1")
@@ -412,9 +433,9 @@ geneHandler = function(h, ...) {
 	genetable[11][[3]] = as.character(muc1.signal)
 	genetable[11][[4]] = as.character(muc1)
 	genetable[11][[5]] = as.character(muc1.bmpc.signal)
-	genetable[11][[6]] = as.character(round(p.muc1.bmpc/7*100, 1))
+	genetable[11][[6]] = as.character(round(p.muc1.bmpc/10*100, 1))
 	genetable[11][[7]] = as.character(muc1.mmc.signal)
-	genetable[11][[8]] = as.character(round(p.muc1.mmc/233*100, 1))
+	genetable[11][[8]] = as.character(round(p.muc1.mmc/329*100, 1))
 	genetable[11][[9]] = overexpression(muc1.signal, muc1, muc1.bmpc.signal, muc1.bmpc.sd, p.muc1.bmpc)
 
 	genetable[12][[1]] = as.character("AURKA")
@@ -422,10 +443,20 @@ geneHandler = function(h, ...) {
 	genetable[12][[3]] = as.character(aurka.signal)
 	genetable[12][[4]] = as.character(aurka)
 	genetable[12][[5]] = as.character(aurka.bmpc.signal)
-	genetable[12][[6]] = as.character(round(p.aurka.bmpc/7*100, 1))
+	genetable[12][[6]] = as.character(round(p.aurka.bmpc/10*100, 1))
 	genetable[12][[7]] = as.character(aurka.mmc.signal)
-	genetable[12][[8]] = as.character(round(p.aurka.mmc/233*100, 1))
+	genetable[12][[8]] = as.character(round(p.aurka.mmc/329*100, 1))
 	genetable[12][[9]] = overexpression(aurka.signal, aurka, aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
+
+	genetable[13][[1]] = as.character("IGF1R")
+	genetable[13][[2]] = as.character("225330_at")
+	genetable[13][[3]] = if (!exists("igf1r.signal")) assign("igf1r.signal", "NA", env=.GlobalEnv) else as.character(igf1r.signal) # for compatibility to older versions were igf1r is not measured
+	genetable[13][[4]] = if (!exists("igf1r")) assign("igf1r", "NA", env=.GlobalEnv) else as.character(igf1r) # for compatibility to older versions were igf1r is not measured
+	genetable[13][[5]] = as.character(igf1r.bmpc.signal)
+	genetable[13][[6]] = as.character(round(p.igf1r.bmpc/10*100, 1))
+	genetable[13][[7]] = as.character(igf1r.mmc.signal)
+	genetable[13][[8]] = as.character(round(p.igf1r.mmc/329*100, 1))
+	genetable[13][[9]] = overexpression(igf1r.signal, igf1r, igf1r.bmpc.signal, igf1r.bmpc.sd, p.igf1r.bmpc)
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -527,6 +558,11 @@ integrityHandler = function(h, ...)  {
 		error.count = error.count + 1
 	}
 
+	if (svalue(p.datediag)=="") {
+		insert(warning.message, "Please enter the date of first diagnosis", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
 	if (svalue(p.igtype)=="") {
 		insert(warning.message, "Please enter the Ig-type of the patient", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
@@ -544,7 +580,7 @@ integrityHandler = function(h, ...)  {
 
 	# sample information
 	if (svalue(probe.date)=="") {
-		insert(warning.message, "Please enter the date the sample was taken", font.attr=c(foreground.colors="red"))
+		insert(warning.message, "Please enter the date of the BM-aspiration", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
 
@@ -555,6 +591,11 @@ integrityHandler = function(h, ...)  {
 
 	if (svalue(probe.protokoll)=="") {
 		insert(warning.message, "Please enter cd-138 purification", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+
+	if (svalue(probe.purity)=="") {
+		insert(warning.message, "Please enter cd-138 purity", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
 
@@ -655,10 +696,13 @@ ignoreHandler = function(h, ...) {
 pdfHandler = function(h, ...) {
 	svalue(sb) = "PDF will be created ..."
 
-	Sweave("scripts/befund.Rnw")
+	# Sweave("scripts/befund.Rnw") # german
+	Sweave("scripts/befund_en.Rnw")   # english
 	if(system=="Linux") {
-		system("R CMD pdflatex befund.tex") # create pdf from tex file
-		system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk
+		# system("R CMD pdflatex befund.tex") # create pdf from tex file, german
+		system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
+		# system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
+		system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
 		system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
 		enabled(file.pdfshow)="TRUE"  # activate view pdf button
 		svalue(sb) = "PDF was created and can now be viewed!"
@@ -810,13 +854,20 @@ madbHandler = function(h, ...) {
 win = gwindow("Geneexpression Report", width=1024, height=768)
 g = ggroup(horizontal=F, cont=win, expand=TRUE)
 
-# toolbar
-tbl = list(
-	load = list(handler = loadHandler, icon="open"),
-	save = list(handler = saveHandler, icon="save"), 
-	quit = list(handler = quitHandler, icon="quit")
-)
-tb = gtoolbar(tbl, cont=g)
+# menue --> experimental
+aOpen = gaction(label="Open Report", icon="open", handler=loadHandler)
+aSave = gaction(label="Save Report", icon="save", handler=saveHandler)
+aQuit = gaction(label="Quit", icon="quit", handler=quitHandler)
+
+aGerman = gaction(label="German", handler=function(h, ...) svalue(sb) = "Language Support ist not implemented yet!")
+aEnglish = gaction(label="English", handler=function(h, ...) svalue(sb) = "Language Support ist not implemented yet!")
+
+ml  = list(File = list(open=aOpen, save=aSave, sep=list(separator=TRUE), quit=aQuit),
+	   Analysis = list(),
+	   Settings = list(),
+	   Language = list(German=aGerman, English=aEnglish))
+gmenu(ml, cont=g)
+
 
 # paned group
 pg = gpanedgroup(cont=g, expand=TRUE)
@@ -827,7 +878,7 @@ file = ggroup(horizontal=FALSE, cont=nb.left, label="GEP-Analysis")
 patient = ggroup(horizontal=FALSE, cont=nb.left, label="Patient-Information")
 probe = ggroup(horizontal=FALSE, cont=nb.left, label="Sample-Information")
 befund = ggroup(horizontal=FALSE, cont=nb.left, label="Individual Comments")
-beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Report")
+beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Comment")
 
 # file 
 file.row.1 = glayout(horizontal="TRUE", cont=file)
@@ -868,9 +919,9 @@ enabled(file.ignore)="FALSE"
 tbl.patient = glayout(cont=patient)
 tbl.patient[1,1] = "Name"
 tbl.patient[1,2, expand=FALSE] = (p.name = gedit("", cont=tbl.patient))
-tbl.patient[2,1] = "First Name"
+tbl.patient[2,1] = "First name"
 tbl.patient[2,2, expand=FALSE] = (p.vorname = gedit("", cont=tbl.patient))
-tbl.patient[3,1] = "Date of Birth"
+tbl.patient[3,1] = "Date of birth"
 tbl.patient[3,2, expand=FALSE] = (p.geb = gedit("", cont=tbl.patient))
 tbl.patient[4,1] = "Street"
 tbl.patient[4,2, expand=FALSE] = (p.strasse = gedit("", cont=tbl.patient))
@@ -880,90 +931,111 @@ tbl.patient[6,1] = "Zipcode"
 tbl.patient[6,2, expand=FALSE] = (p.plz = gedit("", cont=tbl.patient))
 tbl.patient[7,1] = ""
 tbl.patient[8,1] = ""
-tbl.patient[9,1] = "Diagnosis"
+tbl.patient[9,1] = "Diagnosis & Stage"
 tbl.patient[9,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiple Myeloma", "MGUS"), cont=tbl.patient))
-tbl.patient[10,1] = "Ig-Type"
-tbl.patient[10,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "IgG", "IgA", "IgD", "BJ" ,"asecretory"), cont=tbl.patient))
-tbl.patient[11,1] = "Lightchain"
-tbl.patient[11,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "l", "k"), cont=tbl.patient))
-tbl.patient[12,1] = "Sex"
-tbl.patient[12,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "m", "f"), cont=tbl.patient))
+tbl.patient[9,3, expand=FALSE] = (p.stage = gdroplist(items=c("", "IA", "IB", "IIA", "IIB", "IIIA", "IIIB"), cont=tbl.patient))
+tbl.patient[10,1] = "Date of diagnosis"
+tbl.patient[10,2, expand=FALSE] = (p.datediag = gedit("", cont=tbl.patient))
+tbl.patient[11,1] = "IgH-type"
+tbl.patient[11,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "G", "A", "D", "BJ" ,"asecretory"), cont=tbl.patient))
+tbl.patient[12,1] = "IgL-type"
+tbl.patient[12,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "lambda", "kappa"), cont=tbl.patient))
+tbl.patient[13,1] = "Sex"
+tbl.patient[13,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "male", "female"), cont=tbl.patient))
 
 # probe
 tbl.probe = glayout(cont=probe)
-tbl.probe[1,1] = "Date Sample was taken"
+tbl.probe[1,1] = "Date BM-aspiration"
 tbl.probe[1,2, expand=FALSE] = (probe.date = gedit("", cont=tbl.probe))
 tbl.probe[2,1] = "Samplevolume"
 tbl.probe[2,2, expand=FALSE] = (probe.volume = gedit("", cont=tbl.probe))
 tbl.probe[2,3] = "ml"
-tbl.probe[3,1] = "CD-138 Purification"
+tbl.probe[3,1] = "CD-138 purification"
 tbl.probe[3,2, expand=FALSE] = (probe.protokoll = gedit("", cont=tbl.probe))
-tbl.probe[3,3] = "%"
-tbl.probe[4,1] = "Amount of RNA used"
-tbl.probe[4,2] = (probe.rna = gedit("", cont=tbl.probe))
-tbl.probe[4,3] = "ng"
-tbl.probe[5,1] = "Array-Type"
-tbl.probe[5,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
-tbl.probe[6,1] = "RNA Purification Protokoll"
-tbl.probe[6,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
-tbl.probe[7,1] = "Normalization Method"
-tbl.probe[7,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
+tbl.probe[4,1] = "CD-138 purity"
+tbl.probe[4,2, expand=FALSE] = (probe.purity = gedit("", cont=tbl.probe))
+tbl.probe[4,3] = "%"
+tbl.probe[5,1] = "Amount of RNA used"
+tbl.probe[5,2] = (probe.rna = gedit("", cont=tbl.probe))
+tbl.probe[5,3] = "ng"
+tbl.probe[6,1] = "Array-Type"
+tbl.probe[6,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
+tbl.probe[7,1] = "RNA Purification Protokoll"
+tbl.probe[7,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
+tbl.probe[8,1] = "Preprocessing Method"
+tbl.probe[8,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
 
 # individual comments
 # create the widgets
-befund.qualitycontrol = gtext(width=250, height=80)
-befund.qualitycontrol.message = gtext(width=150, height=80)
-befund.identitycontrol = gtext(width=250, height=80)
-befund.identitycontrol.message = gtext(width=150, height=80)
-befund.risk = gtext(width=250, height=80)
-befund.risk.message = gtext(width=150, height=80)
-befund.genes = gtext(width=250, height=80)
-befund.genes.message = gtext(width=150, height=80)
-befund.itherapy = gtext(width=250, height=80)
-befund.itherapy.message = gtext(width=150, height=80)
-befund.grtherapy = gtext(width=250, height=80)
-befund.grtherapy.message = gtext(width=150, height=80)
+befund.qualitycontrol = gtext(width=250, height=68)
+befund.qualitycontrol.message = gtext(width=150, height=68)
+
+befund.identitycontrol = gtext(width=250, height=68)
+befund.identitycontrol.message = gtext(width=150, height=68)
+
+befund.genes = gtext(width=250, height=68)
+befund.genes.message = gtext(width=150, height=68)
+
+befund.classification = gtext(width=250, height=68)
+befund.classification.message = gtext(width=150, height=68)
+
+befund.risk = gtext(width=250, height=68)
+befund.risk.message = gtext(width=150, height=68)
+
+befund.itherapy = gtext(width=250, height=68)
+befund.itherapy.message = gtext(width=150, height=68)
+
+befund.grtherapy = gtext(width=250, height=68)
+befund.grtherapy.message = gtext(width=150, height=68)
+
 
 # 1. row
 befund.row.1 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Qualitycontrol", container=befund.row.1)
+tmp = gframe("Quality control", container=befund.row.1)
 add(tmp, befund.qualitycontrol)
 tmp = gframe("", container=befund.row.1)
 add(tmp, befund.qualitycontrol.message)
 
 # 2. row
 befund.row.2 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Identitycontrol", container=befund.row.2)
+tmp = gframe("Identity control", container=befund.row.2)
 add(tmp, befund.identitycontrol)
 tmp = gframe("", container=befund.row.2)
 add(tmp, befund.identitycontrol.message)
 
 # 3. row
 befund.row.3 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Risk Stratification", container=befund.row.3)
-add(tmp, befund.risk)
+tmp = gframe("Genes over- or abberantly expressed", container=befund.row.3)
+add(tmp, befund.genes)
 tmp = gframe("", container=befund.row.3)
-add(tmp, befund.risk.message)
+add(tmp, befund.genes.message)
 
 # 4. row
 befund.row.4 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Overexpressed Genes", container=befund.row.4)
-add(tmp, befund.genes)
+tmp = gframe("Classification of Myeloma", container=befund.row.4)
+add(tmp, befund.classification)
 tmp = gframe("", container=befund.row.4)
-add(tmp, befund.genes.message)
+add(tmp, befund.classification.message)
 
 # 5. row
 befund.row.5 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Targetgenes  for Immunotherapy", container=befund.row.5)
-add(tmp, befund.itherapy)
+tmp = gframe("Risk stratification", container=befund.row.5)
+add(tmp, befund.risk)
 tmp = gframe("", container=befund.row.5)
-add(tmp, befund.itherapy.message)
+add(tmp, befund.risk.message)
 
 # 6. row
 befund.row.6 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Targetgenes for Risk adapted Treatment", container=befund.row.6)
-add(tmp, befund.grtherapy)
+tmp = gframe("Targets for immun-therapy", container=befund.row.6)
+add(tmp, befund.itherapy)
 tmp = gframe("", container=befund.row.6)
+add(tmp, befund.itherapy.message)
+
+# 7. row
+befund.row.7 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Targets for individiualized treatment", container=befund.row.7)
+add(tmp, befund.grtherapy)
+tmp = gframe("", container=befund.row.7)
 add(tmp, befund.grtherapy.message)
 
 # disable comments on startup, disable message boxes
@@ -974,6 +1046,7 @@ enabled(befund.risk.message)="FALSE"
 enabled(befund.genes.message)="FALSE"
 enabled(befund.itherapy.message)="FALSE"
 enabled(befund.grtherapy.message)="FALSE"
+enabled(befund.classification.message)="FALSE"
 
 # beuerteilung
 tbl.beurteilung = glayout(cont=beurteilung)
@@ -984,9 +1057,9 @@ enabled(tbl.beurteilung) = "FALSE"
 nb.right = gnotebook(cont=pg)
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
-ictable = gtable(data.frame(Sex="", IG_Type="", Lightchain="", stringsAsFactors=FALSE), cont=tables)
+ictable = gtable(data.frame(Sex="", IgH_type="", IgL_type="", stringsAsFactors=FALSE), cont=tables)
 risktable = gtable(data.frame(Method=rep("",8), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
-genetable= gtable(data.frame(Gene=rep("",12), 
+genetable= gtable(data.frame(Gene=rep("",13), 
 			     Probeset="", 
 			     Pat.Sig.="", 
 			     Pat.Call="", 
