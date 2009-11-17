@@ -28,6 +28,10 @@ shrisk = function(expr.mas5) {
 	predicted  = ifelse(predicted==1, "low risk", ifelse(predicted==2, "medium risk", "high risk"))
 	predicted2 = ifelse(predicted2==1, "low risk", ifelse(predicted2==2, "medium risk", "high risk"))
 
+	# substitute medium risk to low risk
+	predicted.sub = gsub("medium risk", "low risk", predicted)
+	predicted2.sub = gsub("medium risk", "low risk", predicted2)
+
 	# 17 gene predictor according to paper
 	probesets.17 = c("200638_s_at","1557277_a_at","200850_s_at","201897_s_at","202729_s_at","203432_at","204016_at","205235_s_at","206364_at","206513_at","211576_s_at",
                   "213607_x_at","213628_at","218924_s_at","219918_s_at","220789_s_at","242488_at")
@@ -36,5 +40,5 @@ shrisk = function(expr.mas5) {
 	risk_score17 <-  t(centered_gep70_log2_exp_mas5[probesets.17,]) %*% coef.17
 	risk_score17c <- as.factor(ifelse(risk_score17 > 1.5,"high risk","low risk"))
 
-	return(list(predicted.abs=predicted, predicted.sqrt=predicted2, predicted17=risk_score17c))
+	return(list(predicted.abs=predicted, predicted.sub.abs=predicted.sub, predicted.sqrt=predicted2, predicted.sub.sqrt=predicted2.sub, predicted17=risk_score17c))
 }

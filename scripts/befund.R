@@ -92,6 +92,7 @@ legend(legend=sampleNames(qc.data), x=4.5, y=15, lty=1, col=1:7, cex=0.6)
 dev.off()
 
 # convert  *.pdf to *.gif for the imagehandler within the gui
+# convert  *.pdf to *.png for the creation of the pdf report
 if(system=="Linux") {
 	system("convert temp/qualityplot.pdf temp/qualityplot.gif")
 	system("convert temp/qcsummary.pdf temp/qcsummary.gif")
@@ -99,6 +100,13 @@ if(system=="Linux") {
 	system("convert temp/artifacts.pdf temp/artifacts.gif")
 	system("convert temp/spikein_performance.pdf temp/spikein_performance.gif")
 	system("convert temp/degredation.pdf temp/degredation.gif")
+
+	system("convert temp/qualityplot.pdf temp/qualityplot.png")
+	system("convert temp/qcsummary.pdf temp/qcsummary.png")
+	system("convert temp/nuse_rle.pdf temp/nuse_rle.png")
+	system("convert temp/artifacts.pdf temp/artifacts.png")
+	system("convert temp/spikein_performance.pdf temp/spikein_performance.png")
+	system("convert temp/degredation.pdf temp/degredation.png")
 }
 
 if(system=="Windows") {
@@ -112,14 +120,17 @@ if(system=="Windows") {
 # sex
 load("data/pam.sex.Rdata")
 sex = sig.sex(exprs(exprs.external.gcrma))
+sex  = ifelse(sex=="m", "male", "femal")
 
 # type
 load("data/pam.type.Rdata")
 type = sig.type(exprs(exprs.external.gcrma))
+type  = ifelse(type=="IgA", "A", ifelse(type=="IgD", "D", "G"))
 
 # lightchain
 load("data/pam.lightchain.Rdata")
 lightchain = sig.lightchain(exprs(exprs.external.gcrma))
+lightchain = ifelse(lightchain=="k", "kappa", "lambda")
 
 # -------------------------------------------------------------------------
 # risk stratification & molecular classifications
@@ -153,6 +164,9 @@ fgfr3.signal = as.numeric(round(exprs(exprs.external.gcrma)["204379_s_at", ],1))
 # whsc1/mmset
 mmset = as.vector((panp.external$Pcalls["209053_s_at", ]))
 mmset.signal = as.numeric(round(exprs(exprs.external.gcrma)["209053_s_at", ],1))
+# igf1r
+igf1r = as.vector((panp.external$Pcalls["225330_at", ]))
+igf1r.signal = as.numeric(round(exprs(exprs.external.gcrma)["225330_at", ],1))
 
 # target genes for imuntherapyh
 # MAGEA1
