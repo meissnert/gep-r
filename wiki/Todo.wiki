@@ -4,12 +4,7 @@
 
 _this is not complete and in order_
 
- * port language from german to english (later add language file) (most of it already done)
+ * language support, automaticly change from german to english
  * port comments in source code from german to english (most of it already done)
- * quit button to the right side
- * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
- * add RLE and NUSE plots to PDF
- * add Spike-In performance to PDF
- * add Artifact-Control to PDF
- * add RAN degredation Plot to PDF
- * PDF size of images within /temp is too big, reduze size or change to png...
+ *  * uppon klicking the quit button, add some user dialog for aksing to quit without saving or saving
+ * PDF size of images within /temp is too big, reduze size or change to png (working on that atm)
