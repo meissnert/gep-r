@@ -120,7 +120,7 @@ if(system=="Windows") {
 # sex
 load("data/pam.sex.Rdata")
 sex = sig.sex(exprs(exprs.external.gcrma))
-sex  = ifelse(sex=="m", "male", "femal")
+sex  = ifelse(sex=="m", "male", "female")
 
 # type
 load("data/pam.type.Rdata")

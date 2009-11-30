@@ -155,7 +155,7 @@ loadHandler = function(h, ...) {
 	
 	# copy images
 	# copy .gif files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T) 
+	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 	# copy .pdf files from save to the temp folder, overwrite all existing files
 	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 	# copy .png files from save to the temp folder, overwrite all existing files
@@ -859,8 +859,20 @@ aOpen = gaction(label="Open Report", icon="open", handler=loadHandler)
 aSave = gaction(label="Save Report", icon="save", handler=saveHandler)
 aQuit = gaction(label="Quit", icon="quit", handler=quitHandler)
 
-aGerman = gaction(label="German", handler=function(h, ...) svalue(sb) = "Language Support ist not implemented yet!")
-aEnglish = gaction(label="English", handler=function(h, ...) svalue(sb) = "Language Support ist not implemented yet!")
+aGerman = gaction(label="German", handler=function(h, ...) {
+	svalue(aOpen) = "Befund öffnen"
+	svalue(aSave) = "Befund speichern"
+	svalue(aQuit) = "Beenden"
+	
+	
+	# ....
+
+	svalue(aGerman) = "Deutsch"
+	svalue(aEnglish) = "Englisch"
+})
+aEnglish = gaction(label="English", handler=function(h, ...) {
+	svalue(aOpen) = "open Report"
+})
 
 ml  = list(File = list(open=aOpen, save=aSave, sep=list(separator=TRUE), quit=aQuit),
 	   Analysis = list(),
