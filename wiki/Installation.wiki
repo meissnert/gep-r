@@ -20,6 +20,9 @@
   * _affyPLM_
   * _gWidgetsRGtk2_
   * _gWidgets_
+ * pdftk [http://www.accesspdf.com/pdftk/index.html], a RPM for openSUSE 11.2 64-Bit you will find here [http://download.opensuse.org/repositories/home:/aljex/openSUSE_11.2/x86_64/]
+ * Adobe Acrobat Reader
+
 
 == Getting GEP-R ==
 Checkout the source via subversion. See the [http://code.google.com/p/gep-r/source/checkout Source-Tab] for more details.
