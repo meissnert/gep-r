@@ -24,7 +24,7 @@ exprs.external.mas5 = mas5(external)
 # Qualitycontrol
 # -------------------------------------------------------------------------
 require(affydata)
-require(MAQCsubsetAFX)
+#require(MAQCsubsetAFX)
 require(affyQCReport)
 require(affyPLM)
 load("data/qc.ref.Rdata") # load myeloma reference chips for qc
@@ -37,12 +37,12 @@ qc.data.norm.panp = my.pa.calls(qc.data.norm, verbose=TRUE) # panp
 qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc object
 
 # qc plot
-pdf("temp/qcsummary.pdf")
+png("temp/qcsummary.png")
 my.plot.qc.stats(qc.obj, usemid=T, main="", present.thresh=10, bg.thresh=20)
 dev.off()
 
 #  quality control metrics -- reproducibility plot
-pdf("temp/qualityplot.pdf")
+png("temp/qualityplot.pdf")
 my.repplot(qc.data.norm)
 dev.off()
 
@@ -50,14 +50,14 @@ dev.off()
 # detect which arrays have lower quality data
 Pset <- fitPLM(qc.data, background.method="GCRMA")
 
-pdf("temp/nuse_rle.pdf")
+png("temp/nuse_rle.png")
 par(mfrow=c(2,1), cex=0.5)
 RLE(Pset,col="lightblue",main="RLE", ylim=c(-3.5, 3.5))
 NUSE(Pset,col="yellow", main="NUSE", ylim=c(0.8, 1.5))
 dev.off()
 
 # check the "new" chip for possible artifacts, by plotting pseudo-images
-pdf("temp/artifacts.pdf")
+png("temp/artifacts.png")
 par(mfrow=c(2,3))
 image(Pset, which=7, main="Weights") # pseudo-image of the weights
 image(Pset, which=7,type="resids", main="Residuals")
@@ -72,7 +72,7 @@ x.val = array(concentration, c(4, length(qc.data)))
 x.val = t(x.val)
 y.val = spikeInProbes(qc.obj)
 
-pdf("temp/spikein_performance.pdf")
+png("temp/spikein_performance.png")
 plot(x.val, y.val, col=1:7, main="Spike-in performance", xlab="log ( concentration in pM)", ylab="log2 (expression)", ylim=c(4,16))
 legend(legend=sampleNames(qc.data), x=2.5, y=7, lty=1, col=1:7, cex=0.7)
 for (i in 1:length(qc.data)) {
@@ -86,7 +86,7 @@ dev.off()
 
 # rna degredation
 degredation = AffyRNAdeg(qc.data)
-pdf("temp/degredation.pdf")
+png("temp/degredation.png")
 plotAffyRNAdeg(degredation, col=1:7, lty=1)
 legend(legend=sampleNames(qc.data), x=4.5, y=15, lty=1, col=1:7, cex=0.6)
 dev.off()
@@ -94,19 +94,20 @@ dev.off()
 # convert  *.pdf to *.gif for the imagehandler within the gui
 # convert  *.pdf to *.png for the creation of the pdf report
 if(system=="Linux") {
-	system("convert temp/qualityplot.pdf temp/qualityplot.gif")
-	system("convert temp/qcsummary.pdf temp/qcsummary.gif")
-	system("convert temp/nuse_rle.pdf temp/nuse_rle.gif")
-	system("convert temp/artifacts.pdf temp/artifacts.gif")
-	system("convert temp/spikein_performance.pdf temp/spikein_performance.gif")
-	system("convert temp/degredation.pdf temp/degredation.gif")
+	system("convert temp/qualityplot.png temp/qualityplot.gif")
+	system("convert temp/qcsummary.png temp/qcsummary.gif")
+	system("convert temp/nuse_rle.png temp/nuse_rle.gif")
+	system("convert temp/artifacts.png temp/artifacts.gif")
+	system("convert temp/spikein_performance.png temp/spikein_performance.gif")
+	system("convert temp/degredation.png temp/degredation.gif")
+	system("convert temp/degredation.png temp/degredation.gif")
 
-	system("convert temp/qualityplot.pdf temp/qualityplot.png")
-	system("convert temp/qcsummary.pdf temp/qcsummary.png")
-	system("convert temp/nuse_rle.pdf temp/nuse_rle.png")
-	system("convert temp/artifacts.pdf temp/artifacts.png")
-	system("convert temp/spikein_performance.pdf temp/spikein_performance.png")
-	system("convert temp/degredation.pdf temp/degredation.png")
+#	system("convert temp/qualityplot.pdf temp/qualityplot.png")
+#	system("convert temp/qcsummary.pdf temp/qcsummary.png")
+#	system("convert temp/nuse_rle.pdf temp/nuse_rle.png")
+#	system("convert temp/artifacts.pdf temp/artifacts.png")
+#	system("convert temp/spikein_performance.pdf temp/spikein_performance.png")
+#	system("convert temp/degredation.pdf temp/degredation.png")
 }
 
 if(system=="Windows") {
@@ -212,7 +213,9 @@ load("data/pam.ec.Rdata")
 ec = sig.ec(exprs(exprs.external.gcrma))
 
 # shaughnessy molecular classification
-# still to do...
+load("data/pam.sh_red.Rdata")
+genes.sh.mol = unique(read.csv2("data/shmol.txt", sep="", header=F, as.is=T)$V1)
+shmol = sig.sh(as.matrix(exprs(exprs.external.gcrma)[genes.sh.mol,]))
 
 # -------------------------------------------------------------------------
 # prediction of chromosomal abberations

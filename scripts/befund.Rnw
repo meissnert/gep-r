@@ -38,18 +38,21 @@
 \\
 \line(1,0){170}
 \begin{tabbing}
-\textbf{Klinische Diagnose:} \hspace{0.5cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= %hier klini. Diagnose eintragen
+\textbf{Klinische Diagnose:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Salmon-Durie Stadium:} \=\Sexpr{svalue(p.stage)}%hier klini. Diagnose eintragen
 \\
-\textbf{Klinische Angaben:}
-\>\textbf{Ig-Typ:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
-\>\textbf{Leichtkettentyp:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
+\textbf{Datum der Erstdiagnose:} \>\Sexpr{svalue(p.datediag)}
+\\
+\textbf{Klinische Daten:}
+\>\textbf{IgH-Typ:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\>\textbf{IgL-Typ:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
 
 % Angaben zur Genexpressionsanalyse
 \begin{tabular}{ | l l | } \hline
 Datum der Probenentnahme (KM): & \Sexpr{svalue(probe.date)} \tabularnewline 
 Probenvolumen: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
-CD-138 Anreicherung, Protokoll: & \Sexpr{svalue(probe.protokoll)} \% \tabularnewline
+CD-138 Anreicherung (autoMACS): & \Sexpr{svalue(probe.protokoll)}  \tabularnewline
+CD-138 Reinheit: & \Sexpr{svalue(probe.purity)} \% \tabularnewline
 Menge der zur Analyse verwendeten RNA: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
 Array-Typ: & \Sexpr{svalue(probe.array)} \tabularnewline
 Anzahl analysierter Probesets: & \Sexpr{nr.genes} \tabularnewline
@@ -67,34 +70,21 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \line(1,0){170}
 \begin{enumerate}
 \item \textbf{Qualitätskontrolle} \\
-% Hier Erläuterungen zur Qualitätskontrolle
-% MAQC Kontrolle + QC Stats --> Erläuterung kommt noch
 \Sexpr{svalue(befund.qualitycontrol)}
 
 \item \textbf{Identitäskontrolle} \\
-% Hier Erläuterungen zur Identifikationskontrolle
-% Prädiktion mittels PAM-Prädiktor von Geschlecht, IG-Typ und Leichtkette. Sens./Spez. kommt noch
 \Sexpr{svalue(befund.identitycontrol)}
 
-\item \textbf{Risikoklassifizierungen} \\
-% Hier Erläuterungen zur Risikoklassifizierung
-% Berechnung der Riskikoscores nach Sh...... kommt noch..
-\Sexpr{svalue(befund.risk)}.
-
-\item \textbf{Beim Multiplen Myelom häufig im Vergleich zu normalen Plasmazellen überexprimierte Gene (z.B. aufgrund einer Translokation oder Amplifikation).} \\
-% Hier Erläuerungen zu den expr. Genen
-% häufig expr. Gene
-% Starke Überexpression von CCND1, fehlende Expression von FGFR3 und MMSET.
+\item \textbf{Gene über- oder aberrant exprimiert} \\
 \Sexpr{svalue(befund.genes)}
 
+\item \textbf{Risikoklassifizierungen} \\
+\Sexpr{svalue(befund.risk)}.
+
 \item \textbf{Zielantigene für Immuntherapie} \\
-% Zielantigene für Immuntherapie
-% Expression von HM1.24/BST2. Keine expression von MAGEA3, A1 und MUC1.
 \Sexpr{svalue(befund.itherapy)}
 
 \item \textbf{Zielantigene für gruppenspezifische Therapie} \\
-% Zielantigene für gruppenspezifische Therapie
-% Expression von Aurorakinase A.
 \Sexpr{svalue(befund.grtherapy)}
 
 \end{enumerate}
@@ -111,6 +101,13 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 %Aufgrund der fehlenden Expression von MAGEA3 und MUC-1 ist eine Immuntherapie hinsichtlich dieses Antigens nicht erfolgsversprechend. \\ \\
 %Aufgrund des vorliegens einer TACI-Expression ist ein Einschluss in die TACI-Fe5 Studie möglicherweise von therapeutischem Interesse.
 \Sexpr{svalue(beurteilung)}
+
+\vspace{3cm}
+
+\begin{tabbing}
+Dr. med. Dipl. phys. D. Hose \hspace{6cm} \=Prof. Dr. H. Goldschmidt \\
+Leiter, Labor für Myelomforschung \> Leiter, Sektion Multiples Myelom
+\end{tabbing}
 
 \pagebreak
 
@@ -137,29 +134,29 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 \vspace{0.5cm}
 
-\begin{tabular}{ | l | c | c | c | c | } \hline
- & prädiktierter Wert & Wertebereich  & Sensitivität & Spezifität \tabularnewline \hline \hline
-Geschlecht & \Sexpr{sex} & [m;f] & & \tabularnewline \hline 
-Ig-Typ & \Sexpr{type} & [IgA;IgG;IgD] & & \tabularnewline \hline 
-Leichtkette & \Sexpr{lightchain} & [l;k] & & \tabularnewline \hline 
+\begin{tabular}{ | l | c | c | } \hline
+ & prädiktierter Wert & Wertebereich   \tabularnewline \hline \hline
+Geschlecht & \Sexpr{sex} & [m;f]  \tabularnewline \hline 
+IgH-Typ & \Sexpr{type} & [IgA;IgG;IgD]  \tabularnewline \hline 
+IgL-Typ & \Sexpr{lightchain} & [lambda;kappa]  \tabularnewline \hline 
 \end{tabular}
 
 \vspace{1cm}
 
 % Molekulare Klassifikationen
-\begin{large}\textbf{Molekulare Klassifikationen}\end{large} \\
-\line(1,0){170}
+%\begin{large}\textbf{Molekulare Klassifikationen}\end{large} \\
+%\line(1,0){170}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 
-\begin{tabular}{ | l | c | c |} \hline
- & Klassifikation & Wertebereich \tabularnewline \hline \hline
-Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
-EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
-Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
-\end{tabular}
+%\begin{tabular}{ | l | c | c |} \hline
+% & Klassifikation & Wertebereich \tabularnewline \hline \hline
+%Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
+%EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
+%Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
+%\end{tabular}
 
-\pagebreak
+%\pagebreak
 
 % Risikoklassifizierungen
 \begin{large}\textbf{Risiko Klassifikationen}\end{large} \\
@@ -168,27 +165,30 @@ Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
 \vspace{0.5cm}
 
 \begin{tabular}{ | l | c | c |} \hline
- & Klassifikation & Wertebereich \tabularnewline \hline \hline
-Decaux &  \Sexpr{decaux$decaux.risk} & [high;low] \tabularnewline \hline 
-Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high;medium;low] \tabularnewline \hline
-Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high;medium;low] \tabularnewline \hline
-Shaughnessy 17 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted17} & [high;low] \tabularnewline \hline
-GPI & \Sexpr{gpi} & [high;medium;low] \tabularnewline \hline 
+ & Methode & Klassifikation \tabularnewline \hline \hline
+IFM-Score (Decaux et al., 2008) &  \Sexpr{decaux$decaux.risk} & [high;low] \tabularnewline \hline 
+%Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high;medium;low] \tabularnewline \hline
+%Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high;medium;low] \tabularnewline \hline
+%Shaughnessy 70-Gene-Predictor & \Sexpr{shaughnessy$predicted.sqrt} & [high;low] \tabularnewline \hline
+70-Gene-High-Risk-Score (Shaughnessy et al., 2007) & \Sexpr{shaughnessy$predicted.sub.sqrt} & [high;low] \tabularnewline \hline
+%Shaughnessy 17-GenesPredictor & \Sexpr{shaughnessy$predicted17} & [high;low] \tabularnewline \hline
+Genexpressionsbasierter Proliferationsindex (Hose et al., 2008) & \Sexpr{gpi} & [high;medium;low] \tabularnewline \hline 
 \end{tabular}
 
-\vspace{1cm}
+%\vspace{1cm}
+\pagebreak
 
 % Gene
-\begin{large}\textbf{Gene}\end{large} \\
+\begin{large}\textbf{Expression selektierter Gene und Targets}\end{large} \\
 \line(1,0){170}
 
 \vspace{0.5cm}
 
 \begin{tabular}{ | c | c | c | c | c | c | c | c | } \hline
- & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasmazellen (normal)} & \multicolumn{2}{ | c | }{Plasmazellen (MM)} \tabularnewline \hline
-Gen & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline \hline \hline
+ & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasmacells (normal)} & \multicolumn{2}{ | c | }{Plasmacells (MM)} \tabularnewline \hline
+Gene & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline \hline \hline
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Beim Multiplen Myelom häufig überexprimierte Gene}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Genes frequently overexpressed in Multiple Myeloma}} \tabularnewline \hline \hline
 
 Cyclin D1 & 208712\_at & \Sexpr{cyclind1.signal} & \Sexpr{cyclind1} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
@@ -198,8 +198,10 @@ Cyclin D3 & 201700\_at & \Sexpr{cyclind3.signal} & \Sexpr{cyclind3} & \Sexpr{cyc
 
 FGFR3 & 204379\_s\_at & \Sexpr{fgfr3.signal} & \Sexpr{fgfr3} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
+MMSET & 209053\_s\_at & \Sexpr{mmset.signal} & \Sexpr{mmset} & \Sexpr{mmset.bmpc.signal} & \Sexpr{p.mmset.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{mmset.mmc.signal} & \Sexpr{p.mmset.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Zielantigene für Immuntherapie}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Targets for immun-theraphy}} \tabularnewline \hline \hline
 
 MAGEA1 & 207325\_x\_at & \Sexpr{magea1.signal} & \Sexpr{magea1} & \Sexpr{magea1.bmpc.signal} & \Sexpr{p.magea1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea1.mmc.signal} & \Sexpr{p.magea1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
  
@@ -214,19 +216,13 @@ HM1.24/BST2 & 201641\_at & \Sexpr{hm124.signal} & \Sexpr{hm124} & \Sexpr{hm124.b
 MUC1 & 213693\_s\_at & \Sexpr{muc1.signal} & \Sexpr{muc1} & \Sexpr{muc1.bmpc.signal} & \Sexpr{p.muc1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{muc1.mmc.signal} & \Sexpr{p.muc1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Zielgene für gruppenspezifische Therapie}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Targets for risk adapted treatment}} \tabularnewline \hline \hline
 
 Aurorakinase A & 208079\_s\_at & \Sexpr{aurka.signal} & \Sexpr{aurka} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
+IGF1R & 225330\_at & \Sexpr{igf1r.signal} & \Sexpr{igf1r} & \Sexpr{igf1r.bmpc.signal} & \Sexpr{p.igf1r.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{igf1r.mmc.signal} & \Sexpr{p.igf1r.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
 \end{tabular}
-
-\vspace{3cm}
-
-\begin{tabbing}
-Dipl.phys. D.Hose \hspace{8cm} \=Prof.Dr. H.Goldschmidt \\
-Labor für Myelomforschung \> Sektion Multiples Myelom \\
-Leiter \> Leiter
-\end{tabbing}
 
 \end{g-brief}
 \end{document}
