@@ -832,7 +832,7 @@ madbHandler = function(h, ...) {
 	require(maDB)
 	source("scripts/madb_mod.R") # overwrites original publishToDB function and enables to write expr set to the same experiment eacht time, still neeeds extensive testing..
 	# open connection to the database
-	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="meadb")
+	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
 	# setting loglevel to error
 	log.level = "ERROR"
 
@@ -843,7 +843,7 @@ madbHandler = function(h, ...) {
 	madb.chip = newMadbSet(madb.chip)
 
 	# sample description
-	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex)) # madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual="MM", sex="female")
+	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex)) 
 	TheSamples = list(madb.sample)
 
 	SigChannels = getSignalChannels(madb.chip)

@@ -42,7 +42,7 @@ my.plot.qc.stats(qc.obj, usemid=T, main="", present.thresh=10, bg.thresh=20)
 dev.off()
 
 #  quality control metrics -- reproducibility plot
-png("temp/qualityplot.pdf")
+png("temp/qualityplot.png")
 my.repplot(qc.data.norm)
 dev.off()
 
@@ -223,7 +223,7 @@ shmol = sig.sh(as.matrix(exprs(exprs.external.gcrma)[genes.sh.mol,]))
 # translocation t(4;14)
 load("data/pam.t414.Rdata")
 t414 = sig.t414(exprs(exprs.external.gcrma))
-if(t414==1) {t414="yes"} else {t414 = "no"}
+if(t414==2) {t414="yes"} else {t414 = "no"}
 
 
 
