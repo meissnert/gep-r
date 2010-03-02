@@ -4,6 +4,8 @@ options("guiToolkit"="RGtk2")
 # get system-information for systemspecific adaptions
 # .. what about "not supported" systems?? stop from running the software... more comin soon...
 system = Sys.info()[1]
+lang = "english" # default language for pdf report is english
+db.suport = FALSE # chane to true for enabling psql database support
 
 # ------------------------------------------------------------------------------------------------
 #
@@ -44,11 +46,11 @@ saveHandler = function(h, ...) {
 	file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T) 
 	# copy .pdf files from temp to the save folder, overwrite all existing files
 	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
-	file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
 	
 	# save the "inputs"
 	save = list(
-	       	cel = svalue(cel.label),
+	    cel = svalue(cel.label),
 		plot = svalue(plot),
 		p.name = svalue(p.name),
 		p.vorname = svalue(p.vorname),
@@ -83,7 +85,7 @@ saveHandler = function(h, ...) {
 	# save variables as a r-object with the ending *.report
 	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj", "t414",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
-		   "aurka", "aurka.signal", 
+		   "aurka", "aurka.signal", "shmol",
 		   "ctag1",  "ctag1.signal", 
 		   "cyclind1", "cyclind1.signal", 
 		   "cyclind2", "cyclind2.signal",
@@ -95,7 +97,8 @@ saveHandler = function(h, ...) {
 		   "mmset", "mmset.signal", 
 		   "muc1", "muc1.signal", 
 		   "ssx2", "ssx2.signal",
-		   "igf1r", "igf1r.signal")
+		   "igf1r", "igf1r.signal",
+		   "exprs.external.gcrma", "qc.data.norm") # "exprs.external.gcrma", "qc.data.norm" are saved just for db testing purposes...
 
 
 	save(file=paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", gsub("[()]" , "", svalue(cel.label)), ".report", sep=""), list=tosave)
@@ -157,7 +160,7 @@ loadHandler = function(h, ...) {
 	# copy .gif files from save to the temp folder, overwrite all existing files
 	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 	# copy .pdf files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+	# file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 	# copy .png files from save to the temp folder, overwrite all existing files
 	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("png", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 
@@ -300,8 +303,8 @@ riskHandler = function(h, ...) {
 	risktable[5][[3]] = as.character("[11;12;21;22]")
 
 	risktable[6][[1]] = as.character("Zahn molecular classification")
-	risktable[6][[2]] = ""
-	risktable[6][[3]] = ""
+	risktable[6][[2]] = as.character(shmol)
+	risktable[6][[3]] = as.character("[HP,CD1,CD2,PR,CB,MS,MF]")
 
 	risktable[7][[1]] = as.character("GPI")
 	risktable[7][[2]] = as.character(gpi)
@@ -696,19 +699,28 @@ ignoreHandler = function(h, ...) {
 pdfHandler = function(h, ...) {
 	svalue(sb) = "PDF will be created ..."
 
-	# Sweave("scripts/befund.Rnw") # german
-	Sweave("scripts/befund_en.Rnw")   # english
+	Sweave("scripts/befund.Rnw") # german
+	# Sweave("scripts/befund_en.Rnw")   # english
 	if(system=="Linux") {
-		# system("R CMD pdflatex befund.tex") # create pdf from tex file, german
-		system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
-		# system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
-		system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
-		system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
-		enabled(file.pdfshow)="TRUE"  # activate view pdf button
-		svalue(sb) = "PDF was created and can now be viewed!"
+		if (lang=="english") {
+			system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
+			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"
+		}
+		
+		if (lang=="german") {
+			system("R CMD pdflatex befund.tex") # create pdf from tex file, german
+			system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"	
+		}
 	}
 	
 	if(system=="Windows") {
+		# note: there is a pdftk version vor windows, but still have other problems with the windows version...
 		svalue(sb) = "Creating the PDF within windows is not yet supportet!"
 	}	
 }
@@ -818,8 +830,9 @@ updatedbHandler = function(h, ...) {
 # this is experementell and not really working yet!!!!
 madbHandler = function(h, ...) {
 	require(maDB)
+	source("scripts/madb_mod.R") # overwrites original publishToDB function and enables to write expr set to the same experiment eacht time, still neeeds extensive testing..
 	# open connection to the database
-	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
+	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="meadb")
 	# setting loglevel to error
 	log.level = "ERROR"
 
@@ -830,7 +843,7 @@ madbHandler = function(h, ...) {
 	madb.chip = newMadbSet(madb.chip)
 
 	# sample description
-	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex))
+	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex)) # madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual="MM", sex="female")
 	TheSamples = list(madb.sample)
 
 	SigChannels = getSignalChannels(madb.chip)
@@ -838,7 +851,6 @@ madbHandler = function(h, ...) {
 		SigChannels[[i]]@sample.index = i
 	}
 
-	# write to madb --> Works only once!! problem: exp.name has to be changed every time, but then every chip is his own exp.....
 	publishToDB(madb.chip, con, exp.name="GEP-R", signal.channels=SigChannels, samples=TheSamples, preprocessing="gcRMA", v=FALSE)
 
 	# disconnect the database
@@ -860,24 +872,18 @@ aSave = gaction(label="Save Report", icon="save", handler=saveHandler)
 aQuit = gaction(label="Quit", icon="quit", handler=quitHandler)
 
 aGerman = gaction(label="German", handler=function(h, ...) {
-	svalue(aOpen) = "Befund öffnen"
-	svalue(aSave) = "Befund speichern"
-	svalue(aQuit) = "Beenden"
-	
-	
-	# ....
-
-	svalue(aGerman) = "Deutsch"
-	svalue(aEnglish) = "Englisch"
+	assign("lang", "german", envir=.GlobalEnv)
+	svalue(sb) = "The PDF report will be created in German!"
 })
 aEnglish = gaction(label="English", handler=function(h, ...) {
-	svalue(aOpen) = "open Report"
+	assign("lang", "english", envir=.GlobalEnv)
+	svalue(sb) = "The PDF report will be created in English!"
 })
 
 ml  = list(File = list(open=aOpen, save=aSave, sep=list(separator=TRUE), quit=aQuit),
-	   Analysis = list(),
-	   Settings = list(),
-	   Language = list(German=aGerman, English=aEnglish))
+	   # Analysis = list(),
+	   #Settings = list(),
+	   PDF_Language = list(German=aGerman, English=aEnglish))
 gmenu(ml, cont=g)
 
 
@@ -1085,14 +1091,14 @@ genetable= gtable(data.frame(Gene=rep("",13),
 			     expand=TRUE)
 enabled(tables) = "FALSE"
 
-qc = ggroup(horizontal=FALSE, cont=nb.right, label="QC-Plots")
+qc = ggroup(horizontal=FALSE, cont=nb.right, label="Qualitycontrol")
 tbl.qc = glayout(cont=qc)
 tbl.qc[1,1] = gbutton(text="  Reproducability  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
-tbl.qc[1,2] = gbutton(text="        Stats         ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
+tbl.qc[1,2] = gbutton(text="        QC-Stats      ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
 tbl.qc[1,3] = gbutton(text=" Spike-in Performance ", border=TRUE, handler=dispHandlerSPIKE, cont=tbl.qc)
 tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHandlerNUSERLE, cont=tbl.qc)
-tbl.qc[2,2] = gbutton(text="       Artifacts      ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
-tbl.qc[2,3] = gbutton(text="   RNA Degredation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
+tbl.qc[2,2] = gbutton(text="       Pseudo Images   ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
+tbl.qc[2,3] = gbutton(text="   RNA Degradation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
 plot = gimage("data/default_empty.gif", cont=qc)
 qc.table = gtable(data.frame(QC=rep("",13), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"
