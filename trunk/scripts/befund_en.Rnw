@@ -13,24 +13,28 @@
 \renewcommand{\datumtext}{}
 \newcommand{\n}{\newline}
 
+% Adress information
 \Adresse	{\Sexpr{paste(svalue(p.vorname), svalue(p.name))}\\
 		 \Sexpr{svalue(p.strasse)}\\
 		 \Sexpr{paste(svalue(p.plz), svalue(p.ort))}
 		}
 
+% Heading
 \Betreff	{Gene expression profiling - report (GEP-R)}
 
+% date
 %\Datum		{\today}
 
+% not used..
 %\Anrede	{Sehr geehrter Herr Mustermann,}
 \Gruss		{}{0cm}
 
 \begin{document}
 \begin{g-brief}
-% 1. Seite des Briefkopf
-\ThisCenterWallPaper{1}{data/Logo_hd.pdf}
+% 1. page
+\ThisCenterWallPaper{1}{data/Logo.pdf} % replace logo.pdf with your own layout
 
-% Angaben zum Patienten
+% patient information
 \line(1,0){170} \\ \\
 \textbf{Name:} \Sexpr{svalue(p.name)}, \Sexpr{svalue(p.vorname)} % name des Patienten
 \hspace{8cm}
@@ -47,12 +51,12 @@
 \>\textbf{IgL-type:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
 
-% Angaben zur Genexpressionsanalyse
+% information about genexpression analysis
 \begin{tabular}{ | l l | } \hline
 Date BM-aspiration: & \Sexpr{svalue(probe.date)} \tabularnewline 
-Probevolume: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
+Samplevolume: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
 CD-138 purification (autoMACS): & \Sexpr{svalue(probe.protokoll)}  \tabularnewline
-CD-138 purity: & \Sexpr{svalue(probe.purity)} \% \tabularnewline
+CD-138 purity (FACS)\footnote[1]{Test}: & \Sexpr{svalue(probe.purity)} \% \tabularnewline
 Amount of RNA used: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
 Array-Type: & \Sexpr{svalue(probe.array)} \tabularnewline
 Amount of analyzed probesets: & \Sexpr{nr.genes} \tabularnewline
@@ -61,11 +65,13 @@ RNA amplification protocoll: & \Sexpr{svalue(probe.ampl)} \tabularnewline
 Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \end{tabular}
 
-% Beginn der 2. Seite, mit Briefbogenwechsel
-\pagebreak
-\CenterWallPaper{1}{data/Logo2_hd.pdf}
 
-% Befund
+
+% begin of page 2 ...
+\pagebreak
+\CenterWallPaper{1}{data/Logo2.pdf} % replace logo2.pdf with your own layout
+
+% report
 \begin{large}\textbf{Report}\end{large} \\
 \line(1,0){170}
 \begin{enumerate}
@@ -114,7 +120,7 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 
 \pagebreak
 
-% aufruf des r-skripts 
+% call the r-skripts 
 %<<echo=FALSE, results=hide>>=
 %setwd("/home/linusvanpelt/Work/genchip befund/")
 %source("befund.R")
@@ -122,7 +128,7 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 
 \textbf{\begin{Large}Appendix\end{Large}}
 
-% Qualitätskontrolle
+% qualitycontrol
 \begin{large}\textbf{Quality control}\end{large} \\
 \line(1,0){170}
 \begin{center}
@@ -133,7 +139,7 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 
 \vspace{1cm}
 
-% Identitätskontrolle
+% identitycontrol
 \begin{large}\textbf{Identity control}\end{large} \\
 \line(1,0){170}
 
@@ -148,22 +154,22 @@ IgL-type & \Sexpr{lightchain} & [lambda;kappa]  \tabularnewline \hline
 
 \vspace{1cm}
 
-% Molekulare Klassifikationen
-%\begin{large}\textbf{(Molecular) Classification}\end{large} \\
-%\line(1,0){170}
+% molecular classification
+\begin{large}\textbf{(Molecular) Classification}\end{large} \\
+\line(1,0){170}
 
-%\vspace{0.5cm}
+\vspace{0.5cm}
 
-%\begin{tabular}{ | l | c | c |} \hline
-% & Classification & Range \tabularnewline \hline \hline
-%Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
-%Hose EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
-%Zahn Molecular &  & [...8 Gruppen...] \tabularnewline \hline
-%\end{tabular}
+\begin{tabular}{ | l | c | c |} \hline
+ & Classification & Range \tabularnewline \hline \hline
+Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
+Hose EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
+Zahn Molecular &  & [...8 Gruppen...] \tabularnewline \hline
+\end{tabular}
 
-%\pagebreak
+\pagebreak
 
-% Risikoklassifizierungen
+% risk stratification
 \begin{large}\textbf{Risk stratification}\end{large} \\
 \line(1,0){170}
 
@@ -183,7 +189,7 @@ Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{gpi} & [h
 %\vspace{1cm}
 \pagebreak
 
-% Gene
+% genes
 \begin{large}\textbf{Expression of selected genes and targets}\end{large} \\
 \line(1,0){170}
 

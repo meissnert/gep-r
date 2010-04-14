@@ -28,7 +28,7 @@
 \begin{document}
 \begin{g-brief}
 % 1. Seite des Briefkopf
-\ThisCenterWallPaper{1}{data/Logo_hd.pdf}
+\ThisCenterWallPaper{1}{data/Logo.pdf}
 
 % Angaben zum Patienten
 \line(1,0){170} \\ \\
@@ -63,7 +63,7 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 % Beginn der 2. Seite, mit Briefbogenwechsel
 \pagebreak
-\CenterWallPaper{1}{data/Logo2_hd.pdf}
+\CenterWallPaper{1}{data/Logo2.pdf}
 
 % Befund
 \begin{large}\textbf{Befund}\end{large} \\
@@ -144,19 +144,19 @@ IgL-Typ & \Sexpr{lightchain} & [lambda;kappa]  \tabularnewline \hline
 \vspace{1cm}
 
 % Molekulare Klassifikationen
-%\begin{large}\textbf{Molekulare Klassifikationen}\end{large} \\
-%\line(1,0){170}
+\begin{large}\textbf{Molekulare Klassifikationen}\end{large} \\
+\line(1,0){170}
 
-%\vspace{0.5cm}
+\vspace{0.5cm}
 
-%\begin{tabular}{ | l | c | c |} \hline
-% & Klassifikation & Wertebereich \tabularnewline \hline \hline
-%Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
-%EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
-%Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
-%\end{tabular}
+\begin{tabular}{ | l | c | c |} \hline
+ & Klassifikation & Wertebereich \tabularnewline \hline \hline
+Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
+EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
+Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
+\end{tabular}
 
-%\pagebreak
+\pagebreak
 
 % Risikoklassifizierungen
 \begin{large}\textbf{Risiko Klassifikationen}\end{large} \\

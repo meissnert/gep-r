@@ -699,10 +699,11 @@ ignoreHandler = function(h, ...) {
 pdfHandler = function(h, ...) {
 	svalue(sb) = "PDF will be created ..."
 
-	Sweave("scripts/befund.Rnw") # german
+	# Sweave("scripts/befund.Rnw") # german
 	# Sweave("scripts/befund_en.Rnw")   # english
 	if(system=="Linux") {
 		if (lang=="english") {
+			Sweave("scripts/befund_en.Rnw")
 			system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
 			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
 			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
@@ -711,6 +712,7 @@ pdfHandler = function(h, ...) {
 		}
 		
 		if (lang=="german") {
+			Sweave("scripts/befund.Rnw")
 			system("R CMD pdflatex befund.tex") # create pdf from tex file, german
 			system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
 			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
