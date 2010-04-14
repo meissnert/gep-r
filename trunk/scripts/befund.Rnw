@@ -156,7 +156,7 @@ EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
 Shaughnessy &  & [...8 Gruppen...] \tabularnewline \hline
 \end{tabular}
 
-\pagebreak
+ \pagebreak
 
 % Risikoklassifizierungen
 \begin{large}\textbf{Risiko Klassifikationen}\end{large} \\
