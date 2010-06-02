@@ -43,6 +43,9 @@ my.plotdiag <- function() {
 # function taken from the simpleaffy package (gc() function) and modified:
 # scalefactors and targed taken out, not used for gcrma
 # present call changed to panp present call
+setClass("QCStats",representation(scale.factors="numeric",target="numeric",percent.present="numeric",average.background="numeric",minimum.background="numeric",maximum.background="numeric",spikes="matrix",qc.probes="matrix",bioBCalls="character",bioCCalls="character",bioDCalls="character",creCalls="character",arraytype="character"));
+
+
 my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cdfn = cdfName(unnormalised)) {
     verbose <- getOption("verbose")
 
@@ -54,8 +57,8 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
     #det <- detection.p.val(unnormalised, tau = tau, alpha1 = qc.get.alpha1(),
     #    alpha2 = qc.get.alpha2())
     dpv <- apply(panp, 2, function(x) {
-        x[x != "P"] <- 0
-        x[x == "P"] <- 1
+        x[x == "A"] <- 0
+        x[x == "P" | x == "M"] <- 1
         x <- as.numeric(x)
         return(100 * sum(x)/length(x))
     })
@@ -82,20 +85,41 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
     rownames(spike.vals) <- colnames(x)
     colnames(spike.vals) <- spike.probenames
     bb <- spike.probenames["bioB"]
+    bc = spike.probenames["bioC"] # added bioC call
+    bd = spike.probenames["bioD"] # added bioD call
+    cre = spike.probenames["creX"] # added cre Call
     if (!is.na(bb)) {
         biobcalls <- panp[bb, ]
     }
     else {
         biobcalls <- NULL
     }
+    if (!is.na(bc)) {
+        bioccalls <- panp[bc, ]
+    }
+    else {
+        bioccalls <- NULL
+    }
+    if (!is.na(bd)) {
+        biodcalls <- panp[bd, ]
+    }
+    else {
+        biodcalls <- NULL
+    }
+    if (!is.na(cre)) {
+        crecalls <- panp[cre, ]
+    }
+    else {
+        crecalls <- NULL
+    }
     return(new("QCStats", #scale.factors = sfs, target = target,
         percent.present = dpv, average.background = meanbg, minimum.background = minbg,
         maximum.background = maxbg, 
 	spikes = spike.vals, qc.probes = qc.probe.vals,
-        bioBCalls = biobcalls, arraytype = cdfn))
+        bioBCalls = biobcalls, bioCCalls = bioccalls, bioDCalls = biodcalls, creCalls = crecalls, arraytype = cdfn))
 }
 
-# tthis is taken from the yaqcaffy package (reprodPlot() function) and modified
+# this is taken from the yaqcaffy package (reprodPlot() function) and modified
 # normalization taken out, only ploting here, function takes the normalized obekt as an argument
 my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
     e <- exprs(data)
@@ -138,7 +162,7 @@ my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
 
 # function taken from the simpleaffy package (plot.qc.stats() function) and modified for gcrma preprocessing
 # scale factors taken out
-my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 1.25, ba.thresh = 3.0, present.thresh=10, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
+my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 2.3, ba.thresh = 5.2, present.thresh=10, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
   old.par <- par()
   par(mai=c(0,0,0,0))
   # sfs    <- log2(sfs(x))
@@ -192,13 +216,27 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
   lines(c(0,0),c(0,n),lty=1,col=fc.line.col)
   lines(c(-1,-1),c(0,n),lty=2,col="grey")
   lines(c(-2,-2),c(0,n),lty=2,col="grey")
-  lines(c(-3,-3),c(0,n),lty=2,col=fc.line.col)
+  lines(c(-2.3,-2.3),c(0,n),lty=2,col=fc.line.col)
+  lines(c(-3,-3),c(0,n),lty=2,col="grey")
+  lines(c(-4,-4),c(0,n),lty=2,col="grey")
+  lines(c(-5,-5),c(0,n),lty=2,col="grey")
+  lines(c(-5.2,-5.2),c(0,n),lty=2,col=fc.line.col)
   lines(c(1,1),c(0,n),lty=2,col="grey")
   lines(c(2,2),c(0,n),lty=2,col="grey")
-  lines(c(3,3),c(0,n),lty=2,col=fc.line.col)
+  lines(c(2.3,2.3),c(0,n),lty=2,col=fc.line.col)
+  lines(c(3,3),c(0,n),lty=2,col="grey")
+  lines(c(4,4),c(0,n),lty=2,col="grey")
+  lines(c(5,5),c(0,n),lty=2,col="grey")
+  lines(c(5.2,5.2),c(0,n),lty=2,col=fc.line.col)
+  text(6,-1,"6",pos=3,col=fc.line.col,cex=cex)
+  text(5,-1,"5",pos=3,col=fc.line.col,cex=cex)
+  text(4,-1,"4",pos=3,col=fc.line.col,cex=cex)
   text(3,-1,"3",pos=3,col=fc.line.col,cex=cex)
   text(2,-1,"2",pos=3,col=fc.line.col,cex=cex)
   text(1,-1,"1",pos=3,col=fc.line.col,cex=cex)
+  text(-6,-1,"-6",pos=3,col=fc.line.col,cex=cex)
+  text(-5,-1,"-5",pos=3,col=fc.line.col,cex=cex)
+  text(-4,-1,"-4",pos=3,col=fc.line.col,cex=cex)
   text(-3,-1,"-3",pos=3,col=fc.line.col,cex=cex)
   text(-2,-1,"-2",pos=3,col=fc.line.col,cex=cex)
   text(-1,-1,"-1",pos=3,col=fc.line.col,cex=cex)
@@ -215,6 +253,9 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
   }
 
   bb  <- x@bioBCalls
+  bc = x@bioCCalls
+  bd = x@bioDCalls
+  cre = x@creCalls
 
   for(i in 1:n) {
     x1<-spread[1]
@@ -249,6 +290,15 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
      text(x2,y2,label=abg[i],col=col,pos=4,cex=cex);
      if(bb[i]!="P") {
        text(0,i-1,label="bioB",col="red",cex=cex);
+     }
+     if(bc[i]!="P") {
+       text(0,i-1,label="bioC",col="red",cex=cex);
+     }
+     if(bd[i]!="P") {
+       text(0,i-1,label="bioD",col="red",cex=cex);
+     }
+     if(cre[i]!="P") {
+       text(0,i-1,label="Cre",col="red",cex=cex);
      }
 
   }

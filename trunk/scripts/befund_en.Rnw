@@ -56,7 +56,8 @@
 Date BM-aspiration: & \Sexpr{svalue(probe.date)} \tabularnewline 
 Samplevolume: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
 CD-138 purification (autoMACS): & \Sexpr{svalue(probe.protokoll)}  \tabularnewline
-CD-138 purity (FACS)\footnote[1]{Test}: & \Sexpr{svalue(probe.purity)} \% \tabularnewline
+CD-138 purity (flow cytometry)\footnote{Test}: & \Sexpr{svalue(probe.purity.facs)} \% \tabularnewline
+CD-138 purity (iFISH)\footnote{Test}: & \Sexpr{svalue(probe.purity.fish)} \% \tabularnewline
 Amount of RNA used: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
 Array-Type: & \Sexpr{svalue(probe.array)} \tabularnewline
 Amount of analyzed probesets: & \Sexpr{nr.genes} \tabularnewline
@@ -147,9 +148,9 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 
 \begin{tabular}{ | l | c | c | } \hline
  & Prediction & Range \tabularnewline \hline \hline
-Sex & \Sexpr{sex} & [m;f] \tabularnewline \hline 
-IgH-type & \Sexpr{type} & [A;G;D] \tabularnewline \hline 
-IgL-type & \Sexpr{lightchain} & [lambda;kappa]  \tabularnewline \hline 
+Sex & \Sexpr{sex} & [m, f] \tabularnewline \hline 
+IgH-type & \Sexpr{type} & [A, G, D] \tabularnewline \hline 
+IgL-type & \Sexpr{lightchain} & [lambda, kappa]  \tabularnewline \hline 
 \end{tabular}
 
 \vspace{1cm}
@@ -162,9 +163,9 @@ IgL-type & \Sexpr{lightchain} & [lambda;kappa]  \tabularnewline \hline
 
 \begin{tabular}{ | l | c | c |} \hline
  & Classification & Range \tabularnewline \hline \hline
-Bergsagel TC & \Sexpr{bergsagel} & [4p16;maf;6p21;11q13;d1;d1d2;d2;none] \tabularnewline \hline
-Hose EC & \Sexpr{ec} & [1.1; 1.2; 2.1; 2.2] \tabularnewline \hline
-Zahn Molecular &  & [...8 Gruppen...] \tabularnewline \hline
+Bergsagel TC (Bergsagel, 2005) & \Sexpr{bergsagel} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
+Hose EC (Hose et al., 2005) & \Sexpr{ec} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
+Zahn Molecular Class. (Zahn et al, 2006) & \Sexpr{shmol} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
 \end{tabular}
 
 \pagebreak
@@ -177,17 +178,17 @@ Zahn Molecular &  & [...8 Gruppen...] \tabularnewline \hline
 
 \begin{tabular}{ | l | c | c |} \hline
  & Stratification & Range \tabularnewline \hline \hline
-IFM-score (Decaux et al., 2008) &  \Sexpr{decaux$decaux.risk} & [high;low] \tabularnewline \hline 
-%Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high;medium;low] \tabularnewline \hline
-%Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high;medium;low] \tabularnewline \hline
-%Shaughnessy 70-Gene-Predictor & \Sexpr{shaughnessy$predicted.sqrt} & [high;low] \tabularnewline \hline
-70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{shaughnessy$predicted.sub.sqrt} & [high;low] \tabularnewline \hline
-%Shaughnessy 17-GenesPredictor & \Sexpr{shaughnessy$predicted17} & [high;low] \tabularnewline \hline
-Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{gpi} & [high;medium;low] \tabularnewline \hline 
+IFM-score (Decaux et al., 2008) &  \Sexpr{decaux$decaux.risk} & [high, low] \tabularnewline \hline 
+%Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high, medium, low] \tabularnewline \hline
+%Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high, medium, low] \tabularnewline \hline
+%Shaughnessy 70-Gene-Predictor & \Sexpr{shaughnessy$predicted.sqrt} & [high, low] \tabularnewline \hline
+70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{shaughnessy$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
+%Shaughnessy 17-GenesPredictor & \Sexpr{shaughnessy$predicted17} & [high, low] \tabularnewline \hline
+Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{gpi} & [high, medium, low] \tabularnewline \hline 
 \end{tabular}
 
-%\vspace{1cm}
-\pagebreak
+\vspace{1cm}
+%\pagebreak
 
 % genes
 \begin{large}\textbf{Expression of selected genes and targets}\end{large} \\

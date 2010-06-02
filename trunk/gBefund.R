@@ -4,8 +4,19 @@ options("guiToolkit"="RGtk2")
 # get system-information for systemspecific adaptions
 # .. what about "not supported" systems?? stop from running the software... more comin soon...
 system = Sys.info()[1]
-lang = "english" # default language for pdf report is english
-db.suport = FALSE # chane to true for enabling psql database support
+
+# ------------------------------------------------------------------------------------------------
+#
+# Options
+#
+# ------------------------------------------------------------------------------------------------
+lang = "english" # default language for pdf report is english, you can also change to "german"
+				 # note: this changes only the language of the pdf, gui is always in english
+
+require(pgUtils)
+db.support = FALSE # change to true for enabling psql database support, 
+				  # make sure the sql server is running and you have created the gepr and madb database!!!
+				  
 
 # ------------------------------------------------------------------------------------------------
 #
@@ -23,6 +34,10 @@ quitHandler = function(h, ...) {
 	if(file.exists("befund.log")) {file.remove("befund.log")}
 	if(file.exists("befund.tex")) {file.remove("befund.tex")}
 	if(file.exists("befund.pdf")) {file.remove("befund.pdf")}
+	if(file.exists("befund_en.aux")) {file.remove("befund_en.aux")}
+	if(file.exists("befund_en.log")) {file.remove("befund_en.log")}
+	if(file.exists("befund_en.tex")) {file.remove("befund_en.tex")}
+	if(file.exists("befund_en.pdf")) {file.remove("befund_en.pdf")}
 
 	# delete all files within temp
 	file.remove(paste("temp/", dir("temp/"), sep=""))
@@ -67,7 +82,8 @@ saveHandler = function(h, ...) {
 		probe.date = svalue(probe.date),
 		probe.volume = svalue(probe.volume),
 		probe.protokoll = svalue(probe.protokoll),
-		probe.purity = svalue(probe.purity),
+		probe.purity.facs = svalue(probe.purity.facs),
+		probe.purity.fish = svalue(probe.purity.fish),
 		probe.rna = svalue(probe.rna),
 		probe.array = svalue(probe.array),
 		probe.ampl = svalue(probe.ampl),
@@ -104,6 +120,11 @@ saveHandler = function(h, ...) {
 	save(file=paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", gsub("[()]" , "", svalue(cel.label)), ".report", sep=""), list=tosave)
 
 	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "was saved!", sep=" ")
+	
+	if(db.support == TRUE) {
+		savedbHanlder()
+		madbHandler()
+	} # save values to database
 }
 
 # report load handler
@@ -143,7 +164,8 @@ loadHandler = function(h, ...) {
 	svalue(probe.array) = save$probe.array
 	svalue(probe.ampl) = save$probe.ampl
 	svalue(probe.norm) = save$probe.norm
-	svalue(probe.purity) = save$probe.purity
+	svalue(probe.purity.facs) = save$probe.purity.facs
+	svalue(probe.purity.fish) = save$probe.purity.fish
 	svalue(beurteilung) = save$beurteilung
 	svalue(befund.qualitycontrol) = save$befund.qualitycontrol
 	svalue(befund.identitycontrol) = save$befund.identitycontrol
@@ -245,7 +267,8 @@ clearGUIHandler = function(h, ...) {
 	svalue(probe.array) = ""
 	svalue(probe.ampl) = ""
 	svalue(probe.norm) = ""
-	svalue(probe.purity) = ""
+	svalue(probe.purity.facs) = ""
+	svalue(probe.purity.fish) = ""
 	svalue(beurteilung) = ""
 	svalue(befund.qualitycontrol) = ""
 	svalue(befund.identitycontrol) = ""
@@ -324,9 +347,9 @@ riskHandler = function(h, ...) {
 geneHandler = function(h, ...) {
 	overexpression = function(sig.pat, call.pat, sig.bmpc, sd.bmpc, call.bmpc) {
 		sig.value = ""
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "*** (up)"} 
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "*** (aberrant)"} 
-		if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "*** (down)"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "up"} 
+		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "aberrant"} 
+		if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "down"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
 		#else {sig.value = ""}
 		return(sig.value)
 	}
@@ -488,6 +511,12 @@ qctableHandler = function(h, ...) {
 
  	qc.table[13][[1]] = as.character("BioB Call")
 	qc.table[13][[2]] = as.character(qc.obj@bioBCalls)[7]
+	qc.table[14][[1]] = as.character("BioC Call")
+	qc.table[14][[2]] = as.character(qc.obj@bioCCalls)[7]
+	qc.table[15][[1]] = as.character("BioD Call")
+	qc.table[15][[2]] = as.character(qc.obj@bioDCalls)[7]
+	qc.table[16][[1]] = as.character("Cre Call")
+	qc.table[16][[2]] = as.character(qc.obj@creCalls)[7]
 }
 
 # diplay handler
@@ -597,8 +626,13 @@ integrityHandler = function(h, ...)  {
 		error.count = error.count + 1
 	}
 
-	if (svalue(probe.purity)=="") {
-		insert(warning.message, "Please enter cd-138 purity", font.attr=c(foreground.colors="red"))
+	if (svalue(probe.purity.facs)=="") {
+		insert(warning.message, "Please enter cd-138 purity (flow cytometry)", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(probe.purity.fish)=="") {
+		insert(warning.message, "Please enter cd-138 purity (iFISH)", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
 
@@ -727,10 +761,10 @@ pdfHandler = function(h, ...) {
 	}	
 }
 
-# open pdf with acroread
+# open pdf with pdf viewer
 viewpdfHandler = function(h, ...) {
 	if(system=="Linux") {
-		system(paste("acroread", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
+		system(paste("evince", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
 	}
 
 	if(system=="Windows") {
@@ -749,7 +783,6 @@ viewpdfHandler = function(h, ...) {
 # save info to dadabase
 savedbHanlder = function(h, ...) {
 	# open connection to the database
-	require(pgUtils)
 	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="gepr")
 
 	# set dateystyle to european format dd/mm/yyyy
@@ -760,7 +793,7 @@ savedbHanlder = function(h, ...) {
 	if(svalue(cel.label) %in% dbGetResult(result)$cel) {
 		updatedbHandler()
 	} else {dbSendQuery(con, 
-			    paste("INSERT INTO  celfile (cel, name, first_name, birth, street, city, zipcode, diagnosis, ig_type, lightchain, sex, sample_date, sample_volume, cd_138_purification, array_type, rna_purification_protcoll, normalization_method, qualitycontrol, identitycontrol, risk_stratification, overexpressed_genes, targetgenes_immunotherapy, targetgenes_risk_treatment, report) VALUES (", 
+			    paste("INSERT INTO  celfile (cel, name, first_name, birth, street, city, zipcode, diagnosis, ig_type, lightchain, sex, sample_date, sample_volume, cd_138_purification, array_type, rna_purification_protocoll, normalization_method, qualitycontrol, identitycontrol, risk_stratification, overexpressed_genes, targetgenes_immunotherapy, targetgenes_risk_treatment, report) VALUES (", 
 				  "'", svalue(cel.label), "', ", 
 				  "'", svalue(p.name), "', ", 
 				  "'", svalue(p.vorname), "', ", 
@@ -837,26 +870,34 @@ madbHandler = function(h, ...) {
 	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
 	# setting loglevel to error
 	log.level = "ERROR"
+	
+	result = dbSendQuery(con, "SELECT arrayname FROM arrays")
+	
+	if(svalue(cel.label) %in% dbGetResult(result)$arrayname) {
+		dbDisconnect(con)
+		print("Sample already in Database")
+	} else {
+	
+		# this is a "dirty" trick.. getting the featureData from qc.data.norm.. definetly not optimal solution!
+		madb.chip = new ("ExpressionSet", phenoData = phenoData(exprs.external.gcrma) , featureData = featureData(qc.data.norm), experimentData = experimentData(exprs.external.gcrma), annotation = annotation(exprs.external.gcrma),  assayData= assayData(exprs.external.gcrma))
 
-	# this is a "dirty" trick.. getting the featureData from qc.data.norm.. definetly not optimal solution!
-	madb.chip = new ("ExpressionSet", phenoData = phenoData(exprs.external.gcrma) , featureData = featureData(qc.data.norm), experimentData = experimentData(exprs.external.gcrma), annotation = annotation(exprs.external.gcrma),  assayData= assayData(exprs.external.gcrma))
+		# converting to madb object
+		madb.chip = newMadbSet(madb.chip)
 
-	# converting to madb object
-	madb.chip = newMadbSet(madb.chip)
+		# sample description
+		madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex)) 
+		TheSamples = list(madb.sample)
 
-	# sample description
-	madb.sample = new("Sample", name=rownames(phenoData(madb.chip)@data), individual=svalue(p.diag), sex=svalue(p.sex)) 
-	TheSamples = list(madb.sample)
+		SigChannels = getSignalChannels(madb.chip)
+		for (i in 1:length(SigChannels)) {
+			SigChannels[[i]]@sample.index = i
+		}
 
-	SigChannels = getSignalChannels(madb.chip)
-	for (i in 1:length(SigChannels)) {
-		SigChannels[[i]]@sample.index = i
+		publishToDB(madb.chip, con, exp.name="GEP-R", signal.channels=SigChannels, samples=TheSamples, preprocessing="gcRMA", v=FALSE)
+
+		# disconnect the database
+		dbDisconnect(con)
 	}
-
-	publishToDB(madb.chip, con, exp.name="GEP-R", signal.channels=SigChannels, samples=TheSamples, preprocessing="gcRMA", v=FALSE)
-
-	# disconnect the database
-	dbDisconnect(con)
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -972,18 +1013,21 @@ tbl.probe[2,2, expand=FALSE] = (probe.volume = gedit("", cont=tbl.probe))
 tbl.probe[2,3] = "ml"
 tbl.probe[3,1] = "CD-138 purification"
 tbl.probe[3,2, expand=FALSE] = (probe.protokoll = gedit("", cont=tbl.probe))
-tbl.probe[4,1] = "CD-138 purity"
-tbl.probe[4,2, expand=FALSE] = (probe.purity = gedit("", cont=tbl.probe))
+tbl.probe[4,1] = "CD-138 purity (flow cytometry)"
+tbl.probe[4,2, expand=FALSE] = (probe.purity.facs = gedit("", cont=tbl.probe))
 tbl.probe[4,3] = "%"
-tbl.probe[5,1] = "Amount of RNA used"
-tbl.probe[5,2] = (probe.rna = gedit("", cont=tbl.probe))
-tbl.probe[5,3] = "ng"
-tbl.probe[6,1] = "Array-Type"
-tbl.probe[6,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
-tbl.probe[7,1] = "RNA Purification Protokoll"
-tbl.probe[7,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
-tbl.probe[8,1] = "Preprocessing Method"
-tbl.probe[8,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
+tbl.probe[5,1] = "CD-138 purity (iFISH)"
+tbl.probe[5,2, expand=FALSE] = (probe.purity.fish = gedit("", cont=tbl.probe))
+tbl.probe[5,3] = "%"
+tbl.probe[6,1] = "Amount of RNA used"
+tbl.probe[6,2] = (probe.rna = gedit("", cont=tbl.probe))
+tbl.probe[6,3] = "ng"
+tbl.probe[7,1] = "Array-Type"
+tbl.probe[7,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
+tbl.probe[8,1] = "RNA Purification Protokoll"
+tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
+tbl.probe[9,1] = "Preprocessing Method"
+tbl.probe[9,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
 
 # individual comments
 # create the widgets
@@ -1102,7 +1146,7 @@ tbl.qc[2,1] = gbutton(text="       NUSE/RLE       ", border=TRUE, handler=dispHa
 tbl.qc[2,2] = gbutton(text="       Pseudo Images   ", border=TRUE, handler=dispHandlerARTIFACTS, cont=tbl.qc)
 tbl.qc[2,3] = gbutton(text="   RNA Degradation    ", border=TRUE, handler=dispHandlerDEGREDATION, cont=tbl.qc)
 plot = gimage("data/default_empty.gif", cont=qc)
-qc.table = gtable(data.frame(QC=rep("",13), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
+qc.table = gtable(data.frame(QC=rep("",16), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"
 
 warnings = ggroup(horizontal=FALSE, cont=nb.right, label="Warnings")

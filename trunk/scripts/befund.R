@@ -212,7 +212,7 @@ bergsagel = bergsagel(exprs.external.mas5)
 load("data/pam.ec.Rdata")
 ec = sig.ec(exprs(exprs.external.gcrma))
 
-# shaughnessy molecular classification
+# zhan molecular classification
 load("data/pam.sh_red.Rdata")
 genes.sh.mol = unique(read.csv2("data/shmol.txt", sep="", header=F, as.is=T)$V1)
 shmol = sig.sh(as.matrix(exprs(exprs.external.gcrma)[genes.sh.mol,]))
