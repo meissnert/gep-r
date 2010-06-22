@@ -3,8 +3,8 @@
 = Installation of GEP-R =
 
 == Required ==
- * Linux Operating System (e.g. [http://www.opensuse.org openSUSE] - GEP-R is developed within openSUSE 11.2 64-Bit)
- * [http://www.r-project.org R]/[http://www.bioconductor.org Bioconductor] Version 2.10/2.5 
+ * Linux Operating System (e.g. [http://www.opensuse.org openSUSE] - GEP-R is developed within openSUSE 11.2 64-Bit) or Windows (still testing)
+ * [http://www.r-project.org R]/[http://www.bioconductor.org Bioconductor] Version 2.10/2.5 or higher
  * with the following packages and their dependencies installed
   * _docval_ (get the gcrma modified version from the [http://code.google.com/p/gep-r/downloads/list Downloads] section)
   * _affy_
@@ -23,7 +23,7 @@
   * _gWidgetsRGtk2_
   * _gWidgets_
  * pdftk [http://www.accesspdf.com/pdftk/index.html], a RPM for openSUSE 11.2 64-Bit you will find here [http://download.opensuse.org/repositories/home:/aljex/openSUSE_11.2/x86_64/]
- * Adobe Acrobat Reader
+ * Evince PDF Viewer (or any other PDF Vierwer, this can be changed within the source code)
 
 
 == Getting GEP-R ==
@@ -35,3 +35,12 @@ To run GEP-R change to the folder containing your local copy of the GEP-R code a
 {{{source("gBefund.R")}}}
 
 to get GEP-R running.
+
+
+== Notes on Windows Installation ==
+
+Please install first:
+  * pdftk for Windows [http://www.accesspdf.com/pdftk/index.html]
+  * ImageMagick for Windows [http://www.imagemagick.org/script/binary-releases.php?ImageMagick=r4fc8getv5t0elkfloki7skmp0#windows]
+  * MiKTeX [http://miktex.org/] or fptex (prefered) [http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=fptex]
+  * Acroread PDF Viewver
