@@ -1,11 +1,11 @@
-# load required librarys
-require(docval)
-require(panp)
-require(gdata)
-
-# ---------------------------------------------------------------------------
 # load gcrma reference data
-load("data/params.befund.Rdata") # report reference gcrma parmameter params
+if (svalue(probe.ampl) == "single amplification") {
+	load("data/sh.params.report.Rdata") # report sh reference gcrma parmameter  
+	params = sh.params
+}
+if (svalue(probe.ampl) == "double amplification") {
+	load("data/params.befund.Rdata") # report reference gcrma parmameter 
+}
 
 # external patient preprocessing
 external = ReadAffy(filenames=cel.file)
@@ -23,13 +23,15 @@ exprs.external.mas5 = mas5(external)
 # -------------------------------------------------------------------------
 # Qualitycontrol
 # -------------------------------------------------------------------------
-require(affydata)
-#require(MAQCsubsetAFX)
-require(affyQCReport)
-require(affyPLM)
-load("data/qc.ref.Rdata") # load myeloma reference chips for qc
-source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
-
+if (svalue(probe.ampl) == "single amplification") {
+	load("data/qc.ref.sh.Rdata")  # load myeloma reference chips for qc
+	# source("scripts/qc_gcrma.sh.R") # does not exist yet
+	source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
+}
+if (svalue(probe.ampl) == "double amplification") {
+	load("data/qc.ref.Rdata") # load myeloma reference chips for qc
+	source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
+}
 # qc summary statistics
 qc.data = merge.AffyBatch(qc.ref, external) # combine sample + referece to affybatch object
 qc.data.norm = gcrma(qc.data) # gcrma 	
@@ -111,8 +113,13 @@ if(system=="Linux") {
 }
 
 if(system=="Windows") {
-	# conversion within windows ...
-	# imagemagic windows version has to be installed, more to come here soon....!!!
+	shell("convert temp/qualityplot.png temp/qualityplot.gif")
+	shell("convert temp/qcsummary.png temp/qcsummary.gif")
+	shell("convert temp/nuse_rle.png temp/nuse_rle.gif")
+	shell("convert temp/artifacts.png temp/artifacts.gif")
+	shell("convert temp/spikein_performance.png temp/spikein_performance.gif")
+	shell("convert temp/degredation.png temp/degredation.gif")
+	shell("convert temp/degredation.png temp/degredation.gif")
 }
 
 # -------------------------------------------------------------------------
