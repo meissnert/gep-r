@@ -162,7 +162,7 @@ my.repplot = function(data, cex=1, main = "Myeloma reference reproducibility") {
 
 # function taken from the simpleaffy package (plot.qc.stats() function) and modified for gcrma preprocessing
 # scale factors taken out
-my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 2.3, ba.thresh = 5.2, present.thresh=10, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
+my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.thresh = 2.3, ba.thresh = 5.2, present.thresh=8, bg.thresh=20, label=NULL, main="QC Stats", usemid=F, spread=c(-8,8), cex=1,...) {
   old.par <- par()
   par(mai=c(0,0,0,0))
   # sfs    <- log2(sfs(x))

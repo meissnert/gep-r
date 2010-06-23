@@ -1,9 +1,26 @@
+system = Sys.info()[1] # what system is installed?
+
+# ------------------------------------------------------------------------------------------------
+#
+# Load Libraries
+#
+# ------------------------------------------------------------------------------------------------
 require(gWidgets)
 options("guiToolkit"="RGtk2")
 
-# get system-information for systemspecific adaptions
-# .. what about "not supported" systems?? stop from running the software... more comin soon...
-system = Sys.info()[1]
+require(docval)
+require(panp)
+require(gdata)
+require(affydata)
+#require(MAQCsubsetAFX)
+require(affyQCReport)
+require(affyPLM)
+
+# load packages for db-support, note: works only within linux
+if (system == "Linux") {
+	require(pgUtils)
+	require(maDB)
+	} 
 
 # ------------------------------------------------------------------------------------------------
 #
@@ -13,9 +30,11 @@ system = Sys.info()[1]
 lang = "english" # default language for pdf report is english, you can also change to "german"
 				 # note: this changes only the language of the pdf, gui is always in english
 
-require(pgUtils)
 db.support = FALSE # change to true for enabling psql database support, 
 				  # make sure the sql server is running and you have created the gepr and madb database!!!
+				  # note: works only within Linux
+				  
+probe.ampl = "double amplification"  # single amplification still in development, so this is set to double until single is done..
 				  
 
 # ------------------------------------------------------------------------------------------------
@@ -50,18 +69,26 @@ saveHandler = function(h, ...) {
 	# save all cel-file associated variables in a list 
 	# create a directory, copy imagages and r-object with variables there
 
-	# create dir with name of celfile within the save directory
-	# if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
-	if(!file.exists(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""))) dir.create(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")) # get rid of brackets within filenames
-	# copy .gif files from temp to the save folder, overwrite all existing files
-	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
-	file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
-	# copy .png files from temp to the save folder, overwrite all existing files
-	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
-	file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T) 
-	# copy .pdf files from temp to the save folder, overwrite all existing files
-	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
-	# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+	if (system == "Linux") {
+		# create dir with name of celfile within the save directory
+		# if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
+		if(!file.exists(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""))) dir.create(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")) # get rid of brackets within filenames
+		# copy .gif files from temp to the save folder, overwrite all existing files
+		# file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+		file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+		# copy .png files from temp to the save folder, overwrite all existing files
+		# file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+		file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T) 
+		# copy .pdf files from temp to the save folder, overwrite all existing files
+		# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", svalue(cel.label), sep=""), overwrite=T) 
+		# file.copy(paste("temp/", dir("temp/"), sep="")[grep("pdf", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+	}
+	
+	if (system == "Windows") {
+		if(!file.exists(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""))) dir.create(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")) # get rid of brackets within filenames
+		file.copy(paste("temp/", dir("temp/"), sep="")[grep("gif", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T)
+		file.copy(paste("temp/", dir("temp/"), sep="")[grep("png", paste("temp/", dir("temp/"), sep=""))], paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""), overwrite=T) 
+	}
 	
 	# save the "inputs"
 	save = list(
@@ -121,7 +148,7 @@ saveHandler = function(h, ...) {
 
 	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "was saved!", sep=" ")
 	
-	if(db.support == TRUE) {
+	if(db.support == TRUE & system == "Linux") {
 		savedbHanlder()
 		madbHandler()
 	} # save values to database
@@ -132,15 +159,16 @@ loadHandler = function(h, ...) {
 	# load the selected r-object,(befund) 
 	# copy the save images to the temp folder
 
-	              gfile(text="Please choose a report-object to load...", 
-			    type="open", 
-			    action = function(h, ...) {print(h)
-						       load(h, envir=.GlobalEnv)
-						       },
-			    filter=list("report-objects"=list(patterns=c("*.report"))),
-			    cont=file,			
-			    handler = function(h, ...) {do.call(h$action, list(h$file))}
-			    )	
+	gfile(text="Please choose a report-object to load...", 
+		  type="open", 
+		  action = function(h, ...) {
+			print(h)
+		    load(h, envir=.GlobalEnv)
+		  },
+		  filter=list("report-objects"=list(patterns=c("*.report"))),
+		  cont=file,			
+		  handler = function(h, ...) {do.call(h$action, list(h$file))}
+	)	
 
 	# set the values in the input boxes
 	svalue(cel.label) = save$cel
@@ -179,12 +207,19 @@ loadHandler = function(h, ...) {
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 	
 	# copy images
-	# copy .gif files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
-	# copy .pdf files from save to the temp folder, overwrite all existing files
-	# file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
-	# copy .png files from save to the temp folder, overwrite all existing files
-	file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("png", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+	if (system == "Linux") {
+		# copy .gif files from save to the temp folder, overwrite all existing files
+		file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+		# copy .pdf files from save to the temp folder, overwrite all existing files
+		# file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("pdf", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+		# copy .png files from save to the temp folder, overwrite all existing files
+		file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("png", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
+	}
+	
+	if (system == "Windows") {
+		file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp", overwrite=T, recursiv=T) 
+		file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("png", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp", overwrite=T, recursiv=T) 
+	}
 
 	# call handlers
 	identHandler()			# printout ic, nb right
@@ -206,41 +241,46 @@ loadHandler = function(h, ...) {
 
 # open File Handler
 chooseFile = function(h, ...) {
-	              gfile(text="Please choose a CEL-File to load...", 
-			    type="open", 
-			    action = function(h, ...) {print(h)
-						       cel.file = print(h)
-						       assign("cel.file", cel.file, envir=.GlobalEnv)
-
-						       clearGUIHandler() # clear all "old" entries within the gui
-
-						       svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]
-						       svalue(sb) = "The analysis can now be started!"
-						       enabled(file.analyse)="TRUE" # enables run analysis button
-						       },
-			    filter=list("CEL-Files"=list(patterns=c("*.CEL"))),
-			    cont=file,			
-			    handler = function(h, ...) {do.call(h$action, list(h$file))}
-	)
+	gfile(text="Please choose a CEL-File to load...", 
+	     type="open", 
+	     action = function(h, ...) {
+			print(h)
+			cel.file = print(h)
+			assign("cel.file", cel.file, envir=.GlobalEnv)
+  	        clearGUIHandler() # clear all "old" entries within the gui
+			if(system == "Linux" ) {svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]}
+			if(system == "Windows" ) {svalue(cel.label) =  unlist((strsplit(cel.file, "\\", fixed=T)))[length(unlist((strsplit(cel.file, "\\", fixed=T))))]}
+			svalue(sb) = "The analysis can now be started!"
+			enabled(file.analyse)="TRUE" # enables run analysis button
+		 },
+		 filter=list("CEL-Files"=list(patterns=c("*.CEL"))),
+		 cont=file,			
+		 handler = function(h, ...) {do.call(h$action, list(h$file))}
+		 )
 }
 
 # start analyse handler
 runAnalysis = function(h, ...) {
-	svalue(sb) = "Analysis is running ... please be patient!"         # <<-- das will noch nicht sorecht, vermutlich ausglidern und vor ranAnalysis() ausführen
-	source("scripts/befund.R")	# run the analysis
-	identHandler()			# ausgabe ic, nb rechts
-	riskHandler()			# ausgabe risk, nb rechts
-	geneHandler()			# ausgabe gene, nb rechts
-	qctableHandler()		# ausgabe qc, rechts
-	enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
-	enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
-	enabled(befund) = "TRUE"	# befund aktivieren
-	enabled(tbl.beurteilung) = "TRUE" # beurteilung aktiveiren
-	enabled(file.integrity)="TRUE"  # activate integrity check button
-	enabled(file.ignore)="TRUE"	# activate ignore integrity check button
-	saveHandler()			# speichern
-	svalue(sb) = "Analysis done & saved!"
+	# check if amplification method is set to single or double
+	if (svalue(probe.ampl) == "single amplification" | svalue(probe.ampl) == "double amplification") {
+		svalue(sb) = "Analysis is running ... please be patient!"         # <<-- das will noch nicht sorecht, vermutlich ausglidern und vor ranAnalysis() ausführen
+		source("scripts/befund.R")	# run the analysis
+		identHandler()			# ausgabe ic, nb rechts
+		riskHandler()			# ausgabe risk, nb rechts
+		geneHandler()			# ausgabe gene, nb rechts
+		qctableHandler()		# ausgabe qc, rechts
+		enabled(qc) = "TRUE"		# qualitätskontrolle anzeige einschalten
+		enabled(tables) = "TRUE"	# ergebnisse gene usw. einschalten..
+		enabled(befund) = "TRUE"	# befund aktivieren
+		enabled(tbl.beurteilung) = "TRUE" # beurteilung aktiveiren
+		enabled(file.integrity)="TRUE"  # activate integrity check button
+		enabled(file.ignore)="TRUE"	# activate ignore integrity check button
+		saveHandler()			# speichern
+		svalue(sb) = "Analysis done & saved!"
+	} else {
+		svalue(sb) ="Please select an RNA Amplification Protocoll within the Sample-Information tab!"
 	}
+}
 
 # clear info within the gui prior to loading a new cel-file or *.befund
 clearGUIHandler = function(h, ...) {
@@ -756,8 +796,23 @@ pdfHandler = function(h, ...) {
 	}
 	
 	if(system=="Windows") {
-		# note: there is a pdftk version vor windows, but still have other problems with the windows version...
-		svalue(sb) = "Creating the PDF within windows is not yet supportet!"
+		if (lang=="english") {
+			Sweave("scripts/befund_en.Rnw")
+			shell("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
+			shell(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
+			shell(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"
+		}
+		
+		if (lang=="german") {
+			Sweave("scripts/befund.Rnw")
+			system("R CMD pdflatex befund.tex") # create pdf from tex file, german
+			system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"	
+		}	
 	}	
 }
 
@@ -768,7 +823,7 @@ viewpdfHandler = function(h, ...) {
 	}
 
 	if(system=="Windows") {
-		svalue(sb) = "Opening the PDF within windows is not yet supportet!"
+		system(paste("acroread", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
 	}
 }
 
@@ -828,7 +883,7 @@ savedbHanlder = function(h, ...) {
 # update information within the database
 updatedbHandler = function(h, ...) {
 	# open connection to the database
-	require(pgUtils)
+	#require(pgUtils)
 	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="gepr")
 
 	dbSendQuery(con, paste("UPDATE celfile SET name = '", svalue(p.name), "'", " WHERE cel = '", svalue(cel.label), "'", sep=""))
@@ -864,7 +919,7 @@ updatedbHandler = function(h, ...) {
 # madb handler --> writes the geneexpression profile to the madb database
 # this is experementell and not really working yet!!!!
 madbHandler = function(h, ...) {
-	require(maDB)
+	
 	source("scripts/madb_mod.R") # overwrites original publishToDB function and enables to write expr set to the same experiment eacht time, still neeeds extensive testing..
 	# open connection to the database
 	con <- dbConnect(PgSQL(), host="localhost", user="postgres", dbname="madb")
@@ -1026,6 +1081,7 @@ tbl.probe[7,1] = "Array-Type"
 tbl.probe[7,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
 tbl.probe[8,1] = "RNA Purification Protokoll"
 tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
+# tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "single amplification", "double amplification"), cont=tbl.probe))
 tbl.probe[9,1] = "Preprocessing Method"
 tbl.probe[9,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
 
