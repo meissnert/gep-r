@@ -1,5 +1,10 @@
 system = Sys.info()[1] # what system is installed?
 
+# does it work on mac too? lets test..
+if (system == "Darwin") {
+	system == "Linux"
+}
+
 # ------------------------------------------------------------------------------------------------
 #
 # Load Libraries
@@ -34,7 +39,9 @@ db.support = FALSE # change to true for enabling psql database support,
 				  # make sure the sql server is running and you have created the gepr and madb database!!!
 				  # note: works only within Linux
 				  
-probe.ampl = "double amplification"  # single amplification still in development, so this is set to double until single is done..
+set.probe.ampl = "double amplification"  # single amplification still in development, so this is set to double until single is done..
+set.probe.array = "Affymetrix U133 plus 2.0"
+set.probe.norm = "GC-RMA"
 				  
 
 # ------------------------------------------------------------------------------------------------
@@ -128,7 +135,7 @@ saveHandler = function(h, ...) {
 	# save variables as a r-object with the ending *.report
 	tosave = c("save", "bergsagel", "decaux", "ec", "gpi", "qc.obj", "t414",
 		   "lightchain", "sex", "shaughnessy", "shrisk", "type", "nr.genes",
-		   "aurka", "aurka.signal", "shmol",
+		   "aurka", "aurka.signal", "shmol", "Zs",
 		   "ctag1",  "ctag1.signal", 
 		   "cyclind1", "cyclind1.signal", 
 		   "cyclind2", "cyclind2.signal",
@@ -341,7 +348,7 @@ identHandler = function(h, ...) {
 
 # risk stratification
 riskHandler = function(h, ...) {
-	risktable[1][[1]] = as.character("IFM 15-gene model")
+	risktable[1][[1]] = as.character("IFM 15-gene risk score")
 	risktable[1][[2]] = as.character(decaux$decaux.risk)
 	risktable[1][[3]] = as.character("[high;low]")
 
@@ -349,33 +356,37 @@ riskHandler = function(h, ...) {
 	#risktable[2][[2]] = as.character(shaughnessy$predicted.abs)
 	#risktable[2][[3]] = as.character("[high;medium;low]")
 	
-	risktable[2][[1]] = as.character("Shaughnessy 70-gene-risk-score")
+	risktable[2][[1]] = as.character("UAMMS 70-gene risk score")
 	risktable[2][[2]] = as.character(shaughnessy$predicted.sqrt)
 	risktable[2][[3]] = as.character("[high;medium;low]")
 
-	risktable[3][[1]] = as.character("Shaughnessy 17-gene-risk-score")
+	risktable[3][[1]] = as.character("UAMMS 17-gene risk score")
 	risktable[3][[2]] = as.character(shaughnessy$predicted17)
 	risktable[3][[3]] = as.character("[high;low]")
+	
+	risktable[4][[1]] = as.character("Zs score")
+	risktable[4][[2]] = as.character(Zs)
+	risktable[4][[3]] = as.character("[high;medium;low]")
 
-	risktable[4][[1]] = as.character("Bergsagel TC classification")
-	risktable[4][[2]] = as.character(bergsagel)[1]                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
-	risktable[4][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
+	risktable[5][[1]] = as.character("TC classification")
+	risktable[5][[2]] = as.character(bergsagel)[1]                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
+	risktable[5][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
-	risktable[5][[1]] = as.character("Hose EC classification")
-	risktable[5][[2]] = as.character(ec)
-	risktable[5][[3]] = as.character("[11;12;21;22]")
+	risktable[6][[1]] = as.character("EC classification")
+	risktable[6][[2]] = as.character(ec)
+	risktable[6][[3]] = as.character("[11;12;21;22]")
 
-	risktable[6][[1]] = as.character("Zahn molecular classification")
-	risktable[6][[2]] = as.character(shmol)
-	risktable[6][[3]] = as.character("[HP,CD1,CD2,PR,CB,MS,MF]")
+	risktable[7][[1]] = as.character("Molecular classification")
+	risktable[7][[2]] = as.character(shmol)
+	risktable[7][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
 
-	risktable[7][[1]] = as.character("GPI")
-	risktable[7][[2]] = as.character(gpi)
-	risktable[7][[3]] = as.character("[high;medium;low]")
-
-	risktable[8][[1]] = as.character("Translocation t(4;14)")
-	risktable[8][[2]] = as.character(t414)
-	risktable[8][[3]] = as.character("[yes;no]")
+	risktable[8][[1]] = as.character("GPI")
+	risktable[8][[2]] = as.character(gpi)
+	risktable[8][[3]] = as.character("[high;medium;low]")
+	
+	risktable[9][[1]] = as.character("Translocation t(4;14)")
+	risktable[9][[2]] = as.character(t414)
+	risktable[9][[3]] = as.character("[yes;no]")
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -1080,10 +1091,16 @@ tbl.probe[6,3] = "ng"
 tbl.probe[7,1] = "Array-Type"
 tbl.probe[7,2, expand=FALSE] = (probe.array = gdroplist(items=c("", "Affymetrix U133 plus 2.0"), cont=tbl.probe))
 tbl.probe[8,1] = "RNA Purification Protokoll"
-tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
-# tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "single amplification", "double amplification"), cont=tbl.probe))
+# tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "double amplification"), cont=tbl.probe))
+tbl.probe[8,2, expand=FALSE] = (probe.ampl = gdroplist(items=c("", "single amplification", "double amplification"), cont=tbl.probe))
 tbl.probe[9,1] = "Preprocessing Method"
 tbl.probe[9,2, expand=FALSE] = (probe.norm = gdroplist(items=c("", "GC-RMA"), cont=tbl.probe))
+
+###
+svalue(probe.ampl) = set.probe.ampl # until single ampl. is fully integrated
+svalue(probe.array) = set.probe.array
+svalue(probe.norm) = set.probe.norm
+###
 
 # individual comments
 # create the widgets
@@ -1178,7 +1195,7 @@ nb.right = gnotebook(cont=pg)
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IgH_type="", IgL_type="", stringsAsFactors=FALSE), cont=tables)
-risktable = gtable(data.frame(Method=rep("",8), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+risktable = gtable(data.frame(Method=rep("",9), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
 genetable= gtable(data.frame(Gene=rep("",13), 
 			     Probeset="", 
 			     Pat.Sig.="", 
