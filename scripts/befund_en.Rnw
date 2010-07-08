@@ -165,7 +165,7 @@ IgL-type & \Sexpr{lightchain} & [lambda, kappa]  \tabularnewline \hline
  & Classification & Range \tabularnewline \hline \hline
 Bergsagel TC (Bergsagel, 2005) & \Sexpr{bergsagel} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
 Hose EC (Hose et al., 2005) & \Sexpr{ec} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
-Zahn Molecular Class. (Zahn et al, 2006) & \Sexpr{shmol} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
+Zhan Molecular Class. (Zahn et al, 2006) & \Sexpr{shmol} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
 \end{tabular}
 
 \pagebreak
@@ -185,6 +185,7 @@ IFM-score (Decaux et al., 2008) &  \Sexpr{decaux$decaux.risk} & [high, low] \tab
 70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{shaughnessy$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
 %Shaughnessy 17-GenesPredictor & \Sexpr{shaughnessy$predicted17} & [high, low] \tabularnewline \hline
 Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{gpi} & [high, medium, low] \tabularnewline \hline 
+Zs-Score (Reme et al., 2010) & \Sexpr{Zs} & [high, medium, low] \tabularnewline \hline
 \end{tabular}
 
 \vspace{1cm}
@@ -213,7 +214,7 @@ FGFR3 & 204379\_s\_at & \Sexpr{fgfr3.signal} & \Sexpr{fgfr3} & \Sexpr{fgfr3.bmpc
 MMSET & 209053\_s\_at & \Sexpr{mmset.signal} & \Sexpr{mmset} & \Sexpr{mmset.bmpc.signal} & \Sexpr{p.mmset.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{mmset.mmc.signal} & \Sexpr{p.mmset.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Targets for immun-theraphy}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Targets for immun-therapy}} \tabularnewline \hline \hline
 
 MAGEA1 & 207325\_x\_at & \Sexpr{magea1.signal} & \Sexpr{magea1} & \Sexpr{magea1.bmpc.signal} & \Sexpr{p.magea1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea1.mmc.signal} & \Sexpr{p.magea1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
  
