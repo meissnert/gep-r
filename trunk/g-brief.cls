@@ -214,7 +214,7 @@
 \def\IhrZeichen#1{\def\ihrzeichen{#1}} \def\ihrzeichen{}
 \def\IhrSchreiben#1{\def\ihrschreiben{#1}} \def\ihrschreiben{}
 \def\MeinZeichen#1{\def\meinzeichen{#1}} \def\meinzeichen{}
-\def\Datum#1{\def\datum{#1}} \def\datum{\today}
+%\def\Datum#1{\def\datum{#1}} \def\datum{\today}
 
 \def\Betreff#1{\def\betreff{#1}} \def\betreff{}
 
@@ -270,11 +270,11 @@
   \makebox[55.0mm][l]{\ihrschreibentext} \ifunserzeichen
   \makebox[20.0mm][l]{\unserzeichentext} \else
   \makebox[20.0mm][l]{\meinzeichentext} \fi \fi
-  \makebox[37.0mm][r]{\datumtext} \\
+% \makebox[37.0mm][r]{\datumtext} \\
   \makebox[45.5mm][l]{\ihrzeichen}
   \makebox[55.0mm][l]{\ihrschreiben}
   \makebox[20.0mm][l]{\meinzeichen}
-  \makebox[37.0mm][r]{\datum} \par
+%  \makebox[37.0mm][r]{\datum} \par
 
   \vspace{8mm}
 

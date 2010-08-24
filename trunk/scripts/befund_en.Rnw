@@ -32,7 +32,8 @@
 \begin{document}
 \begin{g-brief}
 % 1. page
-\ThisCenterWallPaper{1}{data/Logo.pdf} % replace logo.pdf with your own layout
+%\ThisCenterWallPaper{1}{data/Logo.pdf} % replace logo.pdf with your own layout
+\ThisCenterWallPaper{1}{data/Logo_hd.pdf} % replace logo.pdf with your own layout
 
 % patient information
 \line(1,0){170} \\ \\
@@ -60,7 +61,7 @@ CD-138 purity (flow cytometry)\footnote{Test}: & \Sexpr{svalue(probe.purity.facs
 CD-138 purity (iFISH)\footnote{Test}: & \Sexpr{svalue(probe.purity.fish)} \% \tabularnewline
 Amount of RNA used: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
 Array-Type: & \Sexpr{svalue(probe.array)} \tabularnewline
-Amount of analyzed probesets: & \Sexpr{nr.genes} \tabularnewline
+Amount of analyzed probesets: & \Sexpr{process.res$genes} \tabularnewline
 Amount of analyzed genes and ESTs: & ca. 39 000 \tabularnewline
 RNA amplification protocoll: & \Sexpr{svalue(probe.ampl)} \tabularnewline
 Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
@@ -70,7 +71,8 @@ Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 % begin of page 2 ...
 \pagebreak
-\CenterWallPaper{1}{data/Logo2.pdf} % replace logo2.pdf with your own layout
+%\CenterWallPaper{1}{data/Logo2.pdf} % replace logo2.pdf with your own layout
+\CenterWallPaper{1}{data/Logo2_hd.pdf} % replace logo2.pdf with your own layout
 
 % report
 \begin{large}\textbf{Report}\end{large} \\
@@ -115,8 +117,8 @@ Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \vspace{3cm}
 
 \begin{tabbing}
-Dr. med. Dipl. phys. D. Hose \hspace{6cm} \=Prof. Dr. H. Goldschmidt \\
-Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
+Prof. Dr. H. Goldschmidt \hspace{6cm} \=Dr. med. Dipl. phys. D. Hose \\
+Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
 \end{tabbing}
 
 \pagebreak
@@ -133,9 +135,15 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 \begin{large}\textbf{Quality control}\end{large} \\
 \line(1,0){170}
 \begin{center}
-\resizebox{7.5cm}{!}{\includegraphics{temp/artifacts.png}}
+\resizebox{7cm}{!}{\includegraphics{temp/qualityplot.png}}
 \hspace{1cm}
-\resizebox{7.5cm}{!}{\includegraphics{temp/qcsummary.png}}
+\resizebox{7cm}{!}{\includegraphics{temp/qcsummary.png}} \\
+\resizebox{7cm}{!}{\includegraphics{temp/nuse_rle.png}}
+\hspace{1cm}
+\resizebox{7cm}{!}{\includegraphics{temp/artifacts.png}} \\
+\resizebox{7cm}{!}{\includegraphics{temp/degredation.png}}
+\hspace{1cm}
+\resizebox{7cm}{!}{\includegraphics{temp/spikein_performance.png}}
 \end{center}
 
 \vspace{1cm}
@@ -148,9 +156,9 @@ Head, Multiple Myeloma Research Lab \> Head, Section Multiple Myeloma
 
 \begin{tabular}{ | l | c | c | } \hline
  & Prediction & Range \tabularnewline \hline \hline
-Sex & \Sexpr{sex} & [m, f] \tabularnewline \hline 
-IgH-type & \Sexpr{type} & [A, G, D] \tabularnewline \hline 
-IgL-type & \Sexpr{lightchain} & [lambda, kappa]  \tabularnewline \hline 
+Sex & \Sexpr{prediction.res[[1]]} & [m, f] \tabularnewline \hline 
+IgH-type & \Sexpr{prediction.res[[2]]} & [A, G, D] \tabularnewline \hline 
+IgL-type & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline 
 \end{tabular}
 
 \vspace{1cm}
@@ -163,12 +171,13 @@ IgL-type & \Sexpr{lightchain} & [lambda, kappa]  \tabularnewline \hline
 
 \begin{tabular}{ | l | c | c |} \hline
  & Classification & Range \tabularnewline \hline \hline
-Bergsagel TC (Bergsagel, 2005) & \Sexpr{bergsagel} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
-Hose EC (Hose et al., 2005) & \Sexpr{ec} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
-Zhan Molecular Class. (Zahn et al, 2006) & \Sexpr{shmol} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
+Bergsagel TC (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
+Hose EC (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
+Zhan Molecular Class. (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
 \end{tabular}
 
-\pagebreak
+%\pagebreak
+\vspace{1cm}
 
 % risk stratification
 \begin{large}\textbf{Risk stratification}\end{large} \\
@@ -178,18 +187,18 @@ Zhan Molecular Class. (Zahn et al, 2006) & \Sexpr{shmol} & [PR, LB, MS, HY, CD1,
 
 \begin{tabular}{ | l | c | c |} \hline
  & Stratification & Range \tabularnewline \hline \hline
-IFM-score (Decaux et al., 2008) &  \Sexpr{decaux$decaux.risk} & [high, low] \tabularnewline \hline 
-%Shaughnessy 70 Genes Abs dist. & \Sexpr{shaughnessy$predicted.abs} & [high, medium, low] \tabularnewline \hline
-%Shaughnessy 70 Genes Sqrt dist. & \Sexpr{shaughnessy$predicted.sqrt} & [high, medium, low] \tabularnewline \hline
-%Shaughnessy 70-Gene-Predictor & \Sexpr{shaughnessy$predicted.sqrt} & [high, low] \tabularnewline \hline
-70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{shaughnessy$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
-%Shaughnessy 17-GenesPredictor & \Sexpr{shaughnessy$predicted17} & [high, low] \tabularnewline \hline
-Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{gpi} & [high, medium, low] \tabularnewline \hline 
-Zs-Score (Reme et al., 2010) & \Sexpr{Zs} & [high, medium, low] \tabularnewline \hline
+%Shaughnessy 17-GenesPredictor & \Sexpr{risk.res[[5]]$predicted17} & [high, low] \tabularnewline \hline
+%Shaughnessy 70 Genes Abs dist. & \Sexpr{risk.res[[5]]$predicted.abs} & [high, medium, low] \tabularnewline \hline
+%Shaughnessy 70 Genes Sqrt dist. & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, medium, low] \tabularnewline \hline
+%Shaughnessy 70-Gene-Predictor & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, low] \tabularnewline \hline
+70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
+Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
+IFM-score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
+Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
 \end{tabular}
 
-\vspace{1cm}
-%\pagebreak
+%\vspace{1cm}
+\pagebreak
 
 % genes
 \begin{large}\textbf{Expression of selected genes and targets}\end{large} \\
@@ -203,37 +212,39 @@ Gene & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline 
 \multicolumn{8}{ | l | }{} \tabularnewline
 \multicolumn{8}{ | l | }{\textbf{Genes frequently overexpressed in Multiple Myeloma}} \tabularnewline \hline \hline
 
-Cyclin D1 & 208712\_at & \Sexpr{cyclind1.signal} & \Sexpr{cyclind1} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+Cyclin D1 & 208712\_at & \Sexpr{genes.res[[4]]} & \Sexpr{genes.res[[3]]} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-Cyclin D2 & 200953\_s\_at & \Sexpr{cyclind2.signal} & \Sexpr{cyclind2} & \Sexpr{cyclind2.bmpc.signal} & \Sexpr{p.cyclind2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind2.mmc.signal} & \Sexpr{p.cyclind2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+Cyclin D2 & 200953\_s\_at & \Sexpr{genes.res[[6]]} & \Sexpr{genes.res[[5]]} & \Sexpr{cyclind2.bmpc.signal} & \Sexpr{p.cyclind2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind2.mmc.signal} & \Sexpr{p.cyclind2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-Cyclin D3 & 201700\_at & \Sexpr{cyclind3.signal} & \Sexpr{cyclind3} & \Sexpr{cyclind3.bmpc.signal} & \Sexpr{p.cyclind3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind3.mmc.signal} & \Sexpr{p.cyclind3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+Cyclin D3 & 201700\_at & \Sexpr{genes.res[[8]]} & \Sexpr{genes.res[[7]]} & \Sexpr{cyclind3.bmpc.signal} & \Sexpr{p.cyclind3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind3.mmc.signal} & \Sexpr{p.cyclind3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-FGFR3 & 204379\_s\_at & \Sexpr{fgfr3.signal} & \Sexpr{fgfr3} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+FGFR3 & 204379\_s\_at & \Sexpr{genes.res[[10]]} & \Sexpr{genes.res[[9]]} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-MMSET & 209053\_s\_at & \Sexpr{mmset.signal} & \Sexpr{mmset} & \Sexpr{mmset.bmpc.signal} & \Sexpr{p.mmset.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{mmset.mmc.signal} & \Sexpr{p.mmset.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+MMSET & 209053\_s\_at & \Sexpr{genes.res[[12]]} & \Sexpr{genes.res[[11]]} & \Sexpr{mmset.bmpc.signal} & \Sexpr{p.mmset.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{mmset.mmc.signal} & \Sexpr{p.mmset.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+TP53 & 201746\_at & \Sexpr{genes.res[[16]]} & \Sexpr{genes.res[[15]]} & \Sexpr{tp53.bmpc.signal} & \Sexpr{p.tp53.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{tp53.mmc.signal} & \Sexpr{p.tp53.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \multicolumn{8}{ | l | }{} \tabularnewline
 \multicolumn{8}{ | l | }{\textbf{Targets for immun-therapy}} \tabularnewline \hline \hline
 
-MAGEA1 & 207325\_x\_at & \Sexpr{magea1.signal} & \Sexpr{magea1} & \Sexpr{magea1.bmpc.signal} & \Sexpr{p.magea1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea1.mmc.signal} & \Sexpr{p.magea1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
- 
-MAGEA3 & 209942\_x\_at & \Sexpr{magea3.signal} & \Sexpr{magea3} & \Sexpr{magea3.bmpc.signal} & \Sexpr{p.magea3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea3.mmc.signal} & \Sexpr{p.magea3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
- 
-CTAG1 & 210546\_x\_at & \Sexpr{ctag1.signal} & \Sexpr{ctag1} & \Sexpr{ctag1.bmpc.signal} & \Sexpr{p.ctag1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ctag1.mmc.signal} & \Sexpr{p.ctag1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+CTAG1 & 210546\_x\_at & \Sexpr{genes.res[[22]]} & \Sexpr{genes.res[[21]]} & \Sexpr{ctag1.bmpc.signal} & \Sexpr{p.ctag1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ctag1.mmc.signal} & \Sexpr{p.ctag1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-SSX2 & 210497\_x\_at & \Sexpr{ssx2.signal} & \Sexpr{ssx2} & \Sexpr{ssx2.bmpc.signal} & \Sexpr{p.ssx2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ssx2.mmc.signal} & \Sexpr{p.ssx2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+HM1.24/BST2 & 201641\_at & \Sexpr{genes.res[[26]]} & \Sexpr{genes.res[[25]]} & \Sexpr{hm124.bmpc.signal} & \Sexpr{p.hm124.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{hm124.mmc.signal} & \Sexpr{p.hm124.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-HM1.24/BST2 & 201641\_at & \Sexpr{hm124.signal} & \Sexpr{hm124} & \Sexpr{hm124.bmpc.signal} & \Sexpr{p.hm124.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{hm124.mmc.signal} & \Sexpr{p.hm124.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+MAGEA1 & 207325\_x\_at & \Sexpr{genes.res[[18]]} & \Sexpr{genes.res[[17]]} & \Sexpr{magea1.bmpc.signal} & \Sexpr{p.magea1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea1.mmc.signal} & \Sexpr{p.magea1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
  
-MUC1 & 213693\_s\_at & \Sexpr{muc1.signal} & \Sexpr{muc1} & \Sexpr{muc1.bmpc.signal} & \Sexpr{p.muc1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{muc1.mmc.signal} & \Sexpr{p.muc1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+MAGEA3 & 209942\_x\_at & \Sexpr{genes.res[[20]]} & \Sexpr{genes.res[[19]]} & \Sexpr{magea3.bmpc.signal} & \Sexpr{p.magea3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{magea3.mmc.signal} & \Sexpr{p.magea3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+ 
+MUC1 & 213693\_s\_at & \Sexpr{genes.res[[28]]} & \Sexpr{genes.res[[27]]} & \Sexpr{muc1.bmpc.signal} & \Sexpr{p.muc1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{muc1.mmc.signal} & \Sexpr{p.muc1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+SSX2 & 210497\_x\_at & \Sexpr{genes.res[[24]]} & \Sexpr{genes.res[[23]]} & \Sexpr{ssx2.bmpc.signal} & \Sexpr{p.ssx2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ssx2.mmc.signal} & \Sexpr{p.ssx2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline 
 
 \multicolumn{8}{ | l | }{} \tabularnewline
 \multicolumn{8}{ | l | }{\textbf{Targets for risk adapted treatment}} \tabularnewline \hline \hline
 
-Aurorakinase A & 208079\_s\_at & \Sexpr{aurka.signal} & \Sexpr{aurka} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+Aurora-kinase A & 208079\_s\_at & \Sexpr{genes.res[[2]]} & \Sexpr{genes.res[[1]]} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
-IGF1R & 225330\_at & \Sexpr{igf1r.signal} & \Sexpr{igf1r} & \Sexpr{igf1r.bmpc.signal} & \Sexpr{p.igf1r.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{igf1r.mmc.signal} & \Sexpr{p.igf1r.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+IGF1R & 225330\_at & \Sexpr{genes.res[[14]]} & \Sexpr{genes.res[[13]]} & \Sexpr{igf1r.bmpc.signal} & \Sexpr{p.igf1r.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{igf1r.mmc.signal} & \Sexpr{p.igf1r.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \end{tabular}
 
