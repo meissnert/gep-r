@@ -163,22 +163,6 @@ IgL-type & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline
 
 \vspace{1cm}
 
-% molecular classification
-\begin{large}\textbf{(Molecular) Classification}\end{large} \\
-\line(1,0){170}
-
-\vspace{0.5cm}
-
-\begin{tabular}{ | l | c | c |} \hline
- & Classification & Range \tabularnewline \hline \hline
-Bergsagel TC (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
-Hose EC (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
-Zhan Molecular Class. (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
-\end{tabular}
-
-%\pagebreak
-\vspace{1cm}
-
 % risk stratification
 \begin{large}\textbf{Risk stratification}\end{large} \\
 \line(1,0){170}
@@ -191,10 +175,26 @@ Zhan Molecular Class. (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, 
 %Shaughnessy 70 Genes Abs dist. & \Sexpr{risk.res[[5]]$predicted.abs} & [high, medium, low] \tabularnewline \hline
 %Shaughnessy 70 Genes Sqrt dist. & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, medium, low] \tabularnewline \hline
 %Shaughnessy 70-Gene-Predictor & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, low] \tabularnewline \hline
-70-gene-high-risk-score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
+UAMMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
+IFM 15-gene risk score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
 Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
-IFM-score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
-Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
+% Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
+\end{tabular}
+
+%\pagebreak
+\vspace{1cm}
+
+% molecular classification
+\begin{large}\textbf{(Molecular) Classification}\end{large} \\
+\line(1,0){170}
+
+\vspace{0.5cm}
+
+\begin{tabular}{ | l | c | c |} \hline
+ & Classification & Range \tabularnewline \hline \hline
+EC classification (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
+Molecular classification (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
+TC classification (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
 \end{tabular}
 
 %\vspace{1cm}
@@ -217,8 +217,6 @@ Cyclin D1 & 208712\_at & \Sexpr{genes.res[[4]]} & \Sexpr{genes.res[[3]]} & \Sexp
 Cyclin D2 & 200953\_s\_at & \Sexpr{genes.res[[6]]} & \Sexpr{genes.res[[5]]} & \Sexpr{cyclind2.bmpc.signal} & \Sexpr{p.cyclind2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind2.mmc.signal} & \Sexpr{p.cyclind2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 Cyclin D3 & 201700\_at & \Sexpr{genes.res[[8]]} & \Sexpr{genes.res[[7]]} & \Sexpr{cyclind3.bmpc.signal} & \Sexpr{p.cyclind3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind3.mmc.signal} & \Sexpr{p.cyclind3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
-
-FGFR3 & 204379\_s\_at & \Sexpr{genes.res[[10]]} & \Sexpr{genes.res[[9]]} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 MMSET & 209053\_s\_at & \Sexpr{genes.res[[12]]} & \Sexpr{genes.res[[11]]} & \Sexpr{mmset.bmpc.signal} & \Sexpr{p.mmset.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{mmset.mmc.signal} & \Sexpr{p.mmset.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
@@ -243,6 +241,8 @@ SSX2 & 210497\_x\_at & \Sexpr{genes.res[[24]]} & \Sexpr{genes.res[[23]]} & \Sexp
 \multicolumn{8}{ | l | }{\textbf{Targets for risk adapted treatment}} \tabularnewline \hline \hline
 
 Aurora-kinase A & 208079\_s\_at & \Sexpr{genes.res[[2]]} & \Sexpr{genes.res[[1]]} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
+
+FGFR3 & 204379\_s\_at & \Sexpr{genes.res[[10]]} & \Sexpr{genes.res[[9]]} & \Sexpr{fgfr3.bmpc.signal} & \Sexpr{p.fgfr3.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{fgfr3.mmc.signal} & \Sexpr{p.fgfr3.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 IGF1R & 225330\_at & \Sexpr{genes.res[[14]]} & \Sexpr{genes.res[[13]]} & \Sexpr{igf1r.bmpc.signal} & \Sexpr{p.igf1r.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{igf1r.mmc.signal} & \Sexpr{p.igf1r.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
