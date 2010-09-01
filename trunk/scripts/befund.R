@@ -262,18 +262,19 @@ gepr.risk = function() {
 	shmol = sig.sh(as.matrix(exprs(process.res$gcrma)[genes.sh.mol,]))
 
 	# s_score + Zs_grouping
-	load("data/image_hm_bg.Rdata")
-	exprs.external.zscore = wrap.val.add(external, params.zscore, method="gcrma")
-	don = data.frame(exprs(exprs.external.zscore))
+	#load("data/image_hm_bg.Rdata")
+	#exprs.external.zscore = wrap.val.add(external, params.zscore, method="gcrma")
+	#don = data.frame(exprs(exprs.external.zscore))
 	#colnames(don) = cel.file
-	s = 0
-	for (j in 1:length(bad)) {
-		s = s+as.numeric(don[bad[j],1])
-	}
-	for (j in 1:length(good)) {
-		s = s-as.numeric(don[good[j],1])
-	}   
-	Zs = ifelse(s>232.4080,"high risk",ifelse(s<=162.2643,"low risk","medium risk"))
+	#s = 0
+	#for (j in 1:length(bad)) {
+	#	s = s+as.numeric(don[bad[j],1])
+	#}
+	#for (j in 1:length(good)) {
+	#	s = s-as.numeric(don[good[j],1])
+	#}   
+	#Zs = ifelse(s>232.4080,"high risk",ifelse(s<=162.2643,"low risk","medium risk"))
+	Zs = "not supported yet"
 	
 	return(list(Zs, shmol, ec, bergsagel, shaughnessy, decaux, gpi))
 }

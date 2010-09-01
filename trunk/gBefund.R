@@ -22,7 +22,7 @@ db.support = FALSE
 set.probe.ampl = "double amplification"
 set.probe.array = "Affymetrix U133 plus 2.0"
 set.probe.norm = "GCRMA"
-multicore = "yes" #"no"
+multicore = "no" # "yes"
 
 system = Sys.info()[1] # what system is installed?
 
@@ -439,7 +439,7 @@ geneHandler = function(h, ...) {
 	genetable[2][[5]] = as.character(cyclind1.bmpc.signal)
 	genetable[2][[6]] = as.character(round(p.cyclind1.bmpc/10*100, 1))
 	genetable[2][[7]] = as.character(cyclind1.mmc.signal)
-	genetable[2][[8]] = as.character(round(p.cyclind1.mmc/332*100, 1))
+	genetable[2][[8]] = as.character(round(p.cyclind1.mmc/262*100, 1))
 	genetable[2][[9]] = overexpression(genes.res[[4]], genes.res[[3]], cyclind1.bmpc.signal, cyclind1.bmpc.sd, p.cyclind1.bmpc)
 
 	genetable[3][[1]] = as.character("\tCyclin D2")
@@ -449,7 +449,7 @@ geneHandler = function(h, ...) {
 	genetable[3][[5]] = as.character(cyclind2.bmpc.signal)
 	genetable[3][[6]] = as.character(round(p.cyclind2.bmpc/10*100, 1))
 	genetable[3][[7]] = as.character(cyclind2.mmc.signal)
-	genetable[3][[8]] = as.character(round(p.cyclind2.mmc/332*100, 1))
+	genetable[3][[8]] = as.character(round(p.cyclind2.mmc/262*100, 1))
 	genetable[3][[9]] = overexpression(genes.res[[6]], genes.res[[5]], cyclind2.bmpc.signal, cyclind2.bmpc.sd, p.cyclind2.bmpc)
 
 	genetable[4][[1]] = as.character("\tCyclin D3")
@@ -459,7 +459,7 @@ geneHandler = function(h, ...) {
 	genetable[4][[5]] = as.character(cyclind3.bmpc.signal)
 	genetable[4][[6]] = as.character(round(p.cyclind3.bmpc/10*100, 1))
 	genetable[4][[7]] = as.character(cyclind3.mmc.signal)
-	genetable[4][[8]] = as.character(round(p.cyclind3.mmc/332*100, 1))
+	genetable[4][[8]] = as.character(round(p.cyclind3.mmc/262*100, 1))
 	genetable[4][[9]] = overexpression(genes.res[[8]], genes.res[[7]], cyclind3.bmpc.signal, cyclind3.bmpc.sd, p.cyclind3.bmpc)
 
 	genetable[5][[1]] = as.character("\tFGFR3")
@@ -469,7 +469,7 @@ geneHandler = function(h, ...) {
 	genetable[5][[5]] = as.character(fgfr3.bmpc.signal)
 	genetable[5][[6]] = as.character(round(p.fgfr3.bmpc/10*100, 1))
 	genetable[5][[7]] = as.character(fgfr3.mmc.signal)
-	genetable[5][[8]] = as.character(round(p.fgfr3.mmc/332*100, 1))
+	genetable[5][[8]] = as.character(round(p.fgfr3.mmc/262*100, 1))
 	genetable[5][[9]] = overexpression(genes.res[[10]], genes.res[[9]], fgfr3.bmpc.signal, fgfr3.bmpc.sd, p.fgfr3.bmpc)
 
 	genetable[6][[1]] = as.character("\tMMSET")
@@ -479,7 +479,7 @@ geneHandler = function(h, ...) {
 	genetable[6][[5]] = as.character(mmset.bmpc.signal)
 	genetable[6][[6]] = as.character(round(p.mmset.bmpc/10*100, 1))
 	genetable[6][[7]] = as.character(mmset.mmc.signal)
-	genetable[6][[8]] = as.character(round(p.mmset.mmc/332*100, 1))
+	genetable[6][[8]] = as.character(round(p.mmset.mmc/262*100, 1))
 	genetable[6][[9]] = overexpression(genes.res[[12]], genes.res[[11]], mmset.bmpc.signal, mmset.bmpc.sd, p.mmset.bmpc)
 	
 	genetable[7][[1]] = as.character("\tTP53")
@@ -489,7 +489,7 @@ geneHandler = function(h, ...) {
 	genetable[7][[5]] = as.character(tp53.bmpc.signal)
 	genetable[7][[6]] = as.character(round(p.tp53.bmpc/10*100, 1))
 	genetable[7][[7]] = as.character(tp53.mmc.signal)
-	genetable[7][[8]] = as.character(round(p.tp53.mmc/332*100, 1))
+	genetable[7][[8]] = as.character(round(p.tp53.mmc/262*100, 1))
 	genetable[7][[9]] = overexpression(genes.res[[16]], genes.res[[15]], tp53.bmpc.signal, tp53.bmpc.sd, p.tp53.bmpc)
 
 	genetable[9][[1]] = as.character("\tCTAG1")
@@ -499,7 +499,7 @@ geneHandler = function(h, ...) {
 	genetable[9][[5]] = as.character(ctag1.bmpc.signal)
 	genetable[9][[6]] = as.character(round(p.ctag1.bmpc/10*100, 1))
 	genetable[9][[7]] = as.character(ctag1.mmc.signal)
-	genetable[9][[8]] = as.character(round(p.ctag1.mmc/332*100, 1))
+	genetable[9][[8]] = as.character(round(p.ctag1.mmc/262*100, 1))
 	genetable[9][[9]] = overexpression(genes.res[[22]], genes.res[[21]], ctag1.bmpc.signal, ctag1.bmpc.sd, p.ctag1.bmpc)
 	
 	genetable[10][[1]] = as.character("\tHM1.24/BST2")
@@ -509,7 +509,7 @@ geneHandler = function(h, ...) {
 	genetable[10][[5]] = as.character(hm124.bmpc.signal)
 	genetable[10][[6]] = as.character(round(p.hm124.bmpc/10*100, 1))
 	genetable[10][[7]] = as.character(hm124.mmc.signal)
-	genetable[10][[8]] = as.character(round(p.hm124.mmc/332*100, 1))
+	genetable[10][[8]] = as.character(round(p.hm124.mmc/262*100, 1))
 	genetable[10][[9]] = overexpression(genes.res[[26]], genes.res[[25]], hm124.bmpc.signal, hm124.bmpc.sd, p.hm124.bmpc)
 
 	genetable[11][[1]] = as.character("\tMAGEA1")
@@ -519,7 +519,7 @@ geneHandler = function(h, ...) {
 	genetable[11][[5]] = as.character(magea1.bmpc.signal)
 	genetable[11][[6]] = as.character(round(p.magea1.bmpc/10*100, 1))
 	genetable[11][[7]] = as.character(magea1.mmc.signal)
-	genetable[11][[8]] = as.character(round(p.magea1.mmc/332*100, 1))
+	genetable[11][[8]] = as.character(round(p.magea1.mmc/262*100, 1))
 	genetable[11][[9]] = overexpression(genes.res[[18]], genes.res[[17]], magea1.bmpc.signal, magea1.bmpc.sd, p.magea1.bmpc)
 
 	genetable[12][[1]] = as.character("\tMAGEA3")
@@ -529,7 +529,7 @@ geneHandler = function(h, ...) {
 	genetable[12][[5]] = as.character(magea3.bmpc.signal)
 	genetable[12][[6]] = as.character(round(p.magea3.bmpc/10*100, 1))
 	genetable[12][[7]] = as.character(magea3.mmc.signal)
-	genetable[12][[8]] = as.character(round(p.magea3.mmc/332*100, 1))
+	genetable[12][[8]] = as.character(round(p.magea3.mmc/262*100, 1))
 	genetable[12][[9]] = overexpression(genes.res[[20]], genes.res[[19]], magea3.bmpc.signal, magea3.bmpc.sd, p.magea3.bmpc)
 
 	genetable[13][[1]] = as.character("\tMUC1")
@@ -539,7 +539,7 @@ geneHandler = function(h, ...) {
 	genetable[13][[5]] = as.character(muc1.bmpc.signal)
 	genetable[13][[6]] = as.character(round(p.muc1.bmpc/10*100, 1))
 	genetable[13][[7]] = as.character(muc1.mmc.signal)
-	genetable[13][[8]] = as.character(round(p.muc1.mmc/332*100, 1))
+	genetable[13][[8]] = as.character(round(p.muc1.mmc/262*100, 1))
 	genetable[13][[9]] = overexpression(genes.res[[28]], genes.res[[27]], muc1.bmpc.signal, muc1.bmpc.sd, p.muc1.bmpc)
 
 	genetable[14][[1]] = as.character("\tSSX2")
@@ -549,7 +549,7 @@ geneHandler = function(h, ...) {
 	genetable[14][[5]] = as.character(ssx2.bmpc.signal)
 	genetable[14][[6]] = as.character(round(p.ssx2.bmpc/10*100, 1))
 	genetable[14][[7]] = as.character(ssx2.mmc.signal)
-	genetable[14][[8]] = as.character(round(p.ssx2.mmc/332*100, 1))
+	genetable[14][[8]] = as.character(round(p.ssx2.mmc/262*100, 1))
 	genetable[14][[9]] = overexpression(genes.res[[24]], genes.res[[23]], ssx2.bmpc.signal, ssx2.bmpc.sd, p.ssx2.bmpc)
 
 	genetable[16][[1]] = as.character("\tAURKA")
@@ -559,7 +559,7 @@ geneHandler = function(h, ...) {
 	genetable[16][[5]] = as.character(aurka.bmpc.signal)
 	genetable[16][[6]] = as.character(round(p.aurka.bmpc/10*100, 1))
 	genetable[16][[7]] = as.character(aurka.mmc.signal)
-	genetable[16][[8]] = as.character(round(p.aurka.mmc/332*100, 1))
+	genetable[16][[8]] = as.character(round(p.aurka.mmc/262*100, 1))
 	genetable[16][[9]] = overexpression(genes.res[[2]], genes.res[[1]], aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
 
 	genetable[17][[1]] = as.character("\tIGF1R")
@@ -569,7 +569,7 @@ geneHandler = function(h, ...) {
 	genetable[17][[5]] = as.character(igf1r.bmpc.signal)
 	genetable[17][[6]] = as.character(round(p.igf1r.bmpc/10*100, 1))
 	genetable[17][[7]] = as.character(igf1r.mmc.signal)
-	genetable[17][[8]] = as.character(round(p.igf1r.mmc/332*100, 1))
+	genetable[17][[8]] = as.character(round(p.igf1r.mmc/262*100, 1))
 	genetable[17][[9]] = overexpression(genes.res[[14]], genes.res[[13]], igf1r.bmpc.signal, igf1r.bmpc.sd, p.igf1r.bmpc)
 }
 

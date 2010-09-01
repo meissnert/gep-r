@@ -22,6 +22,6 @@ gpi = function(exprs, panp) {
 
 	pi.score = sum(gep.panp)
 
-	pi.risk = ifelse(pi.score<=126.6649, "low risk", ifelse(pi.score>126.6649 & pi.score<=294.5495, "medium risk", "high risk"))
+	pi.risk = ifelse(pi.score<=152.0118, "low risk", ifelse(pi.score>152.0118 & pi.score<=316.4200, "medium risk", "high risk"))
 	return(pi.risk)
 }
