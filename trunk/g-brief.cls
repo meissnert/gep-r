@@ -360,13 +360,20 @@
   \def\@evenhead{\@oddhead} \def\@evenfoot{\@oddfoot}}
 
 \def\ps@regularpage{ \headheight36pt\def\@oddhead{\unitlength1mm
-    \begin{picture}(0,0)
+    \begin{picture}(0,0) % removed page written out, just numbering..
       \put(-9,3){\makebox(180,15){\normalsize \ifklassisch \textsl{
-        {\Large\quad}\name\hfill\pagename\ \thepage\quad}
-        \else \textsc{{\Large\quad}\name\hfill\pagename\
+        {\Large\quad}\name\hfill\ \thepage\quad}
+        \else \textsc{{\Large\quad}\name\hfill\
         \thepage\quad} \fi}}
       \iftrennlinien \put(-9,0){\rule{180mm}{0.5pt}} \fi
     \end{picture}\hfill}
+    %\begin{picture}(0,0)
+    %  \put(-9,3){\makebox(180,15){\normalsize \ifklassisch \textsl{
+    %    {\Large\quad}\name\hfill\pagename\ \thepage\quad}
+    %    \else \textsc{{\Large\quad}\name\hfill\pagename\
+    %    \thepage\quad} \fi}}
+    %  \iftrennlinien \put(-9,0){\rule{180mm}{0.5pt}} \fi
+    %\end{picture}\hfill}
   \def\@oddfoot{\empty} \def\@evenhead{\@oddhead}
   \def\@evenfoot{\@oddfoot}}
 
