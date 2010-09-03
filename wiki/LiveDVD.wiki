@@ -37,5 +37,5 @@ To use previously saved patient reports copy the folders /save and /report from 
 
 -----------------
 
-*Known Problem*: MacBook - "No bootable device -- insert boot disk and press any key"
+*Known Problem*: MacBook -> "No bootable device -- insert boot disk and press any key"
 Solution: Hold the option key (alt) as you turn on the machine, then select Macintosh HD and it will boot you back into OS X. 
