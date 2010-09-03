@@ -1,5 +1,0 @@
-==Known Bugs==
-
- * status bar is not always showing the right thing
- * uppon loading error massage (R:27935): Gtk-CRITICAL **: gtk_text_buffer_set_text: assertion `text != NULL' failed
- * problem with filenames containing a space within the filename
