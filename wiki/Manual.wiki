@@ -1,3 +1,0 @@
-= Manual = 
-
-... short manual of how to use GEP-R coming soon
