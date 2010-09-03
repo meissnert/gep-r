@@ -8,6 +8,8 @@
  * with the following packages and their dependencies installed
   * _docval_ (get the gcrma modified version from the [http://code.google.com/p/gep-r/downloads/list Downloads] section)
   * _affy_
+  * _vsn_
+  * _Biobase_
   * _gcrma_
   * _affyQCReport_
   * _simpleaffy_
@@ -22,6 +24,15 @@
   * _affyPLM_
   * _gWidgetsRGtk2_
   * _gWidgets_
+  * _preprocessCore_
+  * _survival_
+  * _genefilter_
+  * _limma_
+  * _pgUtils_ (for Linux/PSQL support)
+  * _Rdbi_ (for Linux/PSQL support)
+  * _RdbiPgSQL_ (for Linux/PSQL support)
+  * _madb_ (for Linux/PSQL support)
+  * _multicore_ (for multicore support, still experimental and by default turned off and only linux)
  * pdftk [http://www.accesspdf.com/pdftk/index.html], a RPM for openSUSE 11.2 64-Bit you will find here [http://download.opensuse.org/repositories/home:/aljex/openSUSE_11.2/x86_64/]
  * Evince PDF Viewer (or any other PDF Vierwer, this can be changed within the source code)
 
