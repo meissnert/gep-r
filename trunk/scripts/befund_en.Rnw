@@ -14,9 +14,10 @@
 \newcommand{\n}{\newline}
 
 % Adress information
-\Adresse	{\Sexpr{paste(svalue(p.vorname), svalue(p.name))}\\
-		 \Sexpr{svalue(p.strasse)}\\
-		 \Sexpr{paste(svalue(p.plz), svalue(p.ort))}
+\Adresse	{\Sexpr{paste(svalue(phys.title), svalue(phys.vorname), svalue(phys.name))}\\
+		 \Sexpr{svalue(phys.strasse)}\\
+		 \Sexpr{paste(svalue(phys.plz), svalue(phys.ort))} \\
+		 \Sexpr{svalue(phys.country)}
 		}
 
 % Heading
@@ -32,15 +33,18 @@
 \begin{document}
 \begin{g-brief}
 % 1. page
-%\ThisCenterWallPaper{1}{data/Logo.pdf} % replace logo.pdf with your own layout
-\ThisCenterWallPaper{1}{data/Logo_hd.pdf} % replace logo.pdf with your own layout
+\ThisCenterWallPaper{1}{data/Logo.pdf} % replace logo.pdf with your own layout
+%\ThisCenterWallPaper{1}{data/Logo_hd.pdf} % replace logo.pdf with your own layout
 
 % patient information
-\line(1,0){170} \\ \\
-\textbf{Name:} \Sexpr{svalue(p.name)}, \Sexpr{svalue(p.vorname)} % name des Patienten
-\hspace{8cm}
-\textbf{Date of birth:} \Sexpr{svalue(p.geb)} % geburtsdatum des Patienten
-\\
+\vspace{-0.5cm}
+\line(1,0){170} 
+\vspace{-0.3cm}
+\begin{tabbing}
+\textbf{Name:  } \=\Sexpr{paste(svalue(p.name), svalue(p.vorname), sep=", ")} \hspace{7.5cm} \= \textbf{Date of birth:} \=\Sexpr{svalue(p.geb)} \\ % geburtsdatum des Patienten
+\textbf{Adress:} \>\Sexpr{paste(svalue(p.strasse), svalue(p.ort), svalue(p.plz), svalue(p.country), sep=", ")}
+\end{tabbing}
+\vspace{-0.6cm}
 \line(1,0){170}
 \begin{tabbing}
 \textbf{Clinical Diagnosis:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Durie-Salmon Stage:} \=\Sexpr{svalue(p.stage)}%hier klini. Diagnose eintragen
@@ -55,15 +59,15 @@
 % information about genexpression analysis
 \begin{tabular}{ | l l | } \hline
 Date BM-aspiration: & \Sexpr{svalue(probe.date)} \tabularnewline 
-Samplevolume: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
+Sample volume: & \Sexpr{svalue(probe.volume)} ml\tabularnewline 
 CD-138 purification (autoMACS): & \Sexpr{svalue(probe.protokoll)}  \tabularnewline
-CD-138 purity (flow cytometry)\footnote{Test}: & \Sexpr{svalue(probe.purity.facs)} \% \tabularnewline
-CD-138 purity (iFISH)\footnote{Test}: & \Sexpr{svalue(probe.purity.fish)} \% \tabularnewline
+CD-138 purity (flow cytometry): & \Sexpr{svalue(probe.purity.facs)} \% \tabularnewline
+CD-138 purity (iFISH): & \Sexpr{svalue(probe.purity.fish)} \% \tabularnewline
 Amount of RNA used: & \Sexpr{svalue(probe.rna)} ng \tabularnewline
 Array-Type: & \Sexpr{svalue(probe.array)} \tabularnewline
 Amount of analyzed probesets: & \Sexpr{process.res$genes} \tabularnewline
 Amount of analyzed genes and ESTs: & ca. 39 000 \tabularnewline
-RNA amplification protocoll: & \Sexpr{svalue(probe.ampl)} \tabularnewline
+RNA amplification protocol: & \Sexpr{svalue(probe.ampl)} \tabularnewline
 Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \end{tabular}
 
@@ -71,40 +75,44 @@ Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 % begin of page 2 ...
 \pagebreak
-%\CenterWallPaper{1}{data/Logo2.pdf} % replace logo2.pdf with your own layout
-\CenterWallPaper{1}{data/Logo2_hd.pdf} % replace logo2.pdf with your own layout
+\CenterWallPaper{1}{data/Logo2.pdf} % replace logo2.pdf with your own layout
+%\CenterWallPaper{1}{data/Logo2_hd.pdf} % replace logo2.pdf with your own layout
 
 % report
 \begin{large}\textbf{Report}\end{large} \\
 \line(1,0){170}
 \begin{enumerate}
-\item \textbf{Quality control} \\
+\item \textbf{Quality control:} 
 \Sexpr{svalue(befund.qualitycontrol)}
 
-\item \textbf{Identity control} \\
+\item \textbf{Identity control:} 
 \Sexpr{svalue(befund.identitycontrol)}
 
-\item \textbf{Genes over- or aberrantly expressed} \\
+\item \textbf{Genes frequently over- or aberrantly expressed in myeloma} \\
 \Sexpr{svalue(befund.genes)}
 
-%\item \textbf{Classification of Myeloma} \\
-%\Sexpr{svalue(befund.classification)}
+\item \textbf{Geneexpression based classification of myeloma} \\
+\Sexpr{svalue(befund.classification)}
 
-\item \textbf{Risk stratification} \\
+\item \textbf{Geneexpression based risk stratification} \\
 \Sexpr{svalue(befund.risk)}
 
-\item \textbf{Targets for immun-therapy} \\
+\item \textbf{Targets for immunotherapy} \\
 \Sexpr{svalue(befund.itherapy)}
 
 \item \textbf{Targets for individualized treatment} \\
 \Sexpr{svalue(befund.grtherapy)}
 
+\item \textbf{Chromosomal aberations} \\
+\Sexpr{svalue(befund.cyto)}
+
 \end{enumerate}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 
 % Beuerteilung
-\begin{large}\textbf{Report}\end{large} \\
+\begin{large}\textbf{Conclusion}\end{large} \\
+\vspace{-0.25cm}
 \line(1,0){170}
 
 %Hier der frei-Text:
@@ -114,11 +122,11 @@ Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 %Aufgrund des vorliegens einer TACI-Expression ist ein Einschluss in die TACI-Fe5 Studie möglicherweise von therapeutischem Interesse.
 \Sexpr{svalue(beurteilung)}
 
-\vspace{3cm}
+\vspace{1.3cm}
 
 \begin{tabbing}
-Prof. Dr. H. Goldschmidt \hspace{6cm} \=Dr. med. Dipl. phys. D. Hose \\
-Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
+Prof. Dr. med. H. Goldschmidt \hspace{3.2cm} \=Dr. med. Dipl. phys. D. Hose \\
+Head, Dept. of Multiple Myeloma \> Head, Multiple Myeloma Research Laboratory
 \end{tabbing}
 
 \pagebreak
@@ -133,7 +141,9 @@ Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
 
 % qualitycontrol
 \begin{large}\textbf{Quality control}\end{large} \\
+\vspace{-0.3cm}
 \line(1,0){170}
+\vspace{-0.1cm}
 \begin{center}
 \resizebox{7cm}{!}{\includegraphics{temp/qualityplot.png}}
 \hspace{1cm}
@@ -155,7 +165,7 @@ Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
 \vspace{0.5cm}
 
 \begin{tabular}{ | l | c | c | } \hline
- & Prediction & Range \tabularnewline \hline \hline
+ & Prediction & Possibilities \tabularnewline \hline \hline
 Sex & \Sexpr{prediction.res[[1]]} & [m, f] \tabularnewline \hline 
 IgH-type & \Sexpr{prediction.res[[2]]} & [A, G, D] \tabularnewline \hline 
 IgL-type & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline 
@@ -175,7 +185,7 @@ IgL-type & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline
 %Shaughnessy 70 Genes Abs dist. & \Sexpr{risk.res[[5]]$predicted.abs} & [high, medium, low] \tabularnewline \hline
 %Shaughnessy 70 Genes Sqrt dist. & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, medium, low] \tabularnewline \hline
 %Shaughnessy 70-Gene-Predictor & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, low] \tabularnewline \hline
-UAMMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
+UAMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
 IFM 15-gene risk score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
 Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
 % Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
@@ -185,16 +195,16 @@ Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[
 \vspace{1cm}
 
 % molecular classification
-\begin{large}\textbf{(Molecular) Classification}\end{large} \\
+\begin{large}\textbf{Classification}\end{large} \\
 \line(1,0){170}
 
 \vspace{0.5cm}
 
 \begin{tabular}{ | l | c | c |} \hline
- & Classification & Range \tabularnewline \hline \hline
-EC classification (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
+ & Group & Possibilities \tabularnewline \hline \hline
 Molecular classification (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
 TC classification (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
+EC classification (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
 \end{tabular}
 
 %\vspace{1cm}
@@ -207,10 +217,10 @@ TC classification (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 
 \vspace{0.5cm}
 
 \begin{tabular}{ | c | c | c | c | c | c | c | c | } \hline
- & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasmacells (normal)} & \multicolumn{2}{ | c | }{Plasmacells (MM)} \tabularnewline \hline
+ & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasma cells (normal)} & \multicolumn{2}{ | c | }{Plasma cells (MM)} \tabularnewline \hline
 Gene & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline \hline \hline
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Genes frequently overexpressed in Multiple Myeloma}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Genes frequently overexpressed in multiple myeloma}} \tabularnewline \hline \hline
 
 Cyclin D1 & 208712\_at & \Sexpr{genes.res[[4]]} & \Sexpr{genes.res[[3]]} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
@@ -223,7 +233,7 @@ MMSET & 209053\_s\_at & \Sexpr{genes.res[[12]]} & \Sexpr{genes.res[[11]]} & \Sex
 TP53 & 201746\_at & \Sexpr{genes.res[[16]]} & \Sexpr{genes.res[[15]]} & \Sexpr{tp53.bmpc.signal} & \Sexpr{p.tp53.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{tp53.mmc.signal} & \Sexpr{p.tp53.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Targets for immun-therapy}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Targets for immunotherapy}} \tabularnewline \hline \hline
 
 CTAG1 & 210546\_x\_at & \Sexpr{genes.res[[22]]} & \Sexpr{genes.res[[21]]} & \Sexpr{ctag1.bmpc.signal} & \Sexpr{p.ctag1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ctag1.mmc.signal} & \Sexpr{p.ctag1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
