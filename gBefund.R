@@ -21,7 +21,7 @@ lang = "english"
 db.support = FALSE
 set.probe.ampl = "double amplification"
 set.probe.array = "Affymetrix U133 plus 2.0"
-set.probe.norm = "GCRMA"
+set.probe.norm = "GC-RMA"
 multicore = "no" # "yes"
 
 system = Sys.info()[1] # what system is installed?
@@ -123,6 +123,14 @@ saveHandler = function(h, ...) {
 		p.sex = svalue(p.sex),
 		p.stage = svalue(p.stage),
 		p.datediag = svalue(p.datediag),
+		p.country = svalue(p.country),
+		phys.name = svalue(phys.name),
+		phys.vorname = svalue(phys.vorname),
+		phys.strasse = svalue(phys.strasse),
+		phys.ort = svalue(phys.ort),
+		phys.plz = svalue(phys.plz),	
+		phys.country = svalue(phys.country),
+		phys.title= svalue(phys.title),
 		probe.date = svalue(probe.date),
 		probe.volume = svalue(probe.volume),
 		probe.protokoll = svalue(probe.protokoll),
@@ -139,11 +147,12 @@ saveHandler = function(h, ...) {
 		befund.genes = svalue(befund.genes),
 		befund.itherapy = svalue(befund.itherapy),
 		befund.grtherapy = svalue(befund.grtherapy),
-		befund.classification = svalue(befund.classification)
+		befund.classification = svalue(befund.classification),
+		befund.cyto = svalue(befund.cyto)
 	       )
 	
 	# save variables as a r-object with the ending *.report
-	tosave = c("save", "quality.res", "cyto.res", "risk.res", "prediction.res", "genes.res") 
+	tosave = c("save", "quality.res", "cyto.res", "risk.res", "prediction.res", "genes.res", "process.res") 
 
 	save(file=paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", gsub("[()]" , "", svalue(cel.label)), ".report", sep=""), list=tosave)
 
@@ -186,6 +195,14 @@ loadHandler = function(h, ...) {
 	svalue(p.sex) = save$p.sex
 	svalue(p.stage) = save$p.stage
 	svalue(p.datediag) = save$p.datediag
+	svalue(p.country) = save$p.country
+	svalue(phys.name) = save$phys.name
+	svalue(phys.vorname) = save$phys.vorname
+	svalue(phys.strasse) = save$phys.strasse
+	svalue(phys.ort) = save$phys.ort
+	svalue(phys.plz) = save$phys.plz
+	svalue(phys.title) = save$phys.title
+	svalue(phys.country) = save$phys.country
 	svalue(probe.date) = save$probe.date
 	svalue(probe.volume) = save$probe.volume
 	svalue(probe.protokoll) = save$probe.protokoll
@@ -203,6 +220,7 @@ loadHandler = function(h, ...) {
 	svalue(befund.itherapy) = save$befund.itherapy
 	svalue(befund.grtherapy) = save$befund.grtherapy
 	svalue(befund.classification) = save$befund.classification
+	svalue(befund.cyto) = save$befund.cyto
 	svalue(sb) = save$sb
 
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
@@ -323,6 +341,14 @@ clearGUIHandler = function(h, ...) {
 	svalue(p.sex) = ""
 	svalue(p.stage) = ""
 	svalue(p.datediag) = ""
+	svalue(p.country) = ""
+	svalue(phys.name) = ""
+	svalue(phys.vorname) = ""
+	svalue(phys.strasse) = ""
+	svalue(phys.ort) = ""
+	svalue(phys.plz) = ""
+	svalue(phys.title) = ""
+	svalue(phys.country) = ""
 	svalue(probe.date) = ""
 	svalue(probe.volume) = ""
 	svalue(probe.protokoll) = ""
@@ -364,29 +390,29 @@ identHandler = function(h, ...) {
 # risk stratification
 riskHandler = function(h, ...) {
 	#headers
-	risktable[5][[1]] = as.character("Molecular (classification)")
+	risktable[5][[1]] = as.character("Classification")
 	risktable[1][[1]] = as.character("Risk stratification")
 	risktable[9][[1]] = as.character("Cytogenetics")
 
 	# molecular (classifications)
-	risktable[8][[1]] = as.character("\tTC classification")
-	risktable[8][[2]] = as.character(risk.res[[4]][1])                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
-	risktable[8][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
+	risktable[7][[1]] = as.character("\tTC classification")
+	risktable[7][[2]] = as.character(risk.res[[4]][1])                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
+	risktable[7][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
-	risktable[6][[1]] = as.character("\tEC classification")
-	risktable[6][[2]] = as.character(risk.res[[3]])
-	risktable[6][[3]] = as.character("[11;12;21;22]")
+	risktable[8][[1]] = as.character("\tEC classification")
+	risktable[8][[2]] = as.character(risk.res[[3]])
+	risktable[8][[3]] = as.character("[11;12;21;22]")
 	
-	risktable[7][[1]] = as.character("\tMolecular classification")
-	risktable[7][[2]] = as.character(risk.res[[2]])
-	risktable[7][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
+	risktable[6][[1]] = as.character("\tMolecular classification")
+	risktable[6][[2]] = as.character(risk.res[[2]])
+	risktable[6][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
 	
 	# risk stratifications
-	# risktable[6][[1]] = as.character("\tUAMMS 17-gene risk score")
+	# risktable[6][[1]] = as.character("\tUAMS 17-gene risk score")
 	# risktable[6][[2]] = as.character(risk.res[[5]]$predicted17)
 	# risktable[6][[3]] = as.character("[high;low]")
 	
-	risktable[3][[1]] = as.character("\tUAMMS 70-gene risk score")
+	risktable[3][[1]] = as.character("\tUAMS 70-gene risk score")
 	risktable[3][[2]] = as.character(risk.res[[5]]$predicted.sqrt)
 	risktable[3][[3]] = as.character("[high;low]")
 	
@@ -432,7 +458,7 @@ geneHandler = function(h, ...) {
 	}
 	
 	#headers
-	genetable[1][[1]] = as.character("Aberrant-/overexpressed genes")
+	genetable[1][[1]] = as.character("Aberrantly-/overexpressed genes")
 	genetable[7][[1]] = as.character("Immuntherapeutical genes")
 	genetable[14][[1]] = as.character("Treatable targets")
 	
@@ -670,6 +696,11 @@ integrityHandler = function(h, ...)  {
 		insert(warning.message, "Please enter a city", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
+	
+	if (svalue(p.country)=="") {
+		insert(warning.message, "Please enter a country", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
 
 		
 	if (svalue(p.plz)=="") {
@@ -701,7 +732,42 @@ integrityHandler = function(h, ...)  {
 		insert(warning.message, "Please enter the sex of the patient", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
-
+	
+	if (svalue(phys.name)=="") {
+		insert(warning.message, "Please enter the name of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(phys.vorname)=="") {
+		insert(warning.message, "Please enter the first name of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(phys.strasse)=="") {
+		insert(warning.message, "Please enter the street of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(phys.ort)=="") {
+		insert(warning.message, "Please enter the city of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(phys.plz)=="") {
+		insert(warning.message, "Please enter the zipcode of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(phys.title)=="") {
+		insert(warning.message, "Please enter the title of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+		if (svalue(phys.country)=="") {
+		insert(warning.message, "Please enter the country of the physician", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
 	# sample information
 	if (svalue(probe.date)=="") {
 		insert(warning.message, "Please enter the date of the BM-aspiration", font.attr=c(foreground.colors="red"))
@@ -1014,7 +1080,7 @@ madbHandler = function(h, ...) {
 # ------------------------------------------------------------------------------------------------
 # About-Dialog
 aboutHandler = function(h, ...) {
-	Dialog("GEP-R GUI Version 0.7 \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
+	Dialog("GEP-R GUI Version 0.7.1 \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
 }
 
 Dialog = function(message, handler=NULL) { 						# this functino analog to the example in the gWidgets vignette
@@ -1081,30 +1147,30 @@ pg = gpanedgroup(cont=g, expand=TRUE)
 # notebook left
 nb.left = gnotebook(cont=pg)
 file = ggroup(horizontal=FALSE, cont=nb.left, label="GEP-Analysis")
-patient = ggroup(horizontal=FALSE, cont=nb.left, label="Patient-Information")
-probe = ggroup(horizontal=FALSE, cont=nb.left, label="Sample-Information")
-befund = ggroup(horizontal=FALSE, cont=nb.left, label="Individual Comments")
+patient = ggroup(horizontal=FALSE, use.scrollwindow=TRUE, cont=nb.left, label="General-Information")
+probe = ggroup(horizontal=FALSE, cont=nb.left, use.scrollwindow=TRUE, label="Sample-Information")
+befund = ggroup(horizontal=FALSE, cont=nb.left, use.scrollwindow=TRUE, label="Individual Comments")
 beurteilung = ggroup(horizontal=FALSE, cont=nb.left, label="Comment")
 
 # file
 file.row.1 = glayout(horizontal="TRUE", cont=file)
-file.row.1[1,1] = "CEL-File "
-file.row.1[1,2] = (file.open = gbutton(text="Open", border=TRUE, handler=chooseFile, cont=file.row.1))
+file.row.1[1,1, anchor = c(-1,0)] = "CEL-File "
+file.row.1[1,2, anchor = c(-1,1)] = (file.open = gbutton(text="Open", border=TRUE, handler=chooseFile, cont=file.row.1))
 
 file.row.2 = glayout(horizontal="TRUE", cont=file)
-file.row.2[1,1] = "Selected File: "
+file.row.2[1,1, anchor = c(-1,0)] = "Selected File: "
 file.row.2[1,2] = (cel.label = glabel("", cont=file.row.2, editable=TRUE))
 file.row.2[2,1] = ""
 file.row.2[3,1] = ""
 
 file.row.3 = glayout(horizontal="TRUE", cont=file)
-file.row.3[1,1] = "GEP Analysis "
+file.row.3[1,1, anchor = c(-1,0)] = "GEP Analysis "
 file.row.3[1,2] = (file.analyse = gbutton(text="Run Analysis", border=TRUE, handler=runAnalysis, cont=file.row.3))
 file.row.3[2,1] = ""
 file.row.3[3,1] = ""
 
 file.row.4 = glayout(horizontal="TRUE", cont=file)
-file.row.4[1,1] = "Integrity "
+file.row.4[1,1, anchor = c(-1,0)] = "Integrity "
 file.row.4[1,2] = (file.integrity = gbutton(text="Check", border=TRUE, handler=integrityHandler, cont=file.row.4))
 file.row.4[1,3] = (file.ignore = gbutton(text="Ignore", border=TRUE, handler=ignoreHandler, cont=file.row.4))
 file.row.4[2,1] = ""
@@ -1112,7 +1178,7 @@ file.row.4[2,1] = ""
 
 
 file.row.5 = glayout(horizontal="TRUE", cont=file)
-file.row.5[1,1] = "PDF "
+file.row.5[1,1, anchor = c(-1,0)] = "PDF "
 file.row.5[1,2] = (file.pdfcreate = gbutton(text="Create PDF", border=TRUE, handler=pdfHandler, cont=file.row.5))
 file.row.5[1,3] = (file.pdfshow = gbutton(text="Show PDF", border=TRUE, handler=viewpdfHandler, cont=file.row.5))
 
@@ -1124,31 +1190,44 @@ enabled(file.ignore)="FALSE"
 
 # patient
 tbl.patient = glayout(cont=patient)
-tbl.patient[1,1] = "Name"
-tbl.patient[1,2, expand=FALSE] = (p.name = gedit("", cont=tbl.patient))
-tbl.patient[2,1] = "First name"
-tbl.patient[2,2, expand=FALSE] = (p.vorname = gedit("", cont=tbl.patient))
-tbl.patient[3,1] = "Date of birth"
-tbl.patient[3,2, expand=FALSE] = (p.geb = gedit("", cont=tbl.patient))
-tbl.patient[4,1] = "Street"
-tbl.patient[4,2, expand=FALSE] = (p.strasse = gedit("", cont=tbl.patient))
-tbl.patient[5,1] = "City"
-tbl.patient[5,2, expand=FALSE] = (p.ort = gedit("", cont=tbl.patient))
-tbl.patient[6,1] = "Zipcode"
-tbl.patient[6,2, expand=FALSE] = (p.plz = gedit("", cont=tbl.patient))
-tbl.patient[7,1] = ""
-tbl.patient[8,1] = ""
-tbl.patient[9,1] = "Diagnosis & Stage"
-tbl.patient[9,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiple Myeloma", "MGUS"), cont=tbl.patient))
-tbl.patient[9,3, expand=FALSE] = (p.stage = gdroplist(items=c("", "IA", "IB", "IIA", "IIB", "IIIA", "IIIB"), cont=tbl.patient))
-tbl.patient[10,1] = "Date of diagnosis"
-tbl.patient[10,2, expand=FALSE] = (p.datediag = gedit("", cont=tbl.patient))
-tbl.patient[11,1] = "IgH-type"
-tbl.patient[11,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "G", "A", "D", "BJ" ,"asecretory"), cont=tbl.patient))
-tbl.patient[12,1] = "IgL-type"
-tbl.patient[12,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "lambda", "kappa"), cont=tbl.patient))
-tbl.patient[13,1] = "Sex"
-tbl.patient[13,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "male", "female"), cont=tbl.patient))
+tbl.patient[1,1] = "Patient Information"
+tbl.patient[2,1, anchor = c(-1,0)] = "Name / First name"
+tbl.patient[2,2, expand=FALSE] = (p.name = gedit("", width=18, cont=tbl.patient))
+tbl.patient[2,3, expand=FALSE] = (p.vorname = gedit("", width=18, cont=tbl.patient))
+tbl.patient[3,1, anchor = c(-1,0)] = "Date of birth"
+tbl.patient[3,2, expand=FALSE] = (p.geb = gedit("", width=18, cont=tbl.patient))
+tbl.patient[4,1, anchor = c(-1,0)] = "Street"
+tbl.patient[4,2:3, expand=FALSE] = (p.strasse = gedit("", width=18, cont=tbl.patient))
+tbl.patient[5,1, anchor = c(-1,0)] = "City / Zip"
+tbl.patient[5,2, expand=FALSE] = (p.ort = gedit("", width=18, cont=tbl.patient))
+tbl.patient[5,3, expand=FALSE] = (p.plz = gedit("", width=18, cont=tbl.patient))
+tbl.patient[6,1, anchor = c(-1,0)] = "Country"
+tbl.patient[6,2, expand=FALSE] = (p.country = gedit("", width=18, cont=tbl.patient))
+tbl.patient[7,1, anchor = c(-1,0)] = "Diagnosis & Stage"
+tbl.patient[7,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiple Myeloma", "MGUS"), cont=tbl.patient))
+tbl.patient[7,3, expand=FALSE] = (p.stage = gdroplist(items=c("", "IA", "IB", "IIA", "IIB", "IIIA", "IIIB"), cont=tbl.patient))
+tbl.patient[8,1, anchor = c(-1,0)] = "Date of diagnosis"
+tbl.patient[8,2, expand=FALSE] = (p.datediag = gedit("", width=18, cont=tbl.patient))
+tbl.patient[9,1, anchor = c(-1,0)] = "IgH-type"
+tbl.patient[9,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "G", "A", "D", "BJ" ,"asecretory"), cont=tbl.patient))
+tbl.patient[10,1, anchor = c(-1,0)] = "IgL-type"
+tbl.patient[10,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "lambda", "kappa"), cont=tbl.patient))
+tbl.patient[11,1, anchor = c(-1,0)] = "Sex"
+tbl.patient[11,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "male", "female"), cont=tbl.patient))
+tbl.patient[12,1:3, anchor = c(-1,0)] = "Corresponding Physician"
+tbl.patient[13,1, anchor = c(-1,0)] = "Title"
+tbl.patient[13,2, expand=FALSE] = (phys.title = gedit("", width=18, cont=tbl.patient))
+tbl.patient[14,1, anchor = c(-1,0)] = "Name / Firstname"
+tbl.patient[14,2, expand=FALSE] = (phys.name = gedit("", width=18, cont=tbl.patient))
+tbl.patient[14,3, expand=FALSE] = (phys.vorname = gedit("", width=18, cont=tbl.patient))
+tbl.patient[15,1, anchor = c(-1,0)] = "Street"
+tbl.patient[15,2:3, expand=FALSE] = (phys.strasse = gedit("", width=18, cont=tbl.patient))
+tbl.patient[16,1, anchor = c(-1,0)] = "City / Zip"
+tbl.patient[16,2, expand=FALSE] = (phys.ort = gedit("", width=18, cont=tbl.patient))
+tbl.patient[16,3, expand=FALSE] = (phys.plz = gedit("", width=18, cont=tbl.patient))
+tbl.patient[17,1, anchor = c(-1,0)] = "Country"
+tbl.patient[17,2, expand=FALSE] = (phys.country = gedit("", width=18, cont=tbl.patient))
+
 
 # probe
 tbl.probe = glayout(cont=probe)
@@ -1185,27 +1264,28 @@ svalue(probe.norm) = set.probe.norm
 
 # individual comments
 # create the widgets
-befund.qualitycontrol = gtext(width=400, height=68)
-#befund.qualitycontrol.message = gtext(width=150, height=68)
+befund.qualitycontrol = gtext(width=400, height=60)
+#befund.qualitycontrol.message = gtext(width=150, height=60)
 
-befund.identitycontrol = gtext(width=400, height=68)
-#befund.identitycontrol.message = gtext(width=150, height=68)
+befund.identitycontrol = gtext(width=400, height=60)
+#befund.identitycontrol.message = gtext(width=150, height=60)
 
-befund.genes = gtext(width=400, height=68)
-#befund.genes.message = gtext(width=150, height=68)
+befund.genes = gtext(width=400, height=60)
+#befund.genes.message = gtext(width=150, height=60)
 
-befund.classification = gtext(width=400, height=68)
-#befund.classification.message = gtext(width=150, height=68)
+befund.classification = gtext(width=400, height=60)
+#befund.classification.message = gtext(width=150, height=60)
 
-befund.risk = gtext(width=400, height=68)
-#befund.risk.message = gtext(width=150, height=68)
+befund.risk = gtext(width=400, height=60)
+#befund.risk.message = gtext(width=150, height=60)
 
-befund.itherapy = gtext(width=400, height=68)
-#befund.itherapy.message = gtext(width=150, height=68)
+befund.itherapy = gtext(width=400, height=60)
+#befund.itherapy.message = gtext(width=150, height=60)
 
-befund.grtherapy = gtext(width=400, height=68)
-#befund.grtherapy.message = gtext(width=150, height=68)
+befund.grtherapy = gtext(width=400, height=60)
+#befund.grtherapy.message = gtext(width=150, height=60)
 
+befund.cyto = gtext(width=400, height=60)
 
 # 1. row
 befund.row.1 = ggroup(horizontal="TRUE", cont=befund)
@@ -1223,7 +1303,7 @@ add(tmp, befund.identitycontrol)
 
 # 3. row
 befund.row.3 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Genes over- or aberrantly expressed", container=befund.row.3)
+tmp = gframe("Genes frequently over- or aberrantly expressed in multiple myeloma", container=befund.row.3)
 add(tmp, befund.genes)
 #tmp = gframe("", container=befund.row.3)
 #add(tmp, befund.genes.message)
@@ -1244,7 +1324,7 @@ add(tmp, befund.risk)
 
 # 6. row
 befund.row.6 = ggroup(horizontal="TRUE", cont=befund)
-tmp = gframe("Targets for immun-therapy", container=befund.row.6)
+tmp = gframe("Targets for immunotherapy", container=befund.row.6)
 add(tmp, befund.itherapy)
 #tmp = gframe("", container=befund.row.6)
 #add(tmp, befund.itherapy.message)
@@ -1255,6 +1335,11 @@ tmp = gframe("Targets for individiualized treatment", container=befund.row.7)
 add(tmp, befund.grtherapy)
 #tmp = gframe("", container=befund.row.7)
 #add(tmp, befund.grtherapy.message)
+
+# 8. row
+befund.row.8 = ggroup(horizontal="TRUE", cont=befund)
+tmp = gframe("Chromosomal aberations", container=befund.row.8)
+add(tmp, befund.cyto)
 
 # disable comments on startup, disable message boxes
 enabled(befund) = "FALSE"
@@ -1268,7 +1353,7 @@ enabled(befund) = "FALSE"
 
 # beuerteilung
 tbl.beurteilung = glayout(cont=beurteilung)
-tbl.beurteilung[1,1, expand=TRUE] = (beurteilung = gtext(width=400, height=350, cont=tbl.beurteilung))
+tbl.beurteilung[1,1, expand=TRUE] = (beurteilung = gtext(width=450, height=350, cont=tbl.beurteilung))
 enabled(tbl.beurteilung) = "FALSE"
 
 # notebook right
@@ -1291,7 +1376,7 @@ genetable= gtable(data.frame(Gene=rep("",17),
 				 expand=TRUE)
 enabled(tables) = "FALSE"
 
-qc = ggroup(horizontal=FALSE, cont=nb.right, label="Qualitycontrol")
+qc = ggroup(horizontal=FALSE, cont=nb.right, label="Quality control")
 tbl.qc = glayout(cont=qc)
 tbl.qc[1,1] = gbutton(text="  Reproducability  ", border=TRUE, handler=dispHandlerMAQC, cont=tbl.qc)
 tbl.qc[1,2] = gbutton(text="        QC-Stats      ", border=TRUE, handler=dispHandlerQCSTATS, cont=tbl.qc)
