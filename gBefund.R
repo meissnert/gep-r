@@ -413,7 +413,7 @@ riskHandler = function(h, ...) {
 	# risktable[6][[3]] = as.character("[high;low]")
 	
 	risktable[3][[1]] = as.character("\tUAMS 70-gene risk score")
-	risktable[3][[2]] = as.character(risk.res[[5]]$predicted.sqrt)
+	risktable[3][[2]] = as.character(risk.res[[5]]$predicted.sub.sqrt)
 	risktable[3][[3]] = as.character("[high;low]")
 	
 	#risktable[2][[1]] = as.character("Shaughnessy 70 Genes Abs. dist.")
