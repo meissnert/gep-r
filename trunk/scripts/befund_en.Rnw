@@ -188,6 +188,7 @@ IgL-type & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline
 UAMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
 IFM 15-gene risk score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
 Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
+HM-meta-score & \Sexpr{p.meta.score} & [high, medium, low] \tabularnewline \hline 
 % Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
 \end{tabular}
 

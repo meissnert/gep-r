@@ -124,6 +124,7 @@ saveHandler = function(h, ...) {
 		p.stage = svalue(p.stage),
 		p.datediag = svalue(p.datediag),
 		p.country = svalue(p.country),
+		p.iss = svalue(p.iss),
 		phys.name = svalue(phys.name),
 		phys.vorname = svalue(phys.vorname),
 		phys.strasse = svalue(phys.strasse),
@@ -196,6 +197,8 @@ loadHandler = function(h, ...) {
 	svalue(p.stage) = save$p.stage
 	svalue(p.datediag) = save$p.datediag
 	svalue(p.country) = save$p.country
+	#svalue(p.iss) = "" # workaround to get meta.score.function called if iss is the same as iss before...
+	svalue(p.iss) = save$p.iss
 	svalue(phys.name) = save$phys.name
 	svalue(phys.vorname) = save$phys.vorname
 	svalue(phys.strasse) = save$phys.strasse
@@ -280,8 +283,6 @@ chooseFile = function(h, ...) {
 
 # start analyse handler
 runAnalysis = function(h, ...) {
-	# check if amplification method is set to single or double
-	if (svalue(probe.ampl) == "single amplification" | svalue(probe.ampl) == "double amplification") {
 		svalue(sb) = "Analysis is running ... please be patient!"         # <<-- das will noch nicht sorecht, vermutlich ausglidern und vor ranAnalysis() ausführen
 		
 		source("scripts/befund.R")	# load the anaylsis functions
@@ -318,9 +319,6 @@ runAnalysis = function(h, ...) {
 		enabled(file.ignore)="TRUE"	# activate ignore integrity check button
 		saveHandler()			# speichern
 		svalue(sb) = "Analysis done & saved!"
-	} else {
-		svalue(sb) ="Please select an RNA Amplification Protocoll within the Sample-Information tab!"
-	}
 }
 
 # clear info within the gui prior to loading a new cel-file or *.befund
@@ -390,22 +388,22 @@ identHandler = function(h, ...) {
 # risk stratification
 riskHandler = function(h, ...) {
 	#headers
-	risktable[5][[1]] = as.character("Classification")
+	risktable[6][[1]] = as.character("Classification")
 	risktable[1][[1]] = as.character("Risk stratification")
-	risktable[9][[1]] = as.character("Cytogenetics")
+	risktable[10][[1]] = as.character("Cytogenetics")
 
 	# molecular (classifications)
-	risktable[7][[1]] = as.character("\tTC classification")
-	risktable[7][[2]] = as.character(risk.res[[4]][1])                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
-	risktable[7][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
+	risktable[8][[1]] = as.character("\tTC classification")
+	risktable[8][[2]] = as.character(risk.res[[4]][1])                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
+	risktable[8][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
-	risktable[8][[1]] = as.character("\tEC classification")
-	risktable[8][[2]] = as.character(risk.res[[3]])
-	risktable[8][[3]] = as.character("[11;12;21;22]")
+	risktable[9][[1]] = as.character("\tEC classification")
+	risktable[9][[2]] = as.character(risk.res[[3]])
+	risktable[9][[3]] = as.character("[11;12;21;22]")
 	
-	risktable[6][[1]] = as.character("\tMolecular classification")
-	risktable[6][[2]] = as.character(risk.res[[2]])
-	risktable[6][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
+	risktable[7][[1]] = as.character("\tMolecular classification")
+	risktable[7][[2]] = as.character(risk.res[[2]])
+	risktable[7][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
 	
 	# risk stratifications
 	# risktable[6][[1]] = as.character("\tUAMS 17-gene risk score")
@@ -427,18 +425,21 @@ riskHandler = function(h, ...) {
 	risktable[2][[1]] = as.character("\tIFM 15-gene risk score")
 	risktable[2][[2]] = as.character(risk.res[[6]]$decaux.risk)
 	risktable[2][[3]] = as.character("[high;low]")
+	
+	# meta score
+	risktable[5][[1]] = as.character("\tHM-meta-score")
+	#risktable[5][[2]] = ""
+	risktable[5][[3]] = as.character("[high;medium;low]")
 
 	#risktable[10][[1]] = as.character("\tZs score")
 	#risktable[10][[2]] = as.character(risk.res[[1]])
 	#risktable[10][[3]] = as.character("[high;medium;low]")
 
-	risktable[10][[1]] = as.character("\tTranslocation t(4;14)")
-	risktable[10][[2]] = as.character(cyto.res[[1]])
-	risktable[10][[3]] = as.character("[yes;no]")
+	risktable[11][[1]] = as.character("\tTranslocation t(4;14)")
+	risktable[11][[2]] = as.character(cyto.res[[1]])
+	risktable[11][[3]] = as.character("[yes;no]")
 	
-	risktable[11][[1]] = ""
-	risktable[11][[2]] = ""
-	risktable[11][[3]] = ""
+
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -1073,6 +1074,44 @@ madbHandler = function(h, ...) {
 	}
 }
 
+# -------------------------------------------------------------------------
+# function to caclulate the HM-Meta-Score
+# -------------------------------------------------------------------------
+meta.score = function(ISS, t414, GPI, SHRISK, DECAUX, AURKA, FGFR3, IGF1R) {
+	a = ifelse(ISS == 1, 0, ifelse(ISS==2, 0.5, 1))
+	
+	b = ifelse(t414 == "no", 0, 1)
+	
+	c = ifelse(SHRISK == "high risk" & DECAUX == "high risk", 1, ifelse(SHRISK == "high risk" & DECAUX == "low risk", 0.5, ifelse(SHRISK == "low risk" & DECAUX == "high risk", 0.5, 0)))
+	
+	d = ifelse(GPI == "high risk", 1, ifelse(GPI == "medium risk", 0.5, 0))
+	
+	e = ifelse(AURKA == "A", 0, 1)
+	
+	f = ifelse(FGFR3 == "P"  & t414==0, 1, 0)
+	
+	g = ifelse(IGF1R == "A", 0, 1)
+	
+	meta = a+b+c+d
+	if (e==1 | f == 1 | g==1) meta = meta+1
+
+	meta.res = ifelse(meta==0, "low risk", ifelse(meta>0 & meta<=3, "medium risk", "high risk"))
+	return(meta.res)
+}
+
+# meta score handler
+p.meta.score = function(h, ...) {
+	if(exists("cyto.res") & exists("risk.res") & exists("genes.res")) {
+		# meta score
+		meta.sample = meta.score(as.numeric(svalue(h$obj)), cyto.res[[1]], risk.res[[7]], risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
+								genes.res[[1]], genes.res[[10]], genes.res[[14]])
+	} else meta.sample = ""
+	
+	risktable[5][[2]] = as.character(meta.sample)
+	
+	assign("p.meta.score", meta.sample, env=.GlobalEnv)
+}
+
 # ------------------------------------------------------------------------------------------------
 #
 # GUI
@@ -1080,7 +1119,7 @@ madbHandler = function(h, ...) {
 # ------------------------------------------------------------------------------------------------
 # About-Dialog
 aboutHandler = function(h, ...) {
-	Dialog("GEP-R GUI Version 0.7.1 \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
+	Dialog("GEP-R GUI Version 0.8 \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
 }
 
 Dialog = function(message, handler=NULL) { 						# this functino analog to the example in the gWidgets vignette
@@ -1208,10 +1247,11 @@ tbl.patient[7,2, expand=FALSE] = (p.diag = gdroplist(items=c("", "Multiple Myelo
 tbl.patient[7,3, expand=FALSE] = (p.stage = gdroplist(items=c("", "IA", "IB", "IIA", "IIB", "IIIA", "IIIB"), cont=tbl.patient))
 tbl.patient[8,1, anchor = c(-1,0)] = "Date of diagnosis"
 tbl.patient[8,2, expand=FALSE] = (p.datediag = gedit("", width=18, cont=tbl.patient))
-tbl.patient[9,1, anchor = c(-1,0)] = "IgH-type"
+tbl.patient[9,1, anchor = c(-1,0)] = "IgH/IgL-type"
 tbl.patient[9,2, expand=FALSE] = (p.igtype = gdroplist(items=c("", "G", "A", "D", "BJ" ,"asecretory"), cont=tbl.patient))
-tbl.patient[10,1, anchor = c(-1,0)] = "IgL-type"
-tbl.patient[10,2, expand=FALSE] = (p.lk = gdroplist(items=c("", "lambda", "kappa"), cont=tbl.patient))
+tbl.patient[9,3, expand=FALSE] = (p.lk = gdroplist(items=c("", "lambda", "kappa"), cont=tbl.patient))
+tbl.patient[10,1, anchor = c(-1,0)] = "ISS"
+tbl.patient[10,2, expand=FALSE] = (p.iss = gdroplist(items=c("", "1", "2", "3"), cont=tbl.patient, handler=p.meta.score))
 tbl.patient[11,1, anchor = c(-1,0)] = "Sex"
 tbl.patient[11,2, expand=FALSE] = (p.sex = gdroplist(items=c("", "male", "female"), cont=tbl.patient))
 tbl.patient[12,1:3, anchor = c(-1,0)] = "Corresponding Physician"
