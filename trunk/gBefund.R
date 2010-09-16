@@ -1088,12 +1088,10 @@ meta.score = function(ISS, t414, GPI, SHRISK, DECAUX, AURKA, FGFR3, IGF1R) {
 	
 	e = ifelse(AURKA == "A", 0, 1)
 	
-	f = ifelse(FGFR3 == "P"  & t414==0, 1, 0)
-	
-	g = ifelse(IGF1R == "A", 0, 1)
+	f = ifelse(IGF1R == "A", 0, 1)
 	
 	meta = a+b+c+d
-	if (e==1 | f == 1 | g==1) meta = meta+1
+	if (e==1 | f==1) meta = meta+1
 
 	meta.res = ifelse(meta==0, "low risk", ifelse(meta>0 & meta<=3, "medium risk", "high risk"))
 	return(meta.res)
