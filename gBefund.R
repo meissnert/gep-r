@@ -1077,7 +1077,7 @@ madbHandler = function(h, ...) {
 # -------------------------------------------------------------------------
 # function to caclulate the HM-Meta-Score
 # -------------------------------------------------------------------------
-meta.score = function(ISS, t414, GPI, SHRISK, DECAUX, AURKA, FGFR3, IGF1R) {
+meta.score = function(ISS, t414, GPI, SHRISK, DECAUX, AURKA, IGF1R) {
 	a = ifelse(ISS == 1, 0, ifelse(ISS==2, 0.5, 1))
 	
 	b = ifelse(t414 == "no", 0, 1)
@@ -1102,7 +1102,7 @@ p.meta.score = function(h, ...) {
 	if(exists("cyto.res") & exists("risk.res") & exists("genes.res")) {
 		# meta score
 		meta.sample = meta.score(as.numeric(svalue(h$obj)), cyto.res[[1]], risk.res[[7]], risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
-								genes.res[[1]], genes.res[[10]], genes.res[[14]])
+								genes.res[[1]], genes.res[[13]])
 	} else meta.sample = ""
 	
 	risktable[5][[2]] = as.character(meta.sample)
