@@ -40,5 +40,5 @@ shrisk = function(expr.mas5) {
 	risk_score17 <-  t(centered_gep70_log2_exp_mas5[probesets.17,]) %*% coef.17
 	risk_score17c <- as.factor(ifelse(risk_score17 > 1.5,"high risk","low risk"))
 
-	return(list(predicted.abs=predicted, predicted.sub.abs=predicted.sub, predicted.sqrt=predicted2, predicted.sub.sqrt=predicted2.sub, predicted17=risk_score17c))
+	return(list(predicted.abs=predicted, predicted.sub.abs=predicted.sub, predicted.sqrt=predicted2, predicted.sub.sqrt=predicted2.sub, predicted17=risk_score17c, score=risk_score))
 }

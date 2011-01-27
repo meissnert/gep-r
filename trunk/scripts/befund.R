@@ -5,6 +5,18 @@
 # individual genes
 # risk assessment
 # -------------------------------------------------------------------------
+load("data/affinity.info.hgu133plus2.Rdata") #affinity info of HGU133 Plus 2.0 Chip
+
+# modified wrap.val.add function for parsing the affyinity info to bg.adjust.gcrma
+my.wrap.val.add = function(abo,scale,affinity.info) {
+	if(!exists("summarize.add")) source("./summarize_val.r")
+   
+    abo.bg  =  docval:::bg.adjust.gcrma.2(abo, affinity.info=affinity.info)
+    abo.nrm =  docval:::normalize.qnt.add(abo.bg,scale$mqnts)
+    eset    =  docval:::summarize.add(abo.nrm,scale$probe.effects)
+   
+    return(eset)
+}
 
 gepr.process.external = function(external) {
 	# load gcrma reference data
@@ -19,6 +31,7 @@ gepr.process.external = function(external) {
 	# external patient preprocessing, windows and no multicore
 	if(system=="Windows" | multicore=="no") {
 	exprs.external.gcrma = wrap.val.add(external, params, method="gcrma")
+	#exprs.external.gcrma = my.wrap.val.add(external, params, "affinity.info.hgu133plus2")
 	exprs.external.mas5 = mas5(external)
 	}
 
@@ -60,7 +73,7 @@ gepr.qualitycontrol = function(external) {
 	# qc summary statistics
 	qc.data = merge.AffyBatch(qc.ref, external) # combine sample + referece to affybatch object
 	
-	qc.data.norm = gcrma(qc.data) # gcrma 	
+	qc.data.norm = gcrma(qc.data, ,affinity.info=affinity.info.hgu133plus2) # gcrma 	
 	qc.data.norm.panp = my.pa.calls(qc.data.norm, verbose=TRUE) # panp
 	qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc object
 	
@@ -97,13 +110,13 @@ gepr.qualitycontrol = function(external) {
 	concentration = log(c(1.5, 5, 25, 100))
 	x.val = array(concentration, c(4, length(qc.data)))
 	x.val = t(x.val)
-	y.val = spikeInProbes(qc.obj)
+	y.val = simpleaffy:::spikeInProbes(qc.obj)
 
 	png("temp/spikein_performance.png")
 	plot(x.val, y.val, col=1:7, main="Spike-in performance", xlab="log ( concentration in pM)", ylab="log2 (expression)", ylim=c(4,16))
 	legend(legend=sampleNames(qc.data), x=2.5, y=7, lty=1, col=1:7, cex=0.7)
 	for (i in 1:length(qc.data)) {
-		y.val = spikeInProbes(qc.obj)[i,]
+		y.val = simpleaffy:::spikeInProbes(qc.obj)[i,]
 		lm.spike = lm(y.val ~ concentration)
 		slope = coef(lm.spike)[2]
 		intercept = coef(lm.spike)[1]
@@ -239,7 +252,7 @@ gepr.risk = function() {
 	# decaux
 	source("scripts/decaux.R")
 	decaux = decaux(process.res$gcrma)
-
+	
 	# shaughnessy 17/70 Gene Risk score
 	source("scripts/shrisk.R")
 	shaughnessy = shrisk(process.res$mas5) # needs mas5 normalized data
@@ -249,8 +262,14 @@ gepr.risk = function() {
 						  # shaughnessy$predicted17	17 Gene predictor
 
 	# bergsagel tc classification
-	source("scripts/bergsagel.R")
-	bergsagel = bergsagel(process.res$mas5)
+	#source("scripts/bergsagel.R")
+	#bergsagel = bergsagel(process.res$mas5)
+	
+	# update 24.01.2011
+	#  TC Classification according to 
+	#  Chng et al. 2007
+	source("scripts/tc_new.R")
+	bergsagel = tc.class(exprs(process.res$mas5))
 
 	# ec
 	load("data/pam.ec.Rdata")
@@ -290,6 +309,8 @@ gepr.cyto = function() {
 
 	return(t414)
 }
+
+
 
 
 

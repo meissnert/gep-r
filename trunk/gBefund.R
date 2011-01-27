@@ -46,6 +46,7 @@ require(affydata)
 #require(MAQCsubsetAFX)
 require(affyQCReport)
 require(affyPLM)
+require(simpleaffy)
 
 # load packages for db-support and multicore support, note: works only within linux
 if (system == "Linux") {
@@ -340,6 +341,7 @@ clearGUIHandler = function(h, ...) {
 	svalue(p.stage) = ""
 	svalue(p.datediag) = ""
 	svalue(p.country) = ""
+	svalue(p.iss) = ""
 	svalue(phys.name) = ""
 	svalue(phys.vorname) = ""
 	svalue(phys.strasse) = ""
@@ -395,15 +397,15 @@ riskHandler = function(h, ...) {
 	# molecular (classifications)
 	risktable[8][[1]] = as.character("\tTC classification")
 	risktable[8][[2]] = as.character(risk.res[[4]][1])                                # just for the moment [1] bergsagel script hast to be checked!!!!!!
-	risktable[8][[3]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
+	risktable[8][[4]] = as.character("[4p16;maf;6p21;11q13;d1;d1d2;d2;none]")
 
 	risktable[9][[1]] = as.character("\tEC classification")
 	risktable[9][[2]] = as.character(risk.res[[3]])
-	risktable[9][[3]] = as.character("[11;12;21;22]")
+	risktable[9][[4]] = as.character("[11;12;21;22]")
 	
 	risktable[7][[1]] = as.character("\tMolecular classification")
 	risktable[7][[2]] = as.character(risk.res[[2]])
-	risktable[7][[3]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
+	risktable[7][[4]] = as.character("[HP,CD1,CD2,PR,LB,MS,MF]")
 	
 	# risk stratifications
 	# risktable[6][[1]] = as.character("\tUAMS 17-gene risk score")
@@ -412,24 +414,28 @@ riskHandler = function(h, ...) {
 	
 	risktable[3][[1]] = as.character("\tUAMS 70-gene risk score")
 	risktable[3][[2]] = as.character(risk.res[[5]]$predicted.sub.sqrt)
-	risktable[3][[3]] = as.character("[high;low]")
+	risktable[3][[3]] = round(as.numeric(risk.res[[5]]$score),2)
+	risktable[3][[4]] = as.character("[high;low]")
 	
 	#risktable[2][[1]] = as.character("Shaughnessy 70 Genes Abs. dist.")
 	#risktable[2][[2]] = as.character(shaughnessy$predicted.abs)
 	#risktable[2][[3]] = as.character("[high;medium;low]")
 	
 	risktable[4][[1]] = as.character("\tGPI")
-	risktable[4][[2]] = as.character(risk.res[[7]])
-	risktable[4][[3]] = as.character("[high;medium;low]")
+	risktable[4][[2]] = as.character(risk.res[[7]]$pi.risk)
+	risktable[4][[3]] = round(as.numeric(risk.res[[7]]$pi.score),2)
+	risktable[4][[4]] = as.character("[high;medium;low]")
 	
 	risktable[2][[1]] = as.character("\tIFM 15-gene risk score")
 	risktable[2][[2]] = as.character(risk.res[[6]]$decaux.risk)
-	risktable[2][[3]] = as.character("[high;low]")
+	risktable[2][[3]] = round(as.numeric(risk.res[[6]]$decaux.score),2)
+	risktable[2][[4]] = as.character("[high;low]")
 	
 	# meta score
 	risktable[5][[1]] = as.character("\tHM-meta-score")
 	#risktable[5][[2]] = ""
-	risktable[5][[3]] = as.character("[high;medium;low]")
+	#risktable[5][[3]] = ""
+	risktable[5][[4]] = as.character("[high;medium;low]")
 
 	#risktable[10][[1]] = as.character("\tZs score")
 	#risktable[10][[2]] = as.character(risk.res[[1]])
@@ -437,7 +443,7 @@ riskHandler = function(h, ...) {
 
 	risktable[11][[1]] = as.character("\tTranslocation t(4;14)")
 	risktable[11][[2]] = as.character(cyto.res[[1]])
-	risktable[11][[3]] = as.character("[yes;no]")
+	risktable[11][[4]] = as.character("[yes;no]")
 	
 
 }
@@ -1094,18 +1100,19 @@ meta.score = function(ISS, t414, GPI, SHRISK, DECAUX, AURKA, IGF1R) {
 	if (e==1 | f==1) meta = meta+1
 
 	meta.res = ifelse(meta==0, "low risk", ifelse(meta>0 & meta<=3, "medium risk", "high risk"))
-	return(meta.res)
+	return(list(meta.res=meta.res, meta.value=meta))
 }
 
 # meta score handler
 p.meta.score = function(h, ...) {
 	if(exists("cyto.res") & exists("risk.res") & exists("genes.res")) {
 		# meta score
-		meta.sample = meta.score(as.numeric(svalue(h$obj)), cyto.res[[1]], risk.res[[7]], risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
+		meta.sample = meta.score(as.numeric(svalue(h$obj)), cyto.res[[1]], risk.res[[7]]$pi.risk, risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
 								genes.res[[1]], genes.res[[13]])
 	} else meta.sample = ""
 	
-	risktable[5][[2]] = as.character(meta.sample)
+	risktable[5][[2]] = as.character(meta.sample$meta.res)
+	risktable[5][[3]] = as.numeric(meta.sample$meta.value)
 	
 	assign("p.meta.score", meta.sample, env=.GlobalEnv)
 }
@@ -1399,7 +1406,7 @@ nb.right = gnotebook(cont=pg)
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IgH_type="", IgL_type="", stringsAsFactors=FALSE), cont=tables)
-risktable = gtable(data.frame(Method=rep("",11), Risk="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+risktable = gtable(data.frame(Method=rep("",11), Risk="", Value="", Range="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
 genetable= gtable(data.frame(Gene=rep("",17), 
 				 Probeset="", 
 				 Pat.Sig.="", 
