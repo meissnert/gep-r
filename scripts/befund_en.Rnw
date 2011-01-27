@@ -110,16 +110,12 @@ Preprocessing: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 %\vspace{0.5cm}
 
-% Beuerteilung
+% Conclusion
 \begin{large}\textbf{Conclusion}\end{large} \\
 \vspace{-0.25cm}
 \line(1,0){170}
 
-%Hier der frei-Text:
-%\textbf{Hinweis:} Die Genexpressionsanalyse stellt gegenwärtig ein experimentelles Verfahren dar. Anwendung und Interpretation werden gegenwärtig in klinischen Studien evaluiert. \\ \\
-%Beim Multiplen Myelom wurde wiederholt beschrieben, dass eine starke Überexpression von CCND1 mit dem Vorliegen einer Trankslokation t(11;14), einhergeht, die nach Hochdosistherapie mit einer guten Prognose vergesellschaftet ist. Eine geringe Expression von Proliferationsmarkern (z.B. Ki67) ist ebenfalls mit einer günstigen Prognose vergesellschaftet. \\ \\
-%Aufgrund der fehlenden Expression von MAGEA3 und MUC-1 ist eine Immuntherapie hinsichtlich dieses Antigens nicht erfolgsversprechend. \\ \\
-%Aufgrund des vorliegens einer TACI-Expression ist ein Einschluss in die TACI-Fe5 Studie möglicherweise von therapeutischem Interesse.
+%hear comes the final conclusion:
 \Sexpr{svalue(beurteilung)}
 
 \vspace{1.3cm}

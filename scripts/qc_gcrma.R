@@ -51,7 +51,7 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
 
     cdfn <- cleancdfname(cdfn)
 
-    setQCEnvironment(cdfn)
+    simpleaffy:::setQCEnvironment(cdfn)
 
     x <- exprs(normalised)
     #det <- detection.p.val(unnormalised, tau = tau, alpha1 = qc.get.alpha1(),
@@ -72,13 +72,13 @@ my.qc = function (unnormalised, normalised, panp, tau = 0.015, logged = TRUE, cd
     minbg <- apply(bgsts, 1, min)
     maxbg <- apply(bgsts, 1, max)
     stdvbg <- sqrt(apply(bgsts, 1, var))
-    qc.probenames <- qc.get.probes()
+    qc.probenames <- simpleaffy:::qc.get.probes()
     qc.probe.vals <- rbind(c(), (sapply(qc.probenames, function(y) {
         x[y, ]
     })))
     rownames(qc.probe.vals) <- colnames(x)
     colnames(qc.probe.vals) <- qc.probenames
-    spike.probenames <- qc.get.spikes()
+    spike.probenames <- simpleaffy:::qc.get.spikes()
     spike.vals <- rbind(c(), (sapply(spike.probenames, function(y) {
         x[y, ]
     })))
@@ -171,13 +171,13 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
 
   # meansf <- mean(sfs)
 
-  dpv <- percent.present(x)
+  dpv <- simpleaffy:::percent.present(x)
   dpv <- (round(100*dpv))/100;
 
-  abg <- log2(avbg(x))
+  abg <- log2(simpleaffy:::avbg(x))
   abg <- (round(100*abg))/100;
 	
-  if(is.null(label)) { label <- names(maxbg(x)) }
+  if(is.null(label)) { label <- names(simpleaffy:::maxbg(x)) }
   d1 <- 0.0;
   d2 <- 0.0;
   d3 <- 0.0;
@@ -242,7 +242,7 @@ my.plot.qc.stats = function(x, fc.line.col="black", chip.label.col="black", gdh.
   text(-1,-1,"-1",pos=3,col=fc.line.col,cex=cex)
   text(0,-1,"0",pos=3,col=fc.line.col,cex=cex)
 
-  rats <- ratios(x);
+  rats <- simpleaffy:::ratios(x);
   if(!usemid) {
     gdh <- rats[,3];
     ba  <- rats[,1];

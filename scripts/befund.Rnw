@@ -13,9 +13,10 @@
 \renewcommand{\datumtext}{}
 \newcommand{\n}{\newline}
 
-\Adresse	{\Sexpr{paste(svalue(p.vorname), svalue(p.name))}\\
-		 \Sexpr{svalue(p.strasse)}\\
-		 \Sexpr{paste(svalue(p.plz), svalue(p.ort))}
+\Adresse	{\Sexpr{paste(svalue(phys.title), svalue(phys.vorname), svalue(phys.name))}\\
+		 \Sexpr{svalue(phys.strasse)}\\
+		 \Sexpr{paste(svalue(phys.plz), svalue(phys.ort))} \\
+		 \Sexpr{svalue(phys.country)}
 		}
 
 \Betreff	{Genexpressionsbefund (GEP-R)}
@@ -28,24 +29,27 @@
 \begin{document}
 \begin{g-brief}
 % 1. Seite des Briefkopf
-%\ThisCenterWallPaper{1}{data/Logo.pdf}
-\ThisCenterWallPaper{1}{data/Logo_hd.pdf}
+\ThisCenterWallPaper{1}{data/Logo.pdf}
+%\ThisCenterWallPaper{1}{data/Logo_hd.pdf}
 
 % Angaben zum Patienten
-\line(1,0){170} \\ \\
-\textbf{Name:} \Sexpr{svalue(p.name)}, \Sexpr{svalue(p.vorname)} % name des Patienten
-\hspace{8cm}
-\textbf{Geb.Datum:} \Sexpr{svalue(p.geb)} % geburtsdatum des Patienten
-\\
+\vspace{-0.5cm}
+\line(1,0){170} 
+\vspace{-0.3cm}
+\begin{tabbing}
+\textbf{Name:    } \hspace{0.1cm} \=\Sexpr{paste(svalue(p.name), svalue(p.vorname), sep=", ")} \hspace{7.5cm} \= \textbf{Geb.Datum:} \=\Sexpr{svalue(p.geb)} \\ % name und geburtsdatum des Patienten
+\textbf{Adresse: } \hspace{0.1cm} \>\Sexpr{paste(svalue(p.strasse), svalue(p.ort), svalue(p.plz), svalue(p.country), sep=", ")} % Adresse
+\end{tabbing}
+\vspace{-0.6cm}
 \line(1,0){170}
 \begin{tabbing}
-\textbf{Klinische Diagnose:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Salmon-Durie Stadium:} \=\Sexpr{svalue(p.stage)}%hier klini. Diagnose eintragen
+\textbf{Klinische Diagnose:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Salmon-Durie Stadium:} \=\Sexpr{svalue(p.stage)} %hier klini. Diagnose eintragen
 \\
 \textbf{Datum der Erstdiagnose:} \>\Sexpr{svalue(p.datediag)}
 \\
 \textbf{Klinische Daten:}
-\>\textbf{IgH-Typ:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
-\>\textbf{IgL-Typ:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
+\>\textbf{IgH-type:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\>\textbf{IgL-type:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
 
 % Angaben zur Genexpressionsanalyse
@@ -65,8 +69,8 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 
 % Beginn der 2. Seite, mit Briefbogenwechsel
 \pagebreak
-%\CenterWallPaper{1}{data/Logo2.pdf}
-\CenterWallPaper{1}{data/Logo2_hd.pdf}
+\CenterWallPaper{1}{data/Logo2.pdf}
+%\CenterWallPaper{1}{data/Logo2_hd.pdf}
 
 % Befund
 \begin{large}\textbf{Befund}\end{large} \\
@@ -93,25 +97,25 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \item \textbf{Zielantigene für gruppenspezifische Therapie} \\
 \Sexpr{svalue(befund.grtherapy)}
 
+\item \textbf{Chromosomale Aberrationen} \\
+\Sexpr{svalue(befund.cyto)}
+
 \end{enumerate}
 
 \vspace{0.5cm}
 
 % Beuerteilung
 \begin{large}\textbf{Beurteilung}\end{large} \\
+\vspace{-0.25cm}
 \line(1,0){170}
 
 %Hier der frei-Text:
-\textbf{Hinweis:} Die Genexpressionsanalyse stellt gegenwärtig ein experimentelles Verfahren dar. Anwendung und Interpretation werden gegenwärtig in klinischen Studien evaluiert. \\ \\
-%Beim Multiplen Myelom wurde wiederholt beschrieben, dass eine starke Überexpression von CCND1 mit dem Vorliegen einer Trankslokation t(11;14), einhergeht, die nach Hochdosistherapie mit einer guten Prognose vergesellschaftet ist. Eine geringe Expression von Proliferationsmarkern (z.B. Ki67) ist ebenfalls mit einer günstigen Prognose vergesellschaftet. \\ \\
-%Aufgrund der fehlenden Expression von MAGEA3 und MUC-1 ist eine Immuntherapie hinsichtlich dieses Antigens nicht erfolgsversprechend. \\ \\
-%Aufgrund des vorliegens einer TACI-Expression ist ein Einschluss in die TACI-Fe5 Studie möglicherweise von therapeutischem Interesse.
 \Sexpr{svalue(beurteilung)}
 
-\vspace{3cm}
+\vspace{1.3cm}
 
 \begin{tabbing}
-Prof. Dr. H. Goldschmidt \hspace{6cm} \=Dr. med. Dipl. phys. D. Hose \\
+Prof. Dr. med. H. Goldschmidt \hspace{3.2cm} \=Dr. med. Dipl. phys. D. Hose \\
 Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
 \end{tabbing}
 
@@ -125,6 +129,7 @@ Leiter, Sektion Multiples Myelom \> Leiter, Labor für Myelomforschung
 
 % Qualitätskontrolle
 \begin{large}\textbf{Qualitätskontrolle}\end{large} \\
+\vspace{-0.3cm}
 \line(1,0){170}
 \begin{center}
 \resizebox{7cm}{!}{\includegraphics{temp/qualityplot.png}}
@@ -170,6 +175,7 @@ IgL-Typ & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline
 UAMMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
 IFM 15-gene risk score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
 Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
+HM-meta-score & \Sexpr{p.meta.score} & [high, medium, low] \tabularnewline \hline 
 %Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
 \end{tabular}
 
