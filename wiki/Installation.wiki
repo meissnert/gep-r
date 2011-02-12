@@ -62,4 +62,5 @@ Please install first:
 Please install first:
   * pdftk for MacOS [http://www.pdflabs.com/docs/install-pdftk/]
   * ImageMagick [http://www.imagemagick.org/script/binary-releases.php#macosx]
+  * MacTeX [http://www.tug.org/mactex/]
   * PostgreSQL (for database functionality needed) [http://www.postgresql.org/download/macosx]
