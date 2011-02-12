@@ -19,7 +19,7 @@
   * _hgu133plus2cdf_
   * _gdata_
   * _panp_
-  * _genefilter_
+  * _AnnotationDbi_
   * _pamr_
   * _affyPLM_
   * _gWidgetsRGtk2_
@@ -31,7 +31,7 @@
   * _pgUtils_ (for Linux/PSQL support)
   * _Rdbi_ (for Linux/PSQL support)
   * _RdbiPgSQL_ (for Linux/PSQL support)
-  * _madb_ (for Linux/PSQL support)
+  * _maDB_ (for Linux/PSQL support)
   * _multicore_ (for multicore support, still experimental and by default turned off and only linux)
  * pdftk [http://www.accesspdf.com/pdftk/index.html], a RPM for openSUSE 11.2 64-Bit you will find here [http://download.opensuse.org/repositories/home:/aljex/openSUSE_11.2/x86_64/]
  * Evince PDF Viewer (or any other PDF Vierwer, this can be changed within the source code)
@@ -55,3 +55,11 @@ Please install first:
   * ImageMagick for Windows [http://www.imagemagick.org/script/binary-releases.php?ImageMagick=r4fc8getv5t0elkfloki7skmp0#windows]
   * MiKTeX [http://miktex.org/] or fptex (prefered) [http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=fptex]
   * Acroread PDF Viewver
+
+
+== Notes on MacOS Installation ==
+
+Please install first:
+  * pdftk for MacOS [http://www.pdflabs.com/docs/install-pdftk/]
+  * ImageMagick [http://www.imagemagick.org/script/binary-releases.php#macosx]
+  * PostgreSQL (for database functionality needed) [http://www.postgresql.org/download/macosx]
