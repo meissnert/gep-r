@@ -3,7 +3,7 @@
 = Installation of GEP-R =
 
 == Required ==
- * Linux Operating System (e.g. [http://www.opensuse.org openSUSE] - GEP-R is developed within openSUSE 11.2 64-Bit) or Windows (still testing)
+ * Linux Operating System (e.g. [http://www.opensuse.org openSUSE] - GEP-R is developed within openSUSE 11.2 64-Bit), Windows or MacOS.
  * [http://www.r-project.org R]/[http://www.bioconductor.org Bioconductor] Version 2.10/2.5 or higher
  * with the following packages and their dependencies installed
   * _docval_ (get the gcrma modified version from the [http://code.google.com/p/gep-r/downloads/list Downloads] section)
@@ -49,6 +49,7 @@ to get GEP-R running.
 
 
 == Notes on Windows Installation ==
+(so far tested on Windows XP 32-Bit and Vista 32-Bit)
 
 Please install first:
   * pdftk for Windows [http://www.accesspdf.com/pdftk/index.html]
@@ -58,6 +59,7 @@ Please install first:
 
 
 == Notes on MacOS Installation ==
+(so far tested on MacOS 10.5.8)
 
 Please install first:
   * pdftk for MacOS [http://www.pdflabs.com/docs/install-pdftk/]
