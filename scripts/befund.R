@@ -8,22 +8,23 @@
 load("data/affinity.info.hgu133plus2.Rdata") #affinity info of HGU133 Plus 2.0 Chip
 
 # modified wrap.val.add function for parsing the affyinity info to bg.adjust.gcrma
-my.wrap.val.add = function(abo,scale,affinity.info) {
-	if(!exists("summarize.add")) source("./summarize_val.r")
-   
-    abo.bg  =  docval:::bg.adjust.gcrma.2(abo, affinity.info=affinity.info)
-    abo.nrm =  docval:::normalize.qnt.add(abo.bg,scale$mqnts)
-    eset    =  docval:::summarize.add(abo.nrm,scale$probe.effects)
-   
-    return(eset)
-}
+# --> does not work yet...
+# my.wrap.val.add = function(abo,scale,affinity.info) {
+#	if(!exists("summarize.add")) source("./summarize_val.r")
+#   
+#    abo.bg  =  docval:::bg.adjust.gcrma.2(abo, affinity.info=affinity.info)
+#    abo.nrm =  docval:::normalize.qnt.add(abo.bg,scale$mqnts)
+#    eset    =  docval:::summarize.add(abo.nrm,scale$probe.effects)
+#   
+#    return(eset)
+#}
 
 gepr.process.external = function(external) {
 	# load gcrma reference data
-	if (svalue(probe.ampl) == "single amplification") {
-		load("xyz.Rdata") # there is no single amplification data available...
-		params = sh.params
-	}
+	#if (svalue(probe.ampl) == "single amplification") {
+	#	load("xyz.Rdata") # there is no single amplification data available...
+	#	params = sh.params
+	#}
 	if (svalue(probe.ampl) == "double amplification") {
 		load("data/params.befund.Rdata") # report reference gcrma parmameter 
 	}
@@ -36,7 +37,7 @@ gepr.process.external = function(external) {
 	}
 
 	# external patient preprocessing with multicore, mas5 and gcrma parallel
-	if(system == "Linux" & multicore == "yes") {
+	if((system == "Linux" | system == "Darwin") & multicore == "yes") {
 	p = parallel(wrap.val.add(external, params, method="gcrma"))
 	q = parallel(mas5(external))
 
@@ -61,11 +62,11 @@ gepr.process.external = function(external) {
 # Qualitycontrol
 # -------------------------------------------------------------------------
 gepr.qualitycontrol = function(external) {
-	if (svalue(probe.ampl) == "single amplification") {
-		#load("data/xyzRdata")  # 
+	#if (svalue(probe.ampl) == "single amplification") {
+	#	#load("data/xyzRdata")  # 
 		# source("scripts/qc_gcrma.sh.R") # does not exist yet
-		source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
-	}
+	#	source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
+	#}
 	if (svalue(probe.ampl) == "double amplification") {
 		load("data/qc.ref.Rdata") # load myeloma reference chips for qc
 		source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
@@ -73,7 +74,7 @@ gepr.qualitycontrol = function(external) {
 	# qc summary statistics
 	qc.data = merge.AffyBatch(qc.ref, external) # combine sample + referece to affybatch object
 	
-	qc.data.norm = gcrma(qc.data, ,affinity.info=affinity.info.hgu133plus2) # gcrma 	
+    qc.data.norm = gcrma(qc.data, affinity.info=affinity.info.hgu133plus2) # gcrma 	
 	qc.data.norm.panp = my.pa.calls(qc.data.norm, verbose=TRUE) # panp
 	qc.obj = my.qc(qc.data, qc.data.norm, qc.data.norm.panp$Pcalls) # create qc object
 	
@@ -133,7 +134,7 @@ gepr.qualitycontrol = function(external) {
 
 	# convert  *.pdf to *.gif for the imagehandler within the gui
 	# convert  *.pdf to *.png for the creation of the pdf report
-	if(system=="Linux") {
+	if(system=="Linux" | system == "Darwin") {
 		system("convert temp/qualityplot.png temp/qualityplot.gif")
 		system("convert temp/qcsummary.png temp/qcsummary.gif")
 		system("convert temp/nuse_rle.png temp/nuse_rle.gif")
