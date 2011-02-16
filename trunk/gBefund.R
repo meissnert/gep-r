@@ -24,12 +24,7 @@ set.probe.array = "Affymetrix U133 plus 2.0"
 set.probe.norm = "GC-RMA"
 multicore = "no" # "yes"
 
-system = Sys.info()[1] # what system is installed?
-
-# does it work on mac too? lets test..
-if (system == "Darwin") {
-	system == "Linux"
-}
+system = as.vector(Sys.info()[1]) # what system is installed?
 
 # ------------------------------------------------------------------------------------------------
 #
@@ -49,7 +44,7 @@ require(affyPLM)
 require(simpleaffy)
 
 # load packages for db-support and multicore support, note: works only within linux
-if (system == "Linux") {
+if (system == "Linux" | system == "Darwin") {
 	require(pgUtils)
 	require(maDB)
 	require(multicore)
@@ -87,7 +82,7 @@ saveHandler = function(h, ...) {
 	# save all cel-file associated variables in a list 
 	# create a directory, copy imagages and r-object with variables there
 
-	if (system == "Linux") {
+	if (system == "Linux" | system == "Darwin") {
 		# create dir with name of celfile within the save directory
 		# if(!file.exists(paste("save/", svalue(cel.label), sep=""))) dir.create(paste("save/", svalue(cel.label), sep="")) 
 		if(!file.exists(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep=""))) dir.create(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")) # get rid of brackets within filenames
@@ -160,7 +155,7 @@ saveHandler = function(h, ...) {
 
 	svalue(sb) = paste("Report for CEL-File", svalue(cel.label), "was saved!", sep=" ")
 	
-	if(db.support == TRUE & system == "Linux") {
+	if(db.support == TRUE & (system == "Linux" | system == "Darwin")) {
 		savedbHanlder()
 		madbHandler()
 	} # save values to database
@@ -230,7 +225,7 @@ loadHandler = function(h, ...) {
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 	
 	# copy images
-	if (system == "Linux") {
+	if (system == "Linux" | system == "Darwin") {
 		# copy .gif files from save to the temp folder, overwrite all existing files
 		file.copy(paste("save/", gsub("[()]" , "", svalue(cel.label)), "/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep="")[grep("gif", paste("save/", dir(paste("save/", gsub("[()]" , "", svalue(cel.label)), sep="")), sep=""))], "temp/", overwrite=T, recursiv=T) 
 		# copy .pdf files from save to the temp folder, overwrite all existing files
@@ -271,7 +266,7 @@ chooseFile = function(h, ...) {
 			cel.file = print(h)
 			assign("cel.file", cel.file, envir=.GlobalEnv)
   	        clearGUIHandler() # clear all "old" entries within the gui
-			if(system == "Linux" ) {svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]}
+			if(system == "Linux" | system == "Darwin") {svalue(cel.label) =  unlist((strsplit(cel.file, "/")))[length(unlist((strsplit(cel.file, "/"))))]}
 			if(system == "Windows" ) {svalue(cel.label) =  unlist((strsplit(cel.file, "\\", fixed=T)))[length(unlist((strsplit(cel.file, "\\", fixed=T))))]}
 			svalue(sb) = "The analysis can now be started!"
 			enabled(file.analyse)="TRUE" # enables run analysis button
@@ -900,12 +895,32 @@ pdfHandler = function(h, ...) {
 
 	# Sweave("scripts/befund.Rnw") # german
 	# Sweave("scripts/befund_en.Rnw")   # english
-	if(system=="Linux") {
+	if(system == "Linux") {
 		if (lang=="english") {
 			Sweave("scripts/befund_en.Rnw")
 			system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
 			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
 			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"
+		}
+		
+		if (lang=="german") {
+			Sweave("scripts/befund.Rnw")
+			system("R CMD pdflatex befund.tex") # create pdf from tex file, german
+			system(paste("pdftk befund.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, german
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"	
+		}
+	}
+	
+	if(system == "Darwin") {
+		if (lang=="english") {
+			Sweave("scripts/befund_en.Rnw")
+			system("R CMD pdflatex befund_en.tex") # create pdf from tex file, english
+			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), ".pdf",sep=""))) # move the pdf to the reports directory
 			enabled(file.pdfshow)="TRUE"  # activate view pdf button
 			svalue(sb) = "PDF was created and can now be viewed!"
 		}
@@ -946,6 +961,10 @@ viewpdfHandler = function(h, ...) {
 	if(system=="Linux") {
 		system(paste("evince", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
 	}
+	
+	if(system == "Darwin") {
+		system(paste("open -a Preview", paste("reports/",gsub("[()]" , "", svalue(cel.label)), ".pdf",sep="")))
+	}	
 
 	if(system=="Windows") {
 		system(paste("acroread", paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep="")))
@@ -1147,7 +1166,7 @@ helpHandler = function(h, ...) {
 	#window = gwindow("Help")
 	#url = "http://cran.r-project.org/web/packages/gWidgets/index.html"
 	#ghtml(url, container=window)
-	if(system=="Linux") {
+	if(system=="Linux" | system == "Darwin") {
 		system("firefox http://code.google.com/p/gep-r/w/list")
 	}
 	if(system=="Windows") {
