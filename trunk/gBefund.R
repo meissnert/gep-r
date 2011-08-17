@@ -220,7 +220,7 @@ loadHandler = function(h, ...) {
 	svalue(befund.grtherapy) = save$befund.grtherapy
 	svalue(befund.classification) = save$befund.classification
 	svalue(befund.cyto) = save$befund.cyto
-	svalue(sb) = save$sb
+	# svalue(sb) = save$sb <-- has to be checked some time...
 
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 	
@@ -736,6 +736,11 @@ integrityHandler = function(h, ...)  {
 
 	if (svalue(p.sex)=="") {
 		insert(warning.message, "Please enter the sex of the patient", font.attr=c(foreground.colors="red"))
+		error.count = error.count + 1
+	}
+	
+	if (svalue(p.iss)=="") {
+		insert(warning.message, "Please enter the ISS stage of the patient", font.attr=c(foreground.colors="red"))
 		error.count = error.count + 1
 	}
 	
