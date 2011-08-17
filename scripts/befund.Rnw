@@ -79,7 +79,7 @@ Normalisierung: & \Sexpr{svalue(probe.norm)} \tabularnewline \hline
 \item \textbf{Qualitätskontrolle} \\
 \Sexpr{svalue(befund.qualitycontrol)}
 
-\item \textbf{Identitäskontrolle} \\
+\item \textbf{Identitätskontrolle} \\
 \Sexpr{svalue(befund.identitycontrol)}
 
 \item \textbf{Gene über- oder aberrant exprimiert} \\
