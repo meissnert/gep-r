@@ -43,13 +43,13 @@
 \vspace{-0.6cm}
 \line(1,0){170}
 \begin{tabbing}
-\textbf{Klinische Diagnose:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Salmon-Durie Stadium:} \=\Sexpr{svalue(p.stage)} %hier klini. Diagnose eintragen
+\textbf{Klinische Diagnose:} \hspace{1cm} \=\Sexpr{ifelse(svalue(p.diag)=="Multiple Myeloma", "Multiples Myelom", svalue(p.diag))} \hspace{1cm} \= \textbf{Salmon-Durie Stadium:} \=\Sexpr{svalue(p.stage)} %hier klini. Diagnose eintragen
 \\
 \textbf{Datum der Erstdiagnose:} \>\Sexpr{svalue(p.datediag)}
 \\
 \textbf{Klinische Daten:}
-\>\textbf{IgH-type:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
-\>\textbf{IgL-type:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
+\>\textbf{IgH-Typ:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\>\textbf{IgL-Typ:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
 
 % Angaben zur Genexpressionsanalyse
