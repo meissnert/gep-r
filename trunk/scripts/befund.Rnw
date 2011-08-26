@@ -174,7 +174,7 @@ IgL-Typ & \Sexpr{prediction.res[[3]]} & [lambda, kappa]  \tabularnewline \hline
 %Shaughnessy 70-Gene-Predictor & \Sexpr{risk.res[[5]]$predicted.sqrt} & [high, low] \tabularnewline \hline
 UAMMS 70-gene risk score (Shaughnessy et al., 2007) & \Sexpr{risk.res[[5]]$predicted.sub.sqrt} & [high, low] \tabularnewline \hline
 IFM 15-gene risk score (Decaux et al., 2008) &  \Sexpr{risk.res[[6]]$decaux.risk} & [high, low] \tabularnewline \hline 
-Gene expression based proliferation index (Hose et al., 2008) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
+Gene expression based proliferation index (Hose et al., 2011) & \Sexpr{risk.res[[7]]} & [high, medium, low] \tabularnewline \hline 
 HM-meta-score & \Sexpr{p.meta.score} & [high, medium, low] \tabularnewline \hline 
 %Zs-Score (Reme et al., 2010) & \Sexpr{risk.res[[1]]} & [high, medium, low] \tabularnewline \hline
 \end{tabular}
@@ -190,8 +190,8 @@ HM-meta-score & \Sexpr{p.meta.score} & [high, medium, low] \tabularnewline \hlin
 
 \begin{tabular}{ | l | c | c |} \hline
  & Klassifikation & Wertebereich \tabularnewline \hline \hline
-Molekulare Klassifikation (Zhan et al, 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
-TC Klassifikation (Bergsagel, 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
+Molekulare Klassifikation (Zhan et al., 2006) & \Sexpr{risk.res[[2]]} & [PR, LB, MS, HY, CD1, CD2, MF] \tabularnewline \hline
+TC Klassifikation (Bergsagel et al., 2005) & \Sexpr{risk.res[[4]]} & [4p16, maf, 6p21, 11q13, d1, d1d2, d2, none] \tabularnewline \hline
 EC Klassifikation (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC21, EC22] \tabularnewline \hline
 \end{tabular}
 
