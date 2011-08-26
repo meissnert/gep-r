@@ -21,10 +21,9 @@ load("data/affinity.info.hgu133plus2.Rdata") #affinity info of HGU133 Plus 2.0 C
 
 gepr.process.external = function(external) {
 	# load gcrma reference data
-	#if (svalue(probe.ampl) == "single amplification") {
-	#	load("xyz.Rdata") # there is no single amplification data available...
-	#	params = sh.params
-	#}
+	if (svalue(probe.ampl) == "single amplification") {
+		load("data/params.singleamplification.Rdata") # there is no single amplification data available...
+	}
 	if (svalue(probe.ampl) == "double amplification") {
 		load("data/params.befund.Rdata") # report reference gcrma parmameter 
 	}
@@ -62,15 +61,15 @@ gepr.process.external = function(external) {
 # Qualitycontrol
 # -------------------------------------------------------------------------
 gepr.qualitycontrol = function(external) {
-	#if (svalue(probe.ampl) == "single amplification") {
-	#	#load("data/xyzRdata")  # 
-		# source("scripts/qc_gcrma.sh.R") # does not exist yet
-	#	source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
-	#}
+	if (svalue(probe.ampl) == "single amplification") {
+		load("data/qc.ref.sa.Rdata")  # load myeloma reference chips for single amplified qc
+	}
 	if (svalue(probe.ampl) == "double amplification") {
 		load("data/qc.ref.Rdata") # load myeloma reference chips for qc
-		source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
 	}
+	
+	source("scripts/qc_gcrma.R") # load modifikation of qc() and RepPlot() to work with gcrma and for more performance
+	
 	# qc summary statistics
 	qc.data = merge.AffyBatch(qc.ref, external) # combine sample + referece to affybatch object
 	
@@ -80,7 +79,12 @@ gepr.qualitycontrol = function(external) {
 	
 	# qc plot
 	png("temp/qcsummary.png")
-	my.plot.qc.stats(qc.obj, usemid=T, main="", present.thresh=10, bg.thresh=20)
+	if (svalue(probe.ampl) == "single amplification") {
+		my.plot.qc.stats(qc.obj, usemid=F, main="", gdh.thresh = 2.5, ba.thresh = 4.6, present.thresh=10, bg.thresh=20)
+	}
+	if (svalue(probe.ampl) == "double amplification") {
+		my.plot.qc.stats(qc.obj, usemid=T, main="", gdh.thresh = 2.3, ba.thresh = 5.2, present.thresh=10, bg.thresh=20)
+	}
 	dev.off()
 
 	#  quality control metrics -- reproducibility plot
@@ -168,6 +172,25 @@ gepr.qualitycontrol = function(external) {
 # predictions / identity control
 # -------------------------------------------------------------------------
 gepr.prediction = function() {
+	if (svalue(probe.ampl) == "single amplification") {
+	# sex
+	load("data/pam.sex.sa.Rdata")
+	sex = sig.sex(exprs(process.res$gcrma))
+	sex  = ifelse(sex=="male", "male", "female")
+
+	# type
+	# load("data/pam.type.sa.Rdata")
+	#type = sig.type(exprs(process.res$gcrma))
+	type  = NA #ifelse(type=="IgA", "A", ifelse(type=="IgD", "D", "G"))
+
+	# lightchain
+	# load("data/pam.lightchain.sa.Rdata")
+	# lightchain = sig.lightchain(exprs(process.res$gcrma))
+	lightchain = NA #ifelse(lightchain=="k", "kappa", "lambda")
+	
+	return(list(sex, type, lightchain))
+	}
+if (svalue(probe.ampl) == "double amplification") {
 	# sex
 	load("data/pam.sex.Rdata")
 	sex = sig.sex(exprs(process.res$gcrma))
@@ -184,11 +207,18 @@ gepr.prediction = function() {
 	lightchain = ifelse(lightchain=="k", "kappa", "lambda")
 	
 	return(list(sex, type, lightchain))
+	}
 }
 
 # -------------------------------------------------------------------------
 # genes patient
 # -------------------------------------------------------------------------
+#~ if (svalue(probe.ampl) == "single amplification") {
+#~ 	
+#~ }
+#~ if (svalue(probe.ampl) == "double amplification") {
+#~ 	
+#~ }
 gepr.genes = function() {
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 

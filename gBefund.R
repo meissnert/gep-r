@@ -244,6 +244,7 @@ loadHandler = function(h, ...) {
 	riskHandler()			# printout risk, nb right
 	geneHandler()			# printout genes, nb right
 	qctableHandler()		# printout qc, right
+	p.meta.score.load(svalue(p.iss))		# recalculate the meta score 
 	enabled(qc) = "TRUE"		# turn on qualitycontrol tab
 	enabled(tables) = "TRUE"	# turn on tables tab
 	enabled(befund) = "TRUE"	# turn on report tab
@@ -361,6 +362,7 @@ clearGUIHandler = function(h, ...) {
 	svalue(befund.itherapy) = ""
 	svalue(befund.grtherapy) = ""
 	svalue(befund.classification) = ""
+	svalue(befund.cyto) = ""
 	svalue(sb) = ""	
 }
 
@@ -1145,6 +1147,20 @@ p.meta.score = function(h, ...) {
 	assign("p.meta.score", meta.sample, env=.GlobalEnv)
 }
 
+# this function recalculates the meta score on loading a save report
+p.meta.score.load = function(h, ...) {
+	if(exists("cyto.res") & exists("risk.res") & exists("genes.res")) {
+		# meta score
+		meta.sample = meta.score(as.numeric(svalue(h)), cyto.res[[1]], risk.res[[7]]$pi.risk, risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
+								genes.res[[1]], genes.res[[13]])
+	} else meta.sample = ""
+	
+	risktable[5][[2]] = as.character(meta.sample$meta.res)
+	risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	
+	assign("p.meta.score", meta.sample, env=.GlobalEnv)
+}
+
 # ------------------------------------------------------------------------------------------------
 #
 # GUI
@@ -1461,8 +1477,8 @@ plot = gimage("data/default_empty.gif", cont=qc)
 qc.table = gtable(data.frame(QC=rep("",16), Value="", stringsAsFactors=FALSE), cont=qc, expand=TRUE)
 enabled(qc) = "FALSE"
 
-warnings = ggroup(horizontal=FALSE, cont=nb.right, label="Warnings")
-warnings.message = (warning.message = gtext(width=300, height=500, cont=warnings))
+warnings = ggroup(horizontal=FALSE, cont=nb.right, use.scrollwindow=TRUE, label="Warnings")
+warnings.message = (warning.message = gtext(width=300, height=600, cont=warnings))
 enabled(warnings) = "FALSE" # just to output warning messages, text is not supossed to be editable
 
 # get focus on firt tabs
