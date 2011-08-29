@@ -222,8 +222,15 @@ loadHandler = function(h, ...) {
 	svalue(befund.cyto) = save$befund.cyto
 	# svalue(sb) = save$sb <-- has to be checked some time...
 
-	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
+	# load gene expression from reference cohort based on amplification method ...
+	if (svalue(probe.ampl) == "single amplification") {
+		load("data/genes.sa.Rdata", envir=.GlobalEnv)
+	}
 	
+	if (svalue(probe.ampl) == "double amplification") {
+			load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
+	}
+
 	# copy images
 	if (system == "Linux" | system == "Darwin") {
 		# copy .gif files from save to the temp folder, overwrite all existing files
@@ -429,7 +436,7 @@ riskHandler = function(h, ...) {
 	risktable[2][[2]] = as.character(risk.res[[6]]$decaux.risk)
 	risktable[2][[3]] = as.character("[low;high]")
 	risktable[2][[4]] = round(as.numeric(risk.res[[6]]$decaux.score),2)
-	risktable[2][[5]] = as.character("[13.71279]")
+	risktable[2][[5]] = ifelse(svalue(probe.ampl) == "double amplification", as.character("[13.71279]"), as.character("[8.777225]"))
 	
 	# meta score
 	risktable[5][[1]] = as.character("\tHM-meta-score")
@@ -457,12 +464,17 @@ riskHandler = function(h, ...) {
 
 geneHandler = function(h, ...) {
 	overexpression = function(sig.pat, call.pat, sig.bmpc, sd.bmpc, call.bmpc) {
-		sig.value = ""
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "up"} 
-		if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "aberrant"} 
-		if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "down"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
-		#else {sig.value = ""}
-		return(sig.value)
+		if (svalue(probe.ampl) == "single amplification") {
+			sig.value <- NA
+		}
+		else {		
+			sig.value = ""
+			if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc!=0) {sig.value = "up"} 
+			if((sig.pat > (sig.bmpc+3*sd.bmpc)) & call.pat=="P" & call.bmpc==0) {sig.value = "aberrant"} 
+			if((sig.pat < (sig.bmpc-3*sd.bmpc)) & sig.bmpc>=6) {sig.value = "down"}	# <-- find a better cutoff for bmpc signal! this is not optimal yet!!
+			#else {sig.value = ""}
+			return(sig.value)
+		}
 	}
 	
 	#headers
@@ -477,7 +489,7 @@ geneHandler = function(h, ...) {
 	genetable[2][[5]] = as.character(cyclind1.bmpc.signal)
 	genetable[2][[6]] = as.character(round(p.cyclind1.bmpc/10*100, 1))
 	genetable[2][[7]] = as.character(cyclind1.mmc.signal)
-	genetable[2][[8]] = as.character(round(p.cyclind1.mmc/262*100, 1))
+	genetable[2][[8]] = as.character(round(p.cyclind1.mmc/anzahl.mmc*100, 1))
 	genetable[2][[9]] = overexpression(genes.res[[4]], genes.res[[3]], cyclind1.bmpc.signal, cyclind1.bmpc.sd, p.cyclind1.bmpc)
 
 	genetable[3][[1]] = as.character("\tCyclin D2")
@@ -487,7 +499,7 @@ geneHandler = function(h, ...) {
 	genetable[3][[5]] = as.character(cyclind2.bmpc.signal)
 	genetable[3][[6]] = as.character(round(p.cyclind2.bmpc/10*100, 1))
 	genetable[3][[7]] = as.character(cyclind2.mmc.signal)
-	genetable[3][[8]] = as.character(round(p.cyclind2.mmc/262*100, 1))
+	genetable[3][[8]] = as.character(round(p.cyclind2.mmc/anzahl.mmc*100, 1))
 	genetable[3][[9]] = overexpression(genes.res[[6]], genes.res[[5]], cyclind2.bmpc.signal, cyclind2.bmpc.sd, p.cyclind2.bmpc)
 
 	genetable[4][[1]] = as.character("\tCyclin D3")
@@ -497,7 +509,7 @@ geneHandler = function(h, ...) {
 	genetable[4][[5]] = as.character(cyclind3.bmpc.signal)
 	genetable[4][[6]] = as.character(round(p.cyclind3.bmpc/10*100, 1))
 	genetable[4][[7]] = as.character(cyclind3.mmc.signal)
-	genetable[4][[8]] = as.character(round(p.cyclind3.mmc/262*100, 1))
+	genetable[4][[8]] = as.character(round(p.cyclind3.mmc/anzahl.mmc*100, 1))
 	genetable[4][[9]] = overexpression(genes.res[[8]], genes.res[[7]], cyclind3.bmpc.signal, cyclind3.bmpc.sd, p.cyclind3.bmpc)
 
 	genetable[5][[1]] = as.character("\tMMSET")
@@ -507,7 +519,7 @@ geneHandler = function(h, ...) {
 	genetable[5][[5]] = as.character(mmset.bmpc.signal)
 	genetable[5][[6]] = as.character(round(p.mmset.bmpc/10*100, 1))
 	genetable[5][[7]] = as.character(mmset.mmc.signal)
-	genetable[5][[8]] = as.character(round(p.mmset.mmc/262*100, 1))
+	genetable[5][[8]] = as.character(round(p.mmset.mmc/anzahl.mmc*100, 1))
 	genetable[5][[9]] = overexpression(genes.res[[12]], genes.res[[11]], mmset.bmpc.signal, mmset.bmpc.sd, p.mmset.bmpc)
 	
 	genetable[6][[1]] = as.character("\tTP53")
@@ -517,7 +529,7 @@ geneHandler = function(h, ...) {
 	genetable[6][[5]] = as.character(tp53.bmpc.signal)
 	genetable[6][[6]] = as.character(round(p.tp53.bmpc/10*100, 1))
 	genetable[6][[7]] = as.character(tp53.mmc.signal)
-	genetable[6][[8]] = as.character(round(p.tp53.mmc/262*100, 1))
+	genetable[6][[8]] = as.character(round(p.tp53.mmc/anzahl.mmc*100, 1))
 	genetable[6][[9]] = overexpression(genes.res[[16]], genes.res[[15]], tp53.bmpc.signal, tp53.bmpc.sd, p.tp53.bmpc)
 
 	genetable[8][[1]] = as.character("\tCTAG1")
@@ -527,7 +539,7 @@ geneHandler = function(h, ...) {
 	genetable[8][[5]] = as.character(ctag1.bmpc.signal)
 	genetable[8][[6]] = as.character(round(p.ctag1.bmpc/10*100, 1))
 	genetable[8][[7]] = as.character(ctag1.mmc.signal)
-	genetable[8][[8]] = as.character(round(p.ctag1.mmc/262*100, 1))
+	genetable[8][[8]] = as.character(round(p.ctag1.mmc/anzahl.mmc*100, 1))
 	genetable[8][[9]] = overexpression(genes.res[[22]], genes.res[[21]], ctag1.bmpc.signal, ctag1.bmpc.sd, p.ctag1.bmpc)
 	
 	genetable[9][[1]] = as.character("\tHM1.24/BST2")
@@ -537,7 +549,7 @@ geneHandler = function(h, ...) {
 	genetable[9][[5]] = as.character(hm124.bmpc.signal)
 	genetable[9][[6]] = as.character(round(p.hm124.bmpc/10*100, 1))
 	genetable[9][[7]] = as.character(hm124.mmc.signal)
-	genetable[9][[8]] = as.character(round(p.hm124.mmc/262*100, 1))
+	genetable[9][[8]] = as.character(round(p.hm124.mmc/anzahl.mmc*100, 1))
 	genetable[9][[9]] = overexpression(genes.res[[26]], genes.res[[25]], hm124.bmpc.signal, hm124.bmpc.sd, p.hm124.bmpc)
 
 	genetable[10][[1]] = as.character("\tMAGEA1")
@@ -547,7 +559,7 @@ geneHandler = function(h, ...) {
 	genetable[10][[5]] = as.character(magea1.bmpc.signal)
 	genetable[10][[6]] = as.character(round(p.magea1.bmpc/10*100, 1))
 	genetable[10][[7]] = as.character(magea1.mmc.signal)
-	genetable[10][[8]] = as.character(round(p.magea1.mmc/262*100, 1))
+	genetable[10][[8]] = as.character(round(p.magea1.mmc/anzahl.mmc*100, 1))
 	genetable[10][[9]] = overexpression(genes.res[[18]], genes.res[[17]], magea1.bmpc.signal, magea1.bmpc.sd, p.magea1.bmpc)
 
 	genetable[11][[1]] = as.character("\tMAGEA3")
@@ -557,7 +569,7 @@ geneHandler = function(h, ...) {
 	genetable[11][[5]] = as.character(magea3.bmpc.signal)
 	genetable[11][[6]] = as.character(round(p.magea3.bmpc/10*100, 1))
 	genetable[11][[7]] = as.character(magea3.mmc.signal)
-	genetable[11][[8]] = as.character(round(p.magea3.mmc/262*100, 1))
+	genetable[11][[8]] = as.character(round(p.magea3.mmc/anzahl.mmc*100, 1))
 	genetable[11][[9]] = overexpression(genes.res[[20]], genes.res[[19]], magea3.bmpc.signal, magea3.bmpc.sd, p.magea3.bmpc)
 
 	genetable[12][[1]] = as.character("\tMUC1")
@@ -567,7 +579,7 @@ geneHandler = function(h, ...) {
 	genetable[12][[5]] = as.character(muc1.bmpc.signal)
 	genetable[12][[6]] = as.character(round(p.muc1.bmpc/10*100, 1))
 	genetable[12][[7]] = as.character(muc1.mmc.signal)
-	genetable[12][[8]] = as.character(round(p.muc1.mmc/262*100, 1))
+	genetable[12][[8]] = as.character(round(p.muc1.mmc/anzahl.mmc*100, 1))
 	genetable[12][[9]] = overexpression(genes.res[[28]], genes.res[[27]], muc1.bmpc.signal, muc1.bmpc.sd, p.muc1.bmpc)
 
 	genetable[13][[1]] = as.character("\tSSX2")
@@ -577,7 +589,7 @@ geneHandler = function(h, ...) {
 	genetable[13][[5]] = as.character(ssx2.bmpc.signal)
 	genetable[13][[6]] = as.character(round(p.ssx2.bmpc/10*100, 1))
 	genetable[13][[7]] = as.character(ssx2.mmc.signal)
-	genetable[13][[8]] = as.character(round(p.ssx2.mmc/262*100, 1))
+	genetable[13][[8]] = as.character(round(p.ssx2.mmc/anzahl.mmc*100, 1))
 	genetable[13][[9]] = overexpression(genes.res[[24]], genes.res[[23]], ssx2.bmpc.signal, ssx2.bmpc.sd, p.ssx2.bmpc)
 
 	genetable[15][[1]] = as.character("\tAURKA")
@@ -587,7 +599,7 @@ geneHandler = function(h, ...) {
 	genetable[15][[5]] = as.character(aurka.bmpc.signal)
 	genetable[15][[6]] = as.character(round(p.aurka.bmpc/10*100, 1))
 	genetable[15][[7]] = as.character(aurka.mmc.signal)
-	genetable[15][[8]] = as.character(round(p.aurka.mmc/262*100, 1))
+	genetable[15][[8]] = as.character(round(p.aurka.mmc/anzahl.mmc*100, 1))
 	genetable[15][[9]] = overexpression(genes.res[[2]], genes.res[[1]], aurka.bmpc.signal, aurka.bmpc.sd, p.aurka.bmpc)
 	
 	genetable[16][[1]] = as.character("\tFGFR3")
@@ -597,7 +609,7 @@ geneHandler = function(h, ...) {
 	genetable[16][[5]] = as.character(fgfr3.bmpc.signal)
 	genetable[16][[6]] = as.character(round(p.fgfr3.bmpc/10*100, 1))
 	genetable[16][[7]] = as.character(fgfr3.mmc.signal)
-	genetable[16][[8]] = as.character(round(p.fgfr3.mmc/262*100, 1))
+	genetable[16][[8]] = as.character(round(p.fgfr3.mmc/anzahl.mmc*100, 1))
 	genetable[16][[9]] = overexpression(genes.res[[10]], genes.res[[9]], fgfr3.bmpc.signal, fgfr3.bmpc.sd, p.fgfr3.bmpc)
 
 	genetable[17][[1]] = as.character("\tIGF1R")
@@ -607,7 +619,7 @@ geneHandler = function(h, ...) {
 	genetable[17][[5]] = as.character(igf1r.bmpc.signal)
 	genetable[17][[6]] = as.character(round(p.igf1r.bmpc/10*100, 1))
 	genetable[17][[7]] = as.character(igf1r.mmc.signal)
-	genetable[17][[8]] = as.character(round(p.igf1r.mmc/262*100, 1))
+	genetable[17][[8]] = as.character(round(p.igf1r.mmc/anzahl.mmc*100, 1))
 	genetable[17][[9]] = overexpression(genes.res[[14]], genes.res[[13]], igf1r.bmpc.signal, igf1r.bmpc.sd, p.igf1r.bmpc)
 }
 
@@ -1139,24 +1151,39 @@ p.meta.score = function(h, ...) {
 		# meta score
 		meta.sample = meta.score(as.numeric(svalue(h$obj)), cyto.res[[1]], risk.res[[7]]$pi.risk, risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
 								genes.res[[1]], genes.res[[13]])
-	} else meta.sample = ""
+								
+		risktable[5][[2]] = as.character(meta.sample$meta.res)
+		risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	} 
 	
-	risktable[5][[2]] = as.character(meta.sample$meta.res)
-	risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	else {
+		meta.sample = list(meta.res="", meta.value="")
+		
+		risktable[5][[2]] = as.character(meta.sample$meta.res)
+		risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	}
+
 	
 	assign("p.meta.score", meta.sample, env=.GlobalEnv)
 }
 
 # this function recalculates the meta score on loading a save report
-p.meta.score.load = function(h, ...) {
-	if(exists("cyto.res") & exists("risk.res") & exists("genes.res")) {
+p.meta.score.load = function(h) {
+	if(exists("cyto.res") & exists("risk.res") & exists("genes.res") & h != "") {
 		# meta score
 		meta.sample = meta.score(as.numeric(svalue(h)), cyto.res[[1]], risk.res[[7]]$pi.risk, risk.res[[5]]$predicted.sub.sqrt, risk.res[[6]]$decaux.risk,
 								genes.res[[1]], genes.res[[13]])
-	} else meta.sample = ""
+								
+		risktable[5][[2]] = as.character(meta.sample$meta.res)
+		risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	} 
 	
-	risktable[5][[2]] = as.character(meta.sample$meta.res)
-	risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	else {
+		meta.sample = list(meta.res="", meta.value="")
+		
+		risktable[5][[2]] = as.character(meta.sample$meta.res)
+		risktable[5][[4]] = as.numeric(meta.sample$meta.value)
+	}
 	
 	assign("p.meta.score", meta.sample, env=.GlobalEnv)
 }

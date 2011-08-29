@@ -213,13 +213,61 @@ if (svalue(probe.ampl) == "double amplification") {
 # -------------------------------------------------------------------------
 # genes patient
 # -------------------------------------------------------------------------
-#~ if (svalue(probe.ampl) == "single amplification") {
-#~ 	
-#~ }
-#~ if (svalue(probe.ampl) == "double amplification") {
-#~ 	
-#~ }
 gepr.genes = function() {
+if (svalue(probe.ampl) == "single amplification") {
+	load("data/genes.sa.Rdata", envir=.GlobalEnv)
+
+	# targetgenes for group-specific therapie
+	# aurorakinase A
+	aurka = as.vector((process.res$panp$Pcalls["208079_s_at", ]))
+	aurka.signal = as.numeric(round(exprs(process.res$gcrma)["208079_s_at", ],1))
+
+	# within mm samples often overexpressed genes
+	# Cyclin D1, D2, D3
+	cyclind1 = as.vector((process.res$panp$Pcalls["208712_at", ]))
+	cyclind1.signal = as.numeric(round(exprs(process.res$gcrma)["208712_at", ],1))
+	cyclind2 = as.vector((process.res$panp$Pcalls["200953_s_at", ]))
+	cyclind2.signal = as.numeric(round(exprs(process.res$gcrma)["200953_s_at", ],1))
+	cyclind3 = as.vector((process.res$panp$Pcalls["201700_at", ]))
+	cyclind3.signal = as.numeric(round(exprs(process.res$gcrma)["201700_at", ],1))
+	# FGFR3
+	fgfr3 = as.vector((process.res$panp$Pcalls["204379_s_at", ]))
+	fgfr3.signal = as.numeric(round(exprs(process.res$gcrma)["204379_s_at", ],1))
+	# whsc1/mmset
+	mmset = as.vector((process.res$panp$Pcalls["209053_s_at", ]))
+	mmset.signal = as.numeric(round(exprs(process.res$gcrma)["209053_s_at", ],1))
+	# igf1r
+	igf1r = as.vector((process.res$panp$Pcalls["225330_at", ]))
+	igf1r.signal = as.numeric(round(exprs(process.res$gcrma)["225330_at", ],1))
+	# t53
+	tp53 = as.vector((process.res$panp$Pcalls["201746_at", ]))
+	tp53.signal = as.numeric(round(exprs(process.res$gcrma)["201746_at", ],1))
+
+	# target genes for imuntherapyh
+	# MAGEA1
+	magea1 = as.vector((process.res$panp$Pcalls["207325_x_at", ])) 
+	magea1.signal = as.numeric(round(exprs(process.res$gcrma)["207325_x_at", ],1))
+	# MAGEA3
+	magea3 = as.vector((process.res$panp$Pcalls["209942_x_at", ]))
+	magea3.signal = as.numeric(round(exprs(process.res$gcrma)["209942_x_at", ],1))
+	# CTAG1
+	ctag1 = as.vector((process.res$panp$Pcalls["210546_x_at", ]))
+	ctag1.signal = as.numeric(round(exprs(process.res$gcrma)["210546_x_at", ],1))
+	# SSX2
+	ssx2 = as.vector((process.res$panp$Pcalls["210497_x_at", ]))
+	ssx2.signal = as.numeric(round(exprs(process.res$gcrma)["210497_x_at", ],1))
+	# HM1.24/BST2
+	hm124 = as.vector((process.res$panp$Pcalls["201641_at", ]))
+	hm124.signal = as.numeric(round(exprs(process.res$gcrma)["201641_at", ],1))
+	# MUC1
+	muc1 = as.vector((process.res$panp$Pcalls["213693_s_at", ]))
+	muc1.signal = as.numeric(round(exprs(process.res$gcrma)["213693_s_at", ],1))
+	
+	return(list(aurka, aurka.signal, cyclind1, cyclind1.signal, cyclind2, cyclind2.signal, cyclind3, cyclind3.signal,
+		   fgfr3, fgfr3.signal, mmset, mmset.signal, igf1r, igf1r.signal, tp53, tp53.signal, magea1, magea1.signal,
+		   magea3, magea3.signal, ctag1, ctag1.signal, ssx2, ssx2.signal, hm124, hm124.signal, muc1, muc1.signal))
+}
+if (svalue(probe.ampl) == "double amplification") {
 	load("data/genes.Rdata", envir=.GlobalEnv) # load the reference genes for bmpc and mmc
 
 	# targetgenes for group-specific therapie
@@ -272,6 +320,7 @@ gepr.genes = function() {
 		   fgfr3, fgfr3.signal, mmset, mmset.signal, igf1r, igf1r.signal, tp53, tp53.signal, magea1, magea1.signal,
 		   magea3, magea3.signal, ctag1, ctag1.signal, ssx2, ssx2.signal, hm124, hm124.signal, muc1, muc1.signal))
 }
+}
 
 # -------------------------------------------------------------------------
 # risk stratification & molecular classifications
@@ -280,10 +329,16 @@ gepr.risk = function() {
 	# gpi
 	source("scripts/gpi.befund.R")
 	gpi = gpi(process.res$gcrma, process.res$panp)
+	
 	# decaux
 	source("scripts/decaux.R")
-	decaux = decaux(process.res$gcrma)
-	
+	if (svalue(probe.ampl) == "single amplification") {
+		decaux = decaux.sa(process.res$gcrma)
+	}
+	if (svalue(probe.ampl) == "double amplification") {
+		decaux = decaux(process.res$gcrma)
+	}
+
 	# shaughnessy 17/70 Gene Risk score
 	source("scripts/shrisk.R")
 	shaughnessy = shrisk(process.res$mas5) # needs mas5 normalized data
