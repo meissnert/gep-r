@@ -41,7 +41,7 @@
 \line(1,0){170} 
 \vspace{-0.3cm}
 \begin{tabbing}
-\textbf{Nom du patient:  } \=\Sexpr{paste(svalue(p.name), svalue(p.vorname), sep=", ")} \hspace{7.5cm} \= \textbf{Date of birth:} \=\Sexpr{svalue(p.geb)} \\ % geburtsdatum des Patienten
+\textbf{Nom du patient:  } \=\Sexpr{paste(svalue(p.name), svalue(p.vorname), sep=", ")} \hspace{3.5cm} \= \textbf{Date de naissance:} \=\Sexpr{svalue(p.geb)} \\ % geburtsdatum des Patienten
 \textbf{Adresse:} \>\Sexpr{paste(svalue(p.strasse), svalue(p.ort), svalue(p.plz), svalue(p.country), sep=", ")}
 \end{tabbing}
 \vspace{-0.6cm}
@@ -49,10 +49,12 @@
 \begin{tabbing}
 \textbf{Pathologie:} \hspace{1cm} \=\Sexpr{svalue(p.diag)} \hspace{1cm} \= \textbf{Stade Salmon Durie:} \=\Sexpr{svalue(p.stage)}%hier klini. Diagnose eintragen
 \\
-\textbf{Date du diagnostic:} \>\Sexpr{svalue(p.datediag)}
+\textbf{Date du diagnostic:} \hspace{3cm} \=\Sexpr{svalue(p.datediag)}
 \\
 \textbf{Données cliniques:}
-\>\textbf{Type de chaînes lourdes:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\\
+\=\textbf{Type de chaînes lourdes:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
+\\
 \>\textbf{Type de Chaînes légères:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
 
@@ -191,7 +193,7 @@ HM-meta-score & \Sexpr{p.meta.score} & [high, medium, low] \tabularnewline \hlin
 \vspace{1cm}
 
 % molecular classification
-\begin{large}\textbf{Classification}\end{large} \\
+\begin{large}\textbf{Classification moléculaire}\end{large} \\
 \line(1,0){170}
 
 \vspace{0.5cm}
@@ -207,7 +209,7 @@ EC classification (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC2
 \pagebreak
 
 % genes
-\begin{large}\textbf{Gènes et de cibles exprimés}\end{large} \\
+\begin{large}\textbf{Gènes et cibles exprimés}\end{large} \\
 \line(1,0){170}
 
 \vspace{0.5cm}
@@ -216,7 +218,7 @@ EC classification (Hose et al., 2005) & \Sexpr{risk.res[[3]]} & [EC11, EC12, EC2
  & & \multicolumn{2}{ | c | }{Patient} & \multicolumn{2}{ | c | }{Plasma cells (normal)} & \multicolumn{2}{ | c | }{Plasma cells (MM)} \tabularnewline \hline
 Gene & Probeset & Signal & Call & Signal & Call & Signal & Call \tabularnewline \hline \hline
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Genes frequently overexpressed in multiple myeloma}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Gènes fréquemment surexprimés dans le myelome multiple}} \tabularnewline \hline \hline
 
 Cyclin D1 & 208712\_at & \Sexpr{genes.res[[4]]} & \Sexpr{genes.res[[3]]} & \Sexpr{cyclind1.bmpc.signal} & \Sexpr{p.cyclind1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{cyclind1.mmc.signal} & \Sexpr{p.cyclind1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
@@ -229,7 +231,7 @@ MMSET & 209053\_s\_at & \Sexpr{genes.res[[12]]} & \Sexpr{genes.res[[11]]} & \Sex
 TP53 & 201746\_at & \Sexpr{genes.res[[16]]} & \Sexpr{genes.res[[15]]} & \Sexpr{tp53.bmpc.signal} & \Sexpr{p.tp53.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{tp53.mmc.signal} & \Sexpr{p.tp53.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Targets for immunotherapy}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Cibles pour l'immunothérapie}} \tabularnewline \hline \hline
 
 CTAG1 & 210546\_x\_at & \Sexpr{genes.res[[22]]} & \Sexpr{genes.res[[21]]} & \Sexpr{ctag1.bmpc.signal} & \Sexpr{p.ctag1.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ctag1.mmc.signal} & \Sexpr{p.ctag1.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
@@ -244,7 +246,7 @@ MUC1 & 213693\_s\_at & \Sexpr{genes.res[[28]]} & \Sexpr{genes.res[[27]]} & \Sexp
 SSX2 & 210497\_x\_at & \Sexpr{genes.res[[24]]} & \Sexpr{genes.res[[23]]} & \Sexpr{ssx2.bmpc.signal} & \Sexpr{p.ssx2.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{ssx2.mmc.signal} & \Sexpr{p.ssx2.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline 
 
 \multicolumn{8}{ | l | }{} \tabularnewline
-\multicolumn{8}{ | l | }{\textbf{Targets for risk adapted treatment}} \tabularnewline \hline \hline
+\multicolumn{8}{ | l | }{\textbf{Cibles pour un traitement à la carte}} \tabularnewline \hline \hline
 
 Aurora-kinase A & 208079\_s\_at & \Sexpr{genes.res[[2]]} & \Sexpr{genes.res[[1]]} & \Sexpr{aurka.bmpc.signal} & \Sexpr{p.aurka.bmpc} / \Sexpr{anzahl.bmpc} & \Sexpr{aurka.mmc.signal} & \Sexpr{p.aurka.mmc} / \Sexpr{anzahl.mmc}  \tabularnewline \hline
 
