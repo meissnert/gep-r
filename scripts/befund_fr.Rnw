@@ -51,7 +51,7 @@
 \\
 \textbf{Date du diagnostic:} \>\Sexpr{svalue(p.datediag)}
 \\
-\textbf{Clinical Data:}
+\textbf{Données cliniques:}
 \>\textbf{Type de chaînes lourdes:} \Sexpr{svalue(p.igtype)} % IG-Typ eintragen
 \>\textbf{Type de Chaînes légères:} \Sexpr{svalue(p.lk)} % leichtkette eintragen
 \end{tabbing}
