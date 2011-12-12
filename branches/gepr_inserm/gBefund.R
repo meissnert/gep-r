@@ -17,7 +17,7 @@
 #set.probe.norm 	"GC-RMA", no other normalization supported yet
 #multicore 			default "no", "yes" only works on Linux systems
 
-lang = "english"
+lang = "french"
 db.support = FALSE
 set.probe.ampl = "double amplification"
 set.probe.array = "Affymetrix U133 plus 2.0"
@@ -936,6 +936,15 @@ pdfHandler = function(h, ...) {
 			enabled(file.pdfshow)="TRUE"  # activate view pdf button
 			svalue(sb) = "PDF was created and can now be viewed!"	
 		}
+     		if (lang=="french") {
+			Sweave("scripts/befund_fr.Rnw")
+			system("R CMD pdflatex befund_fr.tex") # create pdf from tex file, english
+			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
+			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
+			enabled(file.pdfshow)="TRUE"  # activate view pdf button
+			svalue(sb) = "PDF was created and can now be viewed!"
+		}
+		
 	}
 	
 	if(system == "Darwin") {
