@@ -1257,7 +1257,7 @@ aEnglish = gaction(label="English", handler=function(h, ...) {
 	assign("lang", "english", envir=.GlobalEnv)
 	svalue(sb) = "The PDF report will be created in English!"
 })
-aFrench = gaction(label="Frensh", handler=function(h, ...) {
+aFrensh = gaction(label="Frensh", handler=function(h, ...) {
 	assign("lang", "frensh", envir=.GlobalEnv)
 	svalue(sb) = "The PDF report will be created in Frensh!"
 })
