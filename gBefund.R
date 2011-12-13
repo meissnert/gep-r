@@ -396,7 +396,7 @@ riskHandler = function(h, ...) {
 	#headers
 	risktable[6][[1]] = as.character("Classification")
 	risktable[1][[1]] = as.character("Risk stratification")
-	risktable[10][[1]] = as.character("Cytogenetics")
+	risktable[11][[1]] = as.character("Cytogenetics")
 
 	# molecular (classifications)
 	risktable[8][[1]] = as.character("\tTC classification")
@@ -445,13 +445,14 @@ riskHandler = function(h, ...) {
 	risktable[5][[3]] = as.character("[low;medium;high]")
 	risktable[5][[5]] = as.character("[0;0.5-3;>3]")
 
-	#risktable[10][[1]] = as.character("\tZs score")
-	#risktable[10][[2]] = as.character(risk.res[[1]])
-	#risktable[10][[3]] = as.character("[high;medium;low]")
+	# 13.12.2011 activation of Zs score
+	risktable[10][[1]] = as.character("\tZs score")
+	risktable[10][[2]] = as.character(risk.res[[1]])
+	risktable[10][[3]] = as.character("[high;medium;low]")
 
-	risktable[11][[1]] = as.character("\tTranslocation t(4;14)")
-	risktable[11][[2]] = as.character(cyto.res[[1]])
-	risktable[11][[3]] = as.character("[yes;no]")
+	risktable[12][[1]] = as.character("\tTranslocation t(4;14)")
+	risktable[12][[2]] = as.character(cyto.res[[1]])
+	risktable[12][[3]] = as.character("[yes;no]")
 	
 
 }
@@ -939,7 +940,7 @@ pdfHandler = function(h, ...) {
      		if (lang=="french") {
 			Sweave("scripts/befund_fr.Rnw")
 			system("R CMD pdflatex befund_fr.tex") # create pdf from tex file, english
-			system(paste("pdftk befund_en.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, english
+			system(paste("pdftk befund_fr.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, frensh
 			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
 			enabled(file.pdfshow)="TRUE"  # activate view pdf button
 			svalue(sb) = "PDF was created and can now be viewed!"
@@ -1204,7 +1205,7 @@ p.meta.score.load = function(h) {
 # ------------------------------------------------------------------------------------------------
 # About-Dialog
 aboutHandler = function(h, ...) {
-	Dialog("GEP-R GUI Version 0.8 \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
+	Dialog("GEP-R GUI \n(C) Tobias Meißner, 2010 \n\nhttp://code.google.com/p/gep-r/")
 }
 
 Dialog = function(message, handler=NULL) { 						# this functino analog to the example in the gWidgets vignette
@@ -1256,9 +1257,13 @@ aEnglish = gaction(label="English", handler=function(h, ...) {
 	assign("lang", "english", envir=.GlobalEnv)
 	svalue(sb) = "The PDF report will be created in English!"
 })
+aFrench = gaction(label="Frensh", handler=function(h, ...) {
+	assign("lang", "frensh", envir=.GlobalEnv)
+	svalue(sb) = "The PDF report will be created in Frensh!"
+})
 
 ml  = list(File = list(open=aOpen, save=aSave, sep=list(separator=TRUE), quit=aQuit),
-	   PDF_Language = list(German=aGerman, English=aEnglish),
+	   PDF_Language = list(German=aGerman, English=aEnglish, Frensh=aFrensh),
 	   Help = list(help=aHelp),
 	   About = list(about=aAbout)
 	   )
@@ -1486,7 +1491,7 @@ nb.right = gnotebook(cont=pg)
 
 tables = ggroup(horizontal=FALSE, cont=nb.right, label="Results")
 ictable = gtable(data.frame(Sex="", IgH_type="", IgL_type="", stringsAsFactors=FALSE), cont=tables)
-risktable = gtable(data.frame(Method=rep("",11), Risk="", Range="", Value="", Cutoff_or_Group_mean="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
+risktable = gtable(data.frame(Method=rep("",12), Risk="", Range="", Value="", Cutoff_or_Group_mean="", stringsAsFactors=FALSE), cont=tables, expand=TRUE)
 genetable= gtable(data.frame(Gene=rep("",17), 
 				 Probeset="", 
 				 Pat.Sig.="", 
