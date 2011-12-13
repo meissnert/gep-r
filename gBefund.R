@@ -940,7 +940,7 @@ pdfHandler = function(h, ...) {
      		if (lang=="french") {
 			Sweave("scripts/befund_fr.Rnw")
 			system("R CMD pdflatex befund_fr.tex") # create pdf from tex file, english
-			system(paste("pdftk befund_fr.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, frensh
+			system(paste("pdftk befund_fr.pdf output", gsub("[()]" , "", svalue(cel.label)), " compress")) # optimize file size using pdftk, french
 			system(paste("mv", gsub("[()]" , "", svalue(cel.label)), paste("reports/",gsub("[()]" , "", svalue(cel.label)), sep=""))) # move the pdf to the reports directory
 			enabled(file.pdfshow)="TRUE"  # activate view pdf button
 			svalue(sb) = "PDF was created and can now be viewed!"
@@ -1257,13 +1257,13 @@ aEnglish = gaction(label="English", handler=function(h, ...) {
 	assign("lang", "english", envir=.GlobalEnv)
 	svalue(sb) = "The PDF report will be created in English!"
 })
-aFrensh = gaction(label="Frensh", handler=function(h, ...) {
-	assign("lang", "frensh", envir=.GlobalEnv)
-	svalue(sb) = "The PDF report will be created in Frensh!"
+aFrench = gaction(label="French", handler=function(h, ...) {
+	assign("lang", "french", envir=.GlobalEnv)
+	svalue(sb) = "The PDF report will be created in French!"
 })
 
 ml  = list(File = list(open=aOpen, save=aSave, sep=list(separator=TRUE), quit=aQuit),
-	   PDF_Language = list(German=aGerman, English=aEnglish, Frensh=aFrensh),
+	   PDF_Language = list(German=aGerman, English=aEnglish, French=aFrench),
 	   Help = list(help=aHelp),
 	   About = list(about=aAbout)
 	   )
