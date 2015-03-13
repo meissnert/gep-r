@@ -1,0 +1,12 @@
+## Abstract ##
+**Introduction**
+In addition to current clinical and cytogenetic risk factors, several highly predictive gene expression based risk stratifications have been proposed in multiple myeloma. At the same time, putative drugable targets have been identified which are only expressed in a subpopulation of myeloma patients (e.g. AURKA). Whereas assessment of both works well within a clinical trial or an experimental setting, they can currently not readily be applied to clinical routine.
+
+**Methods**
+As reference a group of 300 Affymetrix U133 Plus 2.0 DNA microarrays from patients with multiple myeloma is preprocessed using GC-RMA. Quality control of the DNA microarrays is implemented according to the MACQ-Project. Gene expression based prediction of sex, immunoglobulin- and light chain type is used as sample identity-test within a multicenter-setting. Gene expression based risk stratification (IFM-score, 70-gene high risk score, gene expression based proliferation index) and molecular classifications are assessed as published, as are individual target genes e.g. AURKA. To classify a patient within a prospective clinical routine setting, the documentation by value strategy (Kostka & Spang, 2008) was adapted for GC-RMA preprocessing and is used for documenting the quantitative preprocessing information of the reference group. The gene expression based report is developed in the open source language R, containing a GUI based on Gtk2, and the final report is created as a PDF-file.
+
+**Results**
+We present here our publicly available (http://code.google.com/p/gep-r) open source software-framework (GEP-R) that allows creating a gene expression based report from Affymetrix raw-data. The risk stratification of an individual patient is assessed and based on saved preprocessing information of a reference cohort by treating the individual patient’s expression data as being part of this group, assuring comparable risk stratification. Results can be interpreted and commented within the report and a PDF based document be created. The generation of the report can be performed within short time on a standard computer.
+
+**Conclusion**
+Gene expression reporting allows validated assessment of risk and of individual therapeutic targets in myeloma patients within a clinical routine setting.
